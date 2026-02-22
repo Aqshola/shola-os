@@ -1,0 +1,37 @@
+@import '98.css';
+
+:root {
+  --win-teal: #008080;
+  --win-silver: #c0c0c0;
+  --win-gray: #808080;
+  --win-blue: #000080;
+  
+  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', Arial, sans-serif;
+  color: #222;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--win-teal);
+  overflow: hidden; /* Prevent scrolling on desktop */
+  image-rendering: pixelated; /* Help icons look crispy */
+}
+
+/* Base resets for typography to match 98.css expectations */
+h1, h2, h3, h4, h5, h6, p {
+  margin: 0;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}

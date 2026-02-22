@@ -1,0 +1,7 @@
+.desktop {
+    flex-grow: 1;
+    position: relative;
+    overflow: hidden;
+    /* Leaves space for the taskbar at the bottom */
+    height: calc(100vh - 28px);
+}
