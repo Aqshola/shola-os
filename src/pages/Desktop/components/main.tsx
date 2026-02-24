@@ -1,4 +1,4 @@
-import { LIST_DESKTOP_APP } from '../../../module/desktop-module'
+import { LIST_DESKTOP_APP } from '@/module/desktop-module'
 import '../style/window.css'
 export default function Window() {
     return (
