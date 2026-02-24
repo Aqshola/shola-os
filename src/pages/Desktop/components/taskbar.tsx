@@ -1,16 +1,9 @@
 import { createSignal, onCleanup, Show } from "solid-js";
-import { LIST_TASKBAR_APP } from "../../../apps/taskbar-app"
-import EmailWindow from "../../../apps/EmailWindow"
-import ResumeWindow from "../../../apps/ResumeWindow"
+import { LIST_TASKBAR_APP } from "../../../module/taskbar-module"
 import "../style/taskbar.css"
+import { LIST_START_APP } from "../../../module/start-module";
 
-const APP_LINKS = {
-    portfolio: { url: "https://portfolio-terminal-shola.netlify.app", icon: "/assets/icons/kodak_imaging.ico" },
-    github: { url: "https://github.com/aqshol-claw", icon: "/assets/icons/github.ico" },
-    resume: { url: "#", icon: "/assets/icons/certificate_2.ico" },
-    linkedin: { url: "https://linkedin.com/in/aqshol", icon: "/assets/icons/linkedin.ico" },
-    email: { url: "mailto:aqsholclaw@gmail.com", icon: "/assets/icons/mailbox_world.ico" }
-};
+
 
 export default function Taskbar() {
     const [time, setTime] = createSignal(new Date());
@@ -29,30 +22,30 @@ export default function Taskbar() {
 
     const toggleStartMenu = () => setStartMenuOpen(!startMenuOpen());
 
-    const openEmailWindow = () => {
-        setStartMenuOpen(false);
-        setEmailWindowOpen(true);
-    };
+    // const openEmailWindow = () => {
+    //     setStartMenuOpen(false);
+    //     setEmailWindowOpen(true);
+    // };
 
-    const openResumeWindow = () => {
-        setStartMenuOpen(false);
-        setResumeOpen(true);
-        setResumeMinimized(false);
-    };
+    // const openResumeWindow = () => {
+    //     setStartMenuOpen(false);
+    //     setResumeOpen(true);
+    //     setResumeMinimized(false);
+    // };
 
-    const closeResumeWindow = () => {
-        setResumeOpen(false);
-        setResumeMinimized(false);
-    };
+    // const closeResumeWindow = () => {
+    //     setResumeOpen(false);
+    //     setResumeMinimized(false);
+    // };
 
-    const minimizeResumeWindow = () => {
-        setResumeMinimized(true);
-    };
+    // const minimizeResumeWindow = () => {
+    //     setResumeMinimized(true);
+    // };
 
-    const restoreResumeWindow = () => {
-        setResumeMinimized(false);
-        setResumeOpen(true);
-    };
+    // const restoreResumeWindow = () => {
+    //     setResumeMinimized(false);
+    //     setResumeOpen(true);
+    // };
 
     const formatTime = (date: Date) => {
         let hours = date.getHours();
@@ -86,27 +79,13 @@ export default function Taskbar() {
                             <span>Aqshol OS</span>
                         </div>
                         <div class="start-menu-items">
-                        <a href={APP_LINKS.portfolio.url} target="_blank" rel="noopener noreferrer" class="start-menu-item">
-                                <img src={APP_LINKS.portfolio.icon} alt="" />
-                                <span>Portfolio</span>
-                            </a>
 
-                        <button class="start-menu-item" onClick={openResumeWindow}>
-                                <img src={APP_LINKS.resume.icon} alt="" />
-                                <span>Resume</span>
+                        {LIST_START_APP.map((app) => (
+                            <button class="start-menu-item" onClick={app.action}>
+                                <img src={app.icon} alt="" />
+                                <span>{app.title}</span>
                             </button>
-                        <a href={APP_LINKS.github.url} target="_blank" rel="noopener noreferrer" class="start-menu-item">
-                                <img src={APP_LINKS.github.icon} alt="" />
-                                <span>Github</span>
-                            </a>
-                        <a href={APP_LINKS.linkedin.url} target="_blank" rel="noopener noreferrer" class="start-menu-item">
-                                <img src={APP_LINKS.linkedin.icon} alt="" />
-                                <span>LinkedIn</span>
-                            </a>
-                        <button class="start-menu-item" onClick={openEmailWindow}>
-                                <img src={APP_LINKS.email.icon} alt="" />
-                                <span>Email</span>
-                            </button>
+                        ))}
                         </div>
                     </div>
                 </Show>
@@ -125,7 +104,7 @@ export default function Taskbar() {
                 ))}
                 
                 {/* Open windows */}
-                <Show when={resumeOpen() || resumeMinimized()}>
+                {/* <Show when={resumeOpen() || resumeMinimized()}>
                     <button 
                         class="taskbar-button-app"
                         classList={{ active: resumeOpen() && !resumeMinimized() }}
@@ -133,7 +112,7 @@ export default function Taskbar() {
                     >
                         <img src={APP_LINKS.resume.icon} alt="Resume" class="taskbar-button-icon" />
                     </button>
-                </Show>
+                </Show> */}
             </div>
 
             <div class="taskbar-tray">
@@ -145,17 +124,17 @@ export default function Taskbar() {
                 </div>
             </div>
 
-            <EmailWindow
+            {/* <EmailWindow
                 isOpen={emailWindowOpen()}
                 onClose={() => setEmailWindowOpen(false)}
-            />
+            /> */}
             
-            <ResumeWindow
+            {/* <ResumeWindow
                 isOpen={resumeOpen() && !resumeMinimized()}
                 onClose={closeResumeWindow}
                 onMinimize={minimizeResumeWindow}
                 onRestore={restoreResumeWindow}
-            />
+            /> */}
         </div>
 
 

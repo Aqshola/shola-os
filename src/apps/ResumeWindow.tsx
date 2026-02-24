@@ -31,7 +31,7 @@ export default function ResumeWindow(props: ResumeWindowProps) {
                         <button aria-label="Close" onClick={handleClose}></button>
                     </div>
                 </div>
-                <div class="window-body">
+                <div class="window-body" style={{border:"1px solid black", height:"450px"}}>
                     <iframe 
                         src={RESUME_URL} 
                         class="resume-iframe"
