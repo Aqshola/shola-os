@@ -59,6 +59,14 @@
     z-index: 10001;
 }
 
+.email-window.window-maximized {
+    top: 0;
+    left: 0;
+    transform: none;
+    width: 100%;
+    height: calc(100vh - 28px);
+}
+
 .email-window .window-body {
     display: flex;
     flex-direction: column;

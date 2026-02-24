@@ -4,14 +4,16 @@ import "../pages/Desktop/style/window.css";
 interface EmailWindowProps {
     isOpen: boolean;
     onClose: () => void;
+    onMinimize: () => void;
+    onRestore: () => void;
 }
 
 export default function EmailWindow(props: EmailWindowProps) {
+    const [isMaximized, setIsMaximized] = createSignal(false);
     const [senderEmail, setSenderEmail] = createSignal("");
     const [content, setContent] = createSignal("");
 
     const handleSend = () => {
-        // TODO: Connect email service later
         console.log("Send email:", { from: senderEmail(), content: content() });
         alert("Email sent! (Service not configured yet)");
         setSenderEmail("");
@@ -19,14 +21,19 @@ export default function EmailWindow(props: EmailWindowProps) {
         props.onClose();
     };
 
+    const handleMaximize = () => setIsMaximized(!isMaximized());
+
     return (
         <Show when={props.isOpen}>
-            <div class="window email-window">
+            <div 
+                class="window email-window"
+                classList={{ "window-maximized": isMaximized() }}
+            >
                 <div class="title-bar">
                     <div class="title-bar-text">Email</div>
                     <div class="title-bar-controls">
-                        <button aria-label="Minimize"></button>
-                        <button aria-label="Maximize"></button>
+                        <button aria-label="Minimize" onClick={props.onMinimize}></button>
+                        <button aria-label="Maximize" onClick={handleMaximize}></button>
                         <button aria-label="Close" onClick={props.onClose}></button>
                     </div>
                 </div>

@@ -14,4 +14,10 @@ Refactor Start menu apps to use hooks pattern for better code organization
 - [ ] Test & verify
 
 ### Done
-- [ ] Approved pattern design
+- [x] Approved pattern design
+- [x] Create `src/hooks/` folder
+- [x] Create `hooks/useResume.ts` with state + actions
+- [x] Create `hooks/useEmail.ts` with state + actions
+- [x] Update `module/start-module.ts` to config only
+- [x] Simplify Taskbar to use hooks
+- [x] Test & verify
