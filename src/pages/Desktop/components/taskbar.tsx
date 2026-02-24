@@ -1,5 +1,6 @@
 import { createSignal, onCleanup, Show } from "solid-js";
 import { LIST_TASKBAR_APP } from "../../../apps/taskbar-app"
+import EmailWindow from "../../../apps/EmailWindow"
 import "../style/taskbar.css"
 
 const APP_LINKS = {
@@ -13,6 +14,7 @@ const APP_LINKS = {
 export default function Taskbar() {
     const [time, setTime] = createSignal(new Date());
     const [startMenuOpen, setStartMenuOpen] = createSignal(false);
+    const [emailWindowOpen, setEmailWindowOpen] = createSignal(false);
 
     // Equivalent to useEffect(..., [])
     const timer = setInterval(() => setTime(new Date()), 1000);
@@ -21,6 +23,11 @@ export default function Taskbar() {
     onCleanup(() => clearInterval(timer));
 
     const toggleStartMenu = () => setStartMenuOpen(!startMenuOpen());
+
+    const openEmailWindow = () => {
+        setStartMenuOpen(false);
+        setEmailWindowOpen(true);
+    };
 
     const formatTime = (date: Date) => {
         let hours = date.getHours();
@@ -71,10 +78,10 @@ export default function Taskbar() {
                                 <img src={APP_LINKS.linkedin.icon} alt="" />
                                 <span>LinkedIn</span>
                             </a>
-                        <a href={APP_LINKS.email.url} class="start-menu-item">
+                        <button class="start-menu-item" onClick={openEmailWindow}>
                                 <img src={APP_LINKS.email.icon} alt="" />
                                 <span>Email</span>
-                            </a>
+                            </button>
                         </div>
                     </div>
                 </Show>
@@ -101,6 +108,11 @@ export default function Taskbar() {
                     {formatTime(time())}
                 </div>
             </div>
+
+            <EmailWindow
+                isOpen={emailWindowOpen()}
+                onClose={() => setEmailWindowOpen(false)}
+            />
         </div>
 
 
