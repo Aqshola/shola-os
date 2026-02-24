@@ -18,7 +18,7 @@ Add functional Start menu with click-to-show/hide and animation
 - [x] Create feature branch `feature/start-menu`
 - [x] Add show/hide state to Start menu
 - [x] Add animation (fade/slide)
-- [x] Update app links (portfolio, github, resume, email, linkedin)
+- [x] Add icons to app links (portfolio, github, resume, email, linkedin)
 - [x] Test and verify
 
 ## App Links

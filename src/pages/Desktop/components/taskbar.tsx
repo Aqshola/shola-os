@@ -1,108 +1,124 @@
-import { createSignal, onCleanup, Show } from "solid-js";
-import { LIST_TASKBAR_APP } from "../../../apps/taskbar-app"
+import { createSignal, onCleanup, Show, For, JSX } from "solid-js";
+import { initializeStartApps, StartApp } from "../../../module/start-module"
 import "../style/taskbar.css"
-
-const APP_LINKS = {
-    portfolio: { url: "https://portfolio-terminal-shola.netlify.app", icon: "/assets/icons/kodak_imaging.ico" },
-    github: { url: "https://github.com/aqshol-claw", icon: "/assets/icons/github.ico" },
-    resume: { url: "#", icon: "/assets/icons/certificate_2.ico" },
-    linkedin: { url: "https://linkedin.com/in/aqshol", icon: "/assets/icons/linkedin.ico" },
-    email: { url: "mailto:aqsholclaw@gmail.com", icon: "/assets/icons/mailbox_world.ico" }
-};
+import { LIST_TASKBAR_APP } from "../../../module/taskbar-module";
 
 export default function Taskbar() {
+    const appStart = initializeStartApps()
+
     const [time, setTime] = createSignal(new Date());
     const [startMenuOpen, setStartMenuOpen] = createSignal(false);
+    const [activeWindows, setActiveWindows] = createSignal<StartApp[]>([]);
 
-    // Equivalent to useEffect(..., [])
     const timer = setInterval(() => setTime(new Date()), 1000);
-
-    // Cleanup to prevent memory leaks
     onCleanup(() => clearInterval(timer));
 
+    // Start menu
     const toggleStartMenu = () => setStartMenuOpen(!startMenuOpen());
+    const closeStartMenu = () => setStartMenuOpen(false);
+
 
     const formatTime = (date: Date) => {
         let hours = date.getHours();
         let minutes: string | number = date.getMinutes();
         const ampm = hours >= 12 ? 'PM' : 'AM';
-
         hours = hours % 12;
         hours = hours ? hours : 12;
         minutes = minutes < 10 ? '0' + minutes : minutes;
-
         return `${hours}:${minutes} ${ampm}`;
     };
+
+
+
     return (
         <div class="taskbar">
+            {/* Start Button & Menu */}
             <div>
-                <button 
+                <button
                     class="taskbar-button-start"
                     classList={{ active: startMenuOpen() }}
                     onClick={toggleStartMenu}
                 >
-                    <i>
-                        <img src="/assets/icons/start.svg" alt="Start" class="taskbar-button-start-icon" />
-                    </i>
-                    <span>
-                        Start
-                    </span>
+                    <img src="/assets/icons/start.svg" alt="Start" class="taskbar-button-start-icon" />
+                    <span>Start</span>
                 </button>
+
                 <Show when={startMenuOpen()}>
                     <div class="window start-menu show">
                         <div class="start-menu-sidebar">
                             <span>Aqshol OS</span>
                         </div>
                         <div class="start-menu-items">
-                        <a href={APP_LINKS.portfolio.url} target="_blank" rel="noopener noreferrer" class="start-menu-item">
-                                <img src={APP_LINKS.portfolio.icon} alt="" />
-                                <span>Portfolio</span>
-                            </a>
+                            <For each={appStart.LIST_START_APP}>{(app) => (
+                                <button class="start-menu-item" onClick={() => {
+                                    setActiveWindows(prev => [...prev, app]);
+                                    closeStartMenu()
+                                    app.action()
 
-                        <a href={APP_LINKS.resume.url} target="_blank" rel="noopener noreferrer" class="start-menu-item">
-                                <img src={APP_LINKS.resume.icon} alt="" />
-                                <span>Resume</span>
-                            </a>
-                        <a href={APP_LINKS.github.url} target="_blank" rel="noopener noreferrer" class="start-menu-item">
-                                <img src={APP_LINKS.github.icon} alt="" />
-                                <span>Github</span>
-                            </a>
-                        <a href={APP_LINKS.linkedin.url} target="_blank" rel="noopener noreferrer" class="start-menu-item">
-                                <img src={APP_LINKS.linkedin.icon} alt="" />
-                                <span>LinkedIn</span>
-                            </a>
-                        <a href={APP_LINKS.email.url} class="start-menu-item">
-                                <img src={APP_LINKS.email.icon} alt="" />
-                                <span>Email</span>
-                            </a>
+                                }
+                                }>
+                                    <img src={app.icon} alt="" />
+                                    <span>{app.title}</span>
+                                </button>
+                            )}</For>
                         </div>
                     </div>
                 </Show>
             </div>
 
-
             <div class="taskbar-divider"></div>
 
             <div class="taskbar-apps">
-                {LIST_TASKBAR_APP.map((app) => (
+                <For each={LIST_TASKBAR_APP}>{(app) => (
                     <button class="taskbar-button-app">
-                        <i>
-                            <img src={app.icon} alt={app.alt} class="taskbar-button-icon" />
-                        </i>
+                        <img src={app.icon} alt={app.alt} class="taskbar-button-icon" />
                     </button>
-                ))}
+                )}</For>              
             </div>
 
+            <div class="taskbar-windows">
+                  <For each={activeWindows()}>{(win) => win && (
+                    <button
+                        class="taskbar-window-app"
+                        classList={{ inactive: win.hooks?.isMinimized() }}
+                        onClick={()=>{
+                            if(win.hooks?.isMinimized()){
+                                win.hooks?.restore()
+                            } else {
+                                win.hooks?.minimize()
+                            }
+                        }}
+                    >
+                        <img src={win.icon} alt={win.title} class="taskbar-window-app-icon" />
+                        <span>{win.title}</span>
+                    </button>
+                )}</For>
+            </div>
+
+            {/* System Tray */}
             <div class="taskbar-tray">
-                <div class="taskbar-tray-icons">
-                    {/* Add tray icons here later if needed */}
-                </div>
                 <div class="taskbar-clock">
                     {formatTime(time())}
                 </div>
             </div>
+
+
+            <For each={appStart.LIST_START_APP.filter(app => app.type === "window")}>{(app) => {
+                const Component = app.component as (props: any) => JSX.Element;
+                return (
+                    <Component
+                        isOpen={app.hooks?.isActive()}
+                        onClose={()=>{
+                            app.hooks?.close()
+                            setActiveWindows(prev => prev.filter(w => w.title !== app.title))
+                        }}
+                        onMinimize={app.hooks?.minimize}
+                        onRestore={app.hooks?.restore}
+                    />
+                );
+            }}</For>
+
+
         </div>
-
-
     )
 }
