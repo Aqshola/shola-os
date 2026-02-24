@@ -17,7 +17,16 @@ Open resume in a window using iframe when clicking Resume in Start menu
 - [ ] Test & verify
 
 ### Done
-- [ ] Get Google Drive resume embed URL
+- [x] Get Google Drive resume embed URL
+- [x] Create feature branch `feature/resume-window`
+- [x] Create `ResumeWindow.tsx` with iframe
+- [x] Add functional close button (closes window)
+- [x] Add minimize button (hides window, keeps in taskbar)
+- [x] Add maximize button (toggle fullscreen)
+- [x] Add taskbar tab when window is open
+- [x] Click taskbar tab to restore window
+- [x] Change Resume link in Start menu to open window
+- [x] Test & verify
 
 ## Resume Embed URL
 ```
