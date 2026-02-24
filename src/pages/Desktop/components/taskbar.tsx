@@ -3,11 +3,11 @@ import { LIST_TASKBAR_APP } from "../../../apps/taskbar-app"
 import "../style/taskbar.css"
 
 const APP_LINKS = {
-    portfolio: "https://portfolio-terminal-shola.netlify.app",
-    github: "https://github.com/aqshol-claw",
-    resume: "#",
-    email: "mailto:aqsholclaw@gmail.com",
-    linkedin: "https://linkedin.com/in/aqshol"
+    portfolio: { url: "https://portfolio-terminal-shola.netlify.app", icon: "/assets/icons/kodak_imaging.ico" },
+    github: { url: "https://github.com/aqshol-claw", icon: "/assets/icons/github.ico" },
+    resume: { url: "#", icon: "/assets/icons/certificate_2.ico" },
+    linkedin: { url: "https://linkedin.com/in/aqshol", icon: "/assets/icons/linkedin.ico" },
+    email: { url: "mailto:aqsholclaw@gmail.com", icon: "/assets/icons/mailbox_world.ico" }
 };
 
 export default function Taskbar() {
@@ -54,20 +54,25 @@ export default function Taskbar() {
                             <span>Aqshol OS</span>
                         </div>
                         <div class="start-menu-items">
-                        <a href={APP_LINKS.portfolio} target="_blank" rel="noopener noreferrer" class="start-menu-item">
+                        <a href={APP_LINKS.portfolio.url} target="_blank" rel="noopener noreferrer" class="start-menu-item">
+                                <img src={APP_LINKS.portfolio.icon} alt="" />
                                 <span>Portfolio</span>
                             </a>
 
-                        <a href={APP_LINKS.resume} target="_blank" rel="noopener noreferrer" class="start-menu-item">
+                        <a href={APP_LINKS.resume.url} target="_blank" rel="noopener noreferrer" class="start-menu-item">
+                                <img src={APP_LINKS.resume.icon} alt="" />
                                 <span>Resume</span>
                             </a>
-                        <a href={APP_LINKS.github} target="_blank" rel="noopener noreferrer" class="start-menu-item">
+                        <a href={APP_LINKS.github.url} target="_blank" rel="noopener noreferrer" class="start-menu-item">
+                                <img src={APP_LINKS.github.icon} alt="" />
                                 <span>Github</span>
                             </a>
-                        <a href={APP_LINKS.linkedin} target="_blank" rel="noopener noreferrer" class="start-menu-item">
+                        <a href={APP_LINKS.linkedin.url} target="_blank" rel="noopener noreferrer" class="start-menu-item">
+                                <img src={APP_LINKS.linkedin.icon} alt="" />
                                 <span>LinkedIn</span>
                             </a>
-                        <a href={APP_LINKS.email} class="start-menu-item">
+                        <a href={APP_LINKS.email.url} class="start-menu-item">
+                                <img src={APP_LINKS.email.icon} alt="" />
                                 <span>Email</span>
                             </a>
                         </div>
