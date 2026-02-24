@@ -1,14 +1,26 @@
-import { createSignal, onCleanup } from "solid-js";
+import { createSignal, onCleanup, Show } from "solid-js";
 import { LIST_TASKBAR_APP } from "../../../apps/taskbar-app"
 import "../style/taskbar.css"
+
+const APP_LINKS = {
+    portfolio: "https://portfolio-terminal-shola.netlify.app",
+    github: "https://github.com/aqshol-claw",
+    resume: "#",
+    email: "mailto:aqsholclaw@gmail.com",
+    linkedin: "https://linkedin.com/in/aqshol"
+};
+
 export default function Taskbar() {
     const [time, setTime] = createSignal(new Date());
+    const [startMenuOpen, setStartMenuOpen] = createSignal(false);
 
     // Equivalent to useEffect(..., [])
     const timer = setInterval(() => setTime(new Date()), 1000);
 
     // Cleanup to prevent memory leaks
     onCleanup(() => clearInterval(timer));
+
+    const toggleStartMenu = () => setStartMenuOpen(!startMenuOpen());
 
     const formatTime = (date: Date) => {
         let hours = date.getHours();
@@ -24,7 +36,11 @@ export default function Taskbar() {
     return (
         <div class="taskbar">
             <div>
-                <button class="taskbar-button-start">
+                <button 
+                    class="taskbar-button-start"
+                    classList={{ active: startMenuOpen() }}
+                    onClick={toggleStartMenu}
+                >
                     <i>
                         <img src="/assets/icons/start.svg" alt="Start" class="taskbar-button-start-icon" />
                     </i>
@@ -32,38 +48,31 @@ export default function Taskbar() {
                         Start
                     </span>
                 </button>
-                <div class="window start-menu" >
-                    <div class="start-menu-sidebar">
-                        <span>Aqshol OS</span>
-                    </div>
-                    <div class="start-menu-items">
-                       <button
-                        class="start-menu-item"
-                    >
-                        
-                       <span>Portofolio</span>
-                    </button>
+                <Show when={startMenuOpen()}>
+                    <div class="window start-menu show">
+                        <div class="start-menu-sidebar">
+                            <span>Aqshol OS</span>
+                        </div>
+                        <div class="start-menu-items">
+                        <a href={APP_LINKS.portfolio} target="_blank" rel="noopener noreferrer" class="start-menu-item">
+                                <span>Portfolio</span>
+                            </a>
 
-                    <button
-                        class="start-menu-item"
-                    >
-                        
-                       <span>Resume</span>
-                    </button>
-                    <button
-                        class="start-menu-item"
-                    >
-                        
-                       <span>Github</span>
-                    </button>
-                    <button
-                        class="start-menu-item"
-                    >
-                        
-                       <span>LInkedin</span>
-                    </button>
+                        <a href={APP_LINKS.resume} target="_blank" rel="noopener noreferrer" class="start-menu-item">
+                                <span>Resume</span>
+                            </a>
+                        <a href={APP_LINKS.github} target="_blank" rel="noopener noreferrer" class="start-menu-item">
+                                <span>Github</span>
+                            </a>
+                        <a href={APP_LINKS.linkedin} target="_blank" rel="noopener noreferrer" class="start-menu-item">
+                                <span>LinkedIn</span>
+                            </a>
+                        <a href={APP_LINKS.email} class="start-menu-item">
+                                <span>Email</span>
+                            </a>
+                        </div>
                     </div>
-                </div>
+                </Show>
             </div>
 
 
