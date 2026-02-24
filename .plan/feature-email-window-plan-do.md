@@ -16,4 +16,12 @@ Create email window component that opens from Start menu
 - [ ] Test & verify
 
 ### Done
-- [ ] Read 98.css docs
+- [x] Read 98.css docs
+- [x] Create feature branch `feature/email-window`
+- [x] Create `EmailWindow.tsx` component with 98.css window styling
+- [x] Add state to track email window open/closed
+- [x] Change Email link in Start menu to open window
+- [x] Add sender email input
+- [x] Add content textarea
+- [x] Add send button (UI only - service later)
+- [x] Test & verify

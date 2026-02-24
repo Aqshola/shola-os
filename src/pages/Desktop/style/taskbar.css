@@ -20,7 +20,8 @@
     gap: 5px;
 }
 
-.taskbar-button-start.active {
+.taskbar-button-start.active,
+.taskbar-button-app.active {
     background: #dfdfdf;
     box-shadow: inset -1px -1px #000, inset 1px 1px #fff;
 }

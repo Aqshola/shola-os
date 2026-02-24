@@ -1,6 +1,7 @@
 import { createSignal, onCleanup, Show } from "solid-js";
 import { LIST_TASKBAR_APP } from "../../../apps/taskbar-app"
 import EmailWindow from "../../../apps/EmailWindow"
+import ResumeWindow from "../../../apps/ResumeWindow"
 import "../style/taskbar.css"
 
 const APP_LINKS = {
@@ -15,6 +16,10 @@ export default function Taskbar() {
     const [time, setTime] = createSignal(new Date());
     const [startMenuOpen, setStartMenuOpen] = createSignal(false);
     const [emailWindowOpen, setEmailWindowOpen] = createSignal(false);
+    
+    // Resume window state
+    const [resumeOpen, setResumeOpen] = createSignal(false);
+    const [resumeMinimized, setResumeMinimized] = createSignal(false);
 
     // Equivalent to useEffect(..., [])
     const timer = setInterval(() => setTime(new Date()), 1000);
@@ -27,6 +32,26 @@ export default function Taskbar() {
     const openEmailWindow = () => {
         setStartMenuOpen(false);
         setEmailWindowOpen(true);
+    };
+
+    const openResumeWindow = () => {
+        setStartMenuOpen(false);
+        setResumeOpen(true);
+        setResumeMinimized(false);
+    };
+
+    const closeResumeWindow = () => {
+        setResumeOpen(false);
+        setResumeMinimized(false);
+    };
+
+    const minimizeResumeWindow = () => {
+        setResumeMinimized(true);
+    };
+
+    const restoreResumeWindow = () => {
+        setResumeMinimized(false);
+        setResumeOpen(true);
     };
 
     const formatTime = (date: Date) => {
@@ -66,10 +91,10 @@ export default function Taskbar() {
                                 <span>Portfolio</span>
                             </a>
 
-                        <a href={APP_LINKS.resume.url} target="_blank" rel="noopener noreferrer" class="start-menu-item">
+                        <button class="start-menu-item" onClick={openResumeWindow}>
                                 <img src={APP_LINKS.resume.icon} alt="" />
                                 <span>Resume</span>
-                            </a>
+                            </button>
                         <a href={APP_LINKS.github.url} target="_blank" rel="noopener noreferrer" class="start-menu-item">
                                 <img src={APP_LINKS.github.icon} alt="" />
                                 <span>Github</span>
@@ -98,6 +123,17 @@ export default function Taskbar() {
                         </i>
                     </button>
                 ))}
+                
+                {/* Open windows */}
+                <Show when={resumeOpen() || resumeMinimized()}>
+                    <button 
+                        class="taskbar-button-app"
+                        classList={{ active: resumeOpen() && !resumeMinimized() }}
+                        onClick={resumeMinimized() ? restoreResumeWindow : undefined}
+                    >
+                        <img src={APP_LINKS.resume.icon} alt="Resume" class="taskbar-button-icon" />
+                    </button>
+                </Show>
             </div>
 
             <div class="taskbar-tray">
@@ -112,6 +148,13 @@ export default function Taskbar() {
             <EmailWindow
                 isOpen={emailWindowOpen()}
                 onClose={() => setEmailWindowOpen(false)}
+            />
+            
+            <ResumeWindow
+                isOpen={resumeOpen() && !resumeMinimized()}
+                onClose={closeResumeWindow}
+                onMinimize={minimizeResumeWindow}
+                onRestore={restoreResumeWindow}
             />
         </div>
 
