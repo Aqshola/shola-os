@@ -1,14 +1,26 @@
-import { createSignal, onCleanup } from "solid-js";
+import { createSignal, onCleanup, Show } from "solid-js";
 import { LIST_TASKBAR_APP } from "../../../apps/taskbar-app"
 import "../style/taskbar.css"
+
+const APP_LINKS = {
+    portfolio: { url: "https://portfolio-terminal-shola.netlify.app", icon: "/assets/icons/kodak_imaging.ico" },
+    github: { url: "https://github.com/aqshol-claw", icon: "/assets/icons/github.ico" },
+    resume: { url: "#", icon: "/assets/icons/certificate_2.ico" },
+    linkedin: { url: "https://linkedin.com/in/aqshol", icon: "/assets/icons/linkedin.ico" },
+    email: { url: "mailto:aqsholclaw@gmail.com", icon: "/assets/icons/mailbox_world.ico" }
+};
+
 export default function Taskbar() {
     const [time, setTime] = createSignal(new Date());
+    const [startMenuOpen, setStartMenuOpen] = createSignal(false);
 
     // Equivalent to useEffect(..., [])
     const timer = setInterval(() => setTime(new Date()), 1000);
 
     // Cleanup to prevent memory leaks
     onCleanup(() => clearInterval(timer));
+
+    const toggleStartMenu = () => setStartMenuOpen(!startMenuOpen());
 
     const formatTime = (date: Date) => {
         let hours = date.getHours();
@@ -24,7 +36,11 @@ export default function Taskbar() {
     return (
         <div class="taskbar">
             <div>
-                <button class="taskbar-button-start">
+                <button 
+                    class="taskbar-button-start"
+                    classList={{ active: startMenuOpen() }}
+                    onClick={toggleStartMenu}
+                >
                     <i>
                         <img src="/assets/icons/start.svg" alt="Start" class="taskbar-button-start-icon" />
                     </i>
@@ -32,38 +48,36 @@ export default function Taskbar() {
                         Start
                     </span>
                 </button>
-                <div class="window start-menu" >
-                    <div class="start-menu-sidebar">
-                        <span>Aqshol OS</span>
-                    </div>
-                    <div class="start-menu-items">
-                       <button
-                        class="start-menu-item"
-                    >
-                        
-                       <span>Portofolio</span>
-                    </button>
+                <Show when={startMenuOpen()}>
+                    <div class="window start-menu show">
+                        <div class="start-menu-sidebar">
+                            <span>Aqshol OS</span>
+                        </div>
+                        <div class="start-menu-items">
+                        <a href={APP_LINKS.portfolio.url} target="_blank" rel="noopener noreferrer" class="start-menu-item">
+                                <img src={APP_LINKS.portfolio.icon} alt="" />
+                                <span>Portfolio</span>
+                            </a>
 
-                    <button
-                        class="start-menu-item"
-                    >
-                        
-                       <span>Resume</span>
-                    </button>
-                    <button
-                        class="start-menu-item"
-                    >
-                        
-                       <span>Github</span>
-                    </button>
-                    <button
-                        class="start-menu-item"
-                    >
-                        
-                       <span>LInkedin</span>
-                    </button>
+                        <a href={APP_LINKS.resume.url} target="_blank" rel="noopener noreferrer" class="start-menu-item">
+                                <img src={APP_LINKS.resume.icon} alt="" />
+                                <span>Resume</span>
+                            </a>
+                        <a href={APP_LINKS.github.url} target="_blank" rel="noopener noreferrer" class="start-menu-item">
+                                <img src={APP_LINKS.github.icon} alt="" />
+                                <span>Github</span>
+                            </a>
+                        <a href={APP_LINKS.linkedin.url} target="_blank" rel="noopener noreferrer" class="start-menu-item">
+                                <img src={APP_LINKS.linkedin.icon} alt="" />
+                                <span>LinkedIn</span>
+                            </a>
+                        <a href={APP_LINKS.email.url} class="start-menu-item">
+                                <img src={APP_LINKS.email.icon} alt="" />
+                                <span>Email</span>
+                            </a>
+                        </div>
                     </div>
-                </div>
+                </Show>
             </div>
 
 
