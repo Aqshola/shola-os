@@ -1,5 +1,7 @@
+import { JSX } from "solid-js";
 import EmailWindow from "../apps/EmailWindow";
 import ResumeWindow from "../apps/ResumeWindow";
+import { AppWindow } from "../hooks/type";
 import { useEmail } from "../hooks/useEmail";
 import { useResume } from "../hooks/useResume";
 
@@ -8,8 +10,8 @@ export interface StartApp {
     icon: string;
     action: () => void;
     type?: "window" | "external";
-    component?: any; // Optional component to render when the app is opened
-    hooks?: any; // Optional hooks to manage app state
+    component?: (props: any) => JSX.Element; // Optional component to render when the app is opened
+    hooks?: AppWindow; // Optional hooks to manage app state
 }
 
 

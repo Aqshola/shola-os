@@ -1,4 +1,4 @@
-import { createSignal, onCleanup, Show, For } from "solid-js";
+import { createSignal, onCleanup, Show, For, JSX } from "solid-js";
 import { initializeStartApps, StartApp } from "../../../module/start-module"
 import "../style/taskbar.css"
 import { LIST_TASKBAR_APP } from "../../../module/taskbar-module";
@@ -76,16 +76,16 @@ export default function Taskbar() {
                 )}</For>              
             </div>
 
-            <div class="taskbar-window">
+            <div class="taskbar-windows">
                   <For each={activeWindows()}>{(win) => win && (
                     <button
                         class="taskbar-window-app"
-                        classList={{ inactive: win.hooks.isMinimized() }}
+                        classList={{ inactive: win.hooks?.isMinimized() }}
                         onClick={()=>{
-                            if(win.hooks.isMinimized()){
-                                win.hooks.restore()
+                            if(win.hooks?.isMinimized()){
+                                win.hooks?.restore()
                             } else {
-                                win.hooks.minimize()
+                                win.hooks?.minimize()
                             }
                         }}
                     >
@@ -103,14 +103,20 @@ export default function Taskbar() {
             </div>
 
 
-            <For each={appStart.LIST_START_APP.filter(app => app.type === "window")}>{(app) => (
-                <app.component
-                    isOpen={app.hooks.isActive()}
-                    onClose={app.hooks.close}
-                    onMinimize={app.hooks.minimize}
-                    onRestore={app.hooks.restore}
-                />
-            )}</For>
+            <For each={appStart.LIST_START_APP.filter(app => app.type === "window")}>{(app) => {
+                const Component = app.component as (props: any) => JSX.Element;
+                return (
+                    <Component
+                        isOpen={app.hooks?.isActive()}
+                        onClose={()=>{
+                            app.hooks?.close()
+                            setActiveWindows(prev => prev.filter(w => w.title !== app.title))
+                        }}
+                        onMinimize={app.hooks?.minimize}
+                        onRestore={app.hooks?.restore}
+                    />
+                );
+            }}</For>
 
 
         </div>

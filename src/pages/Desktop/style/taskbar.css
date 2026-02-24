@@ -46,6 +46,12 @@
     padding: 0px 4px;
 }
 
+.taskbar-windows{
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    
+}
 
 .taskbar-window-app{
     display: flex;

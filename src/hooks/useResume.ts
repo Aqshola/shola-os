@@ -1,6 +1,7 @@
 import { createSignal } from "solid-js";
+import { AppWindow } from "./type";
 
-export function useResume() {
+export function useResume():AppWindow {
     const [isOpen, setIsOpen] = createSignal(false);
     const [isMinimized, setIsMinimized] = createSignal(false);
 
