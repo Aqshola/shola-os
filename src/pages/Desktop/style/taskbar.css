@@ -14,6 +14,7 @@
     /* Stay above windows */
 }
 
+
 .taskbar-button-start {
     display: flex;
     align-items: center;
@@ -44,6 +45,27 @@
     min-width: fit-content;
     padding: 0px 4px;
 }
+
+
+.taskbar-window-app{
+    display: flex;
+    padding: 0px 4px;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+}
+
+.taskbar-window-app-icon {
+    width: 16px;
+    height: 16px;
+    image-rendering: pixelated;
+}
+
+.taskbar-window-app.inactive {
+    box-shadow: none;
+    border-bottom: 1px solid black;
+}
+
 
 .taskbar-button-icon {
     width: 20px;

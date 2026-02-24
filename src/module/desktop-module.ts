@@ -8,5 +8,4 @@ export const LIST_DESKTOP_APP = [{
     alt: "Portofolio",
     icon: "/assets/icons/kodak_imaging.ico",
 },
-
 ]
