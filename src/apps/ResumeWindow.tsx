@@ -10,12 +10,13 @@ interface ResumeWindowProps {
     onRestore: () => void;
 }
 
-const RESUME_URL = "https://drive.google.com/file/d/1lZ-4EvK1vC5VkIKyWk/preview";
+const RESUME_URL = "https://drive.google.com/file/d/1lZ-4Ef8c24O3e3FxLsRvK1vC5VkIKyWk/preview";
 const WINDOW_ID = "resume";
 
 export default function ResumeWindow(props: ResumeWindowProps) {
     const [isMaximized, setIsMaximized] = createSignal(false);
-    const draggable = useDraggable({ x: 100, y: 50 });
+    const defaultPosition = { x: window.innerWidth/2, y: (window.innerHeight/2)*-1 };
+    const draggable = useDraggable({ x: defaultPosition.x, y: defaultPosition.y });
 
     const handleClose = () => props.onClose();
     const handleMinimize = () => props.onMinimize();

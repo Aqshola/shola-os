@@ -16,7 +16,8 @@ export default function EmailWindow(props: EmailWindowProps) {
     const [isMaximized, setIsMaximized] = createSignal(false);
     const [senderEmail, setSenderEmail] = createSignal("");
     const [content, setContent] = createSignal("");
-    const draggable = useDraggable({ x: 150, y: 100 });
+    const defaultPosition = { x: window.innerWidth/2, y: (window.innerHeight/2)*-1 };
+    const draggable = useDraggable({ x: defaultPosition.x, y: defaultPosition.y });
 
     const handleSend = () => {
         console.log("Send email:", { from: senderEmail(), content: content() });
