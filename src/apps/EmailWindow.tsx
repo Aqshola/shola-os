@@ -1,4 +1,6 @@
 import { createSignal, Show } from "solid-js";
+import { useDraggable } from "@/hooks/useDraggable";
+import { bringToFront, getZIndex } from "@/stores/windowStore";
 import "@/pages/Desktop/style/window.css";
 
 interface EmailWindowProps {
@@ -8,10 +10,13 @@ interface EmailWindowProps {
     onRestore: () => void;
 }
 
+const WINDOW_ID = "email";
+
 export default function EmailWindow(props: EmailWindowProps) {
     const [isMaximized, setIsMaximized] = createSignal(false);
     const [senderEmail, setSenderEmail] = createSignal("");
     const [content, setContent] = createSignal("");
+    const draggable = useDraggable({ x: 150, y: 100 });
 
     const handleSend = () => {
         console.log("Send email:", { from: senderEmail(), content: content() });
@@ -23,13 +28,27 @@ export default function EmailWindow(props: EmailWindowProps) {
 
     const handleMaximize = () => setIsMaximized(!isMaximized());
 
+    const handleTitleBarClick = () => {
+        bringToFront(WINDOW_ID);
+    };
+
     return (
         <Show when={props.isOpen}>
             <div 
                 class="window email-window"
                 classList={{ "window-maximized": isMaximized() }}
+                style={{
+                    position: isMaximized() ? "fixed" : "absolute",
+                    left: isMaximized() ? "0" : `${draggable.position().x}px`,
+                    top: isMaximized() ? "0" : `${draggable.position().y}px`,
+                    "z-index": getZIndex(WINDOW_ID),
+                }}
+                onMouseDown={handleTitleBarClick}
             >
-                <div class="title-bar">
+                <div 
+                    class="title-bar"
+                    onMouseDown={draggable.handleMouseDown}
+                >
                     <div class="title-bar-text">Email</div>
                     <div class="title-bar-controls">
                         <button aria-label="Minimize" onClick={props.onMinimize}></button>

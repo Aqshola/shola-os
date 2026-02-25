@@ -1,4 +1,6 @@
 import { createSignal, Show } from "solid-js";
+import { useDraggable } from "@/hooks/useDraggable";
+import { bringToFront, getZIndex } from "@/stores/windowStore";
 import "@/pages/Desktop/style/window.css";
 
 interface ResumeWindowProps {
@@ -8,22 +10,38 @@ interface ResumeWindowProps {
     onRestore: () => void;
 }
 
-const RESUME_URL = "https://drive.google.com/file/d/1lZ-4Ef8c24O3e3FxLsRvK1vC5VkIKyWk/preview";
+const RESUME_URL = "https://drive.google.com/file/d/1lZ-4EvK1vC5VkIKyWk/preview";
+const WINDOW_ID = "resume";
 
 export default function ResumeWindow(props: ResumeWindowProps) {
     const [isMaximized, setIsMaximized] = createSignal(false);
+    const draggable = useDraggable({ x: 100, y: 50 });
 
     const handleClose = () => props.onClose();
     const handleMinimize = () => props.onMinimize();
     const handleMaximize = () => setIsMaximized(!isMaximized());
+
+    const handleTitleBarClick = () => {
+        bringToFront(WINDOW_ID);
+    };
 
     return (
         <Show when={props.isOpen}>
             <div 
                 class="window resume-window"
                 classList={{ "window-maximized": isMaximized() }}
+                style={{
+                    position: isMaximized() ? "fixed" : "absolute",
+                    left: isMaximized() ? "0" : `${draggable.position().x}px`,
+                    top: isMaximized() ? "0" : `${draggable.position().y}px`,
+                    "z-index": getZIndex(WINDOW_ID),
+                }}
+                onMouseDown={handleTitleBarClick}
             >
-                <div class="title-bar">
+                <div 
+                    class="title-bar"
+                    onMouseDown={draggable.handleMouseDown}
+                >
                     <div class="title-bar-text">Resume</div>
                     <div class="title-bar-controls">
                         <button aria-label="Minimize" onClick={handleMinimize}></button>
