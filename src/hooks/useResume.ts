@@ -1,5 +1,6 @@
 import { createSignal } from "solid-js";
-import { AppWindow } from "./type";
+import { AppWindow } from "@/hooks/type";
+
 
 export function useResume():AppWindow {
     const [isOpen, setIsOpen] = createSignal(false);

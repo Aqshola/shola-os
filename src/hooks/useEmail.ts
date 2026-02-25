@@ -1,5 +1,5 @@
 import { createSignal } from "solid-js";
-import { AppWindow } from "./type";
+import { AppWindow } from "@/hooks/type";
 
 export function useEmail(): AppWindow {
     const [isOpen, setIsOpen] = createSignal(false);

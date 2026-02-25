@@ -1,5 +1,5 @@
 import { LIST_DESKTOP_APP } from '@/module/desktop-module'
-import '../style/window.css'
+import '@/pages/Desktop/style/window.css'
 export default function Window() {
     return (
         <div class="desktop">

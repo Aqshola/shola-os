@@ -1,5 +1,5 @@
 import { createSignal, Show } from "solid-js";
-import "../pages/Desktop/style/window.css";
+import "@/pages/Desktop/style/window.css";
 
 interface ResumeWindowProps {
     isOpen: boolean;
