@@ -2,6 +2,7 @@ import { createSignal, Show } from "solid-js";
 import { useDraggable } from "@/hooks/useDraggable";
 import { bringToFront, getZIndex } from "@/stores/windowStore";
 import "@/pages/Desktop/style/window.css";
+import { useDeviceType } from "@/hooks/useDeviceType";
 
 interface EmailWindowProps {
     isOpen: boolean;
@@ -16,7 +17,8 @@ export default function EmailWindow(props: EmailWindowProps) {
     const [isMaximized, setIsMaximized] = createSignal(false);
     const [senderEmail, setSenderEmail] = createSignal("");
     const [content, setContent] = createSignal("");
-    const defaultPosition = { x: window.innerWidth/2, y: (window.innerHeight/2)*-1 };
+    const deviceType = useDeviceType();
+    const defaultPosition = { x: window.innerWidth / 2, y: (window.innerHeight / 2) * -1 };
     const draggable = useDraggable({ x: defaultPosition.x, y: defaultPosition.y });
 
     const handleSend = () => {
@@ -35,9 +37,13 @@ export default function EmailWindow(props: EmailWindowProps) {
 
     return (
         <Show when={props.isOpen}>
-            <div 
+            <div
                 class="window email-window"
-                classList={{ "window-maximized": isMaximized() }}
+                classList={{
+                    "window-maximized": isMaximized(),
+                    "email-window-mobile": deviceType() === "mobile" && !isMaximized(),
+                    "email-window-desktop": deviceType() === "desktop" && !isMaximized()
+                }}
                 style={{
                     position: isMaximized() ? "fixed" : "absolute",
                     left: isMaximized() ? "0" : `${draggable.position().x}px`,
@@ -46,9 +52,9 @@ export default function EmailWindow(props: EmailWindowProps) {
                 }}
                 onMouseDown={handleTitleBarClick}
             >
-                <div 
+                <div
                     class="title-bar"
-                    onMouseDown={draggable.handleMouseDown}
+                    onMouseDown={!isMaximized() ? draggable.handleMouseDown : undefined}
                 >
                     <div class="title-bar-text">Email</div>
                     <div class="title-bar-controls">

@@ -2,6 +2,7 @@ import { createSignal, Show } from "solid-js";
 import { useDraggable } from "@/hooks/useDraggable";
 import { bringToFront, getZIndex } from "@/stores/windowStore";
 import "@/pages/Desktop/style/window.css";
+import { useDeviceType } from "@/hooks/useDeviceType";
 
 interface ResumeWindowProps {
     isOpen: boolean;
@@ -15,8 +16,10 @@ const WINDOW_ID = "resume";
 
 export default function ResumeWindow(props: ResumeWindowProps) {
     const [isMaximized, setIsMaximized] = createSignal(false);
-    const defaultPosition = { x: window.innerWidth/2, y: (window.innerHeight/2)*-1 };
+    const defaultPosition = { x: window.innerWidth / 2, y: (window.innerHeight / 2) * -1 };
     const draggable = useDraggable({ x: defaultPosition.x, y: defaultPosition.y });
+    const deviceType = useDeviceType();
+
 
     const handleClose = () => props.onClose();
     const handleMinimize = () => props.onMinimize();
@@ -28,9 +31,13 @@ export default function ResumeWindow(props: ResumeWindowProps) {
 
     return (
         <Show when={props.isOpen}>
-            <div 
+            <div
                 class="window resume-window"
-                classList={{ "window-maximized": isMaximized() }}
+                classList={{
+                    "window-maximized": isMaximized(),
+                    "resume-window-mobile": deviceType() === "mobile" && !isMaximized(),
+                    "resume-window-desktop": deviceType() === "desktop" && !isMaximized()
+                }}
                 style={{
                     position: isMaximized() ? "fixed" : "absolute",
                     left: isMaximized() ? "0" : `${draggable.position().x}px`,
@@ -39,9 +46,9 @@ export default function ResumeWindow(props: ResumeWindowProps) {
                 }}
                 onMouseDown={handleTitleBarClick}
             >
-                <div 
+                <div
                     class="title-bar"
-                    onMouseDown={draggable.handleMouseDown}
+                    onMouseDown={!isMaximized() ? draggable.handleMouseDown : undefined}
                 >
                     <div class="title-bar-text">Resume</div>
                     <div class="title-bar-controls">
@@ -50,9 +57,9 @@ export default function ResumeWindow(props: ResumeWindowProps) {
                         <button aria-label="Close" onClick={handleClose}></button>
                     </div>
                 </div>
-                <div class="window-body" style={{border:"1px solid black", height:"450px"}}>
-                    <iframe 
-                        src={RESUME_URL} 
+                <div class="window-body" style={{ border: "1px solid black", height: "450px" }}>
+                    <iframe
+                        src={RESUME_URL}
                         class="resume-iframe"
                         allow="autoplay"
                     />
