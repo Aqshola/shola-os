@@ -1,7 +1,7 @@
 import { createSignal, onCleanup, Show, For, JSX } from "solid-js";
-import { initializeStartApps, StartApp } from "../../../module/start-module"
-import "../style/taskbar.css"
-import { LIST_TASKBAR_APP } from "../../../module/taskbar-module";
+import { initializeStartApps, StartApp } from "@/module/start-module"
+import "@/pages/Desktop/style/taskbar.css"
+import { LIST_TASKBAR_APP } from "@/module/taskbar-module";
 
 export default function Taskbar() {
     const appStart = initializeStartApps()

@@ -1,9 +1,9 @@
 import { JSX } from "solid-js";
-import EmailWindow from "../apps/EmailWindow";
-import ResumeWindow from "../apps/ResumeWindow";
-import { AppWindow } from "../hooks/type";
-import { useEmail } from "../hooks/useEmail";
-import { useResume } from "../hooks/useResume";
+import EmailWindow from "@/apps/EmailWindow";
+import ResumeWindow from "@/apps/ResumeWindow";
+import { AppWindow } from "@/hooks/type";
+import { useEmail } from "@/hooks/useEmail";
+import { useResume } from "@/hooks/useResume";
 
 export interface StartApp {
     title: string;
