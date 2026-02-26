@@ -105,6 +105,28 @@ export default function Taskbar() {
 
             <For each={appStart.LIST_START_APP.filter(app => app.type === "window")}>{(app) => {
                 const Component = app.component as (props: any) => JSX.Element;
+                
+                // Special handling for Portfolio
+                if (app.title === "Portfolio") {
+                    return (
+                        <>
+                            <Component
+                                isOpen={app.hooks?.isActive()}
+                                onClose={()=>{
+                                    app.hooks?.close()
+                                    setActiveWindows(prev => prev.filter(w => w.title !== app.title))
+                                }}
+                                onMinimize={app.hooks?.minimize}
+                                onOpenProject={(id: string) => appStart.portfolio.openProject(id)}
+                            />
+                            <appStart.contentComponent
+                                projectId={appStart.portfolio.openProjectId()}
+                                onClose={() => appStart.portfolio.closeProject()}
+                            />
+                        </>
+                    );
+                }
+                
                 return (
                     <Component
                         isOpen={app.hooks?.isActive()}
