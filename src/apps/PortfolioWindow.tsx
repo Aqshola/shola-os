@@ -1,7 +1,6 @@
-import { For } from "solid-js";
-import { Show } from "solid-js";
+import { For, Show, onMount, onCleanup, createSignal } from "solid-js";
 import { useDraggable } from "@/hooks/useDraggable";
-import { bringToFront, getZIndex } from "@/stores/windowStore";
+import { bringToFront, getZIndex, registerWindow, unregisterWindow } from "@/stores/windowStore";
 import { portfolioProjects, PortfolioProject } from "@/data/portfolioData";
 import "@/pages/Desktop/style/window.css";
 
@@ -9,19 +8,29 @@ interface PortfolioWindowProps {
     isOpen: boolean;
     onClose: () => void;
     onMinimize: () => void;
+    onRestore: () => void;
     onOpenProject: (id: string) => void;
 }
 
 const WINDOW_ID = "portfolio";
 
 export default function PortfolioWindow(props: PortfolioWindowProps) {
+    const [isMaximized, setIsMaximized] = createSignal(false);
     const draggable = useDraggable({ x: 50, y: 30 });
+
+    // Register window on mount
+    onMount(() => {
+        registerWindow(WINDOW_ID);
+    });
+
+    // Unregister on cleanup
+    onCleanup(() => {
+        unregisterWindow(WINDOW_ID);
+    });
 
     const handleClose = () => props.onClose();
     const handleMinimize = () => props.onMinimize();
-    const handleMaximize = () => {
-        // Optional: maximize functionality
-    };
+    const handleMaximize = () => setIsMaximized(!isMaximized());
 
     const handleTitleBarClick = () => {
         bringToFront(WINDOW_ID);
@@ -35,10 +44,13 @@ export default function PortfolioWindow(props: PortfolioWindowProps) {
         <Show when={props.isOpen}>
             <div
                 class="window portfolio-window"
+                classList={{ "window-maximized": isMaximized() }}
                 style={{
-                    position: "absolute",
-                    left: `${draggable.position().x}px`,
-                    top: `${draggable.position().y}px`,
+                    position: isMaximized() ? "fixed" : "absolute",
+                    left: isMaximized() ? "0" : `${draggable.position().x}px`,
+                    top: isMaximized() ? "0" : `${draggable.position().y}px`,
+                    width: isMaximized() ? "100%" : undefined,
+                    height: isMaximized() ? "calc(100vh - 28px)" : undefined,
                     "z-index": getZIndex(WINDOW_ID),
                 }}
                 onMouseDown={handleTitleBarClick}

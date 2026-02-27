@@ -107,16 +107,17 @@ export default function Taskbar() {
                 const Component = app.component as (props: any) => JSX.Element;
                 
                 // Special handling for Portfolio
-                if (app.title === "Portfolio") {
+                if (app.id === "portfolio") {
                     return (
                         <>
                             <Component
                                 isOpen={app.hooks?.isActive()}
                                 onClose={()=>{
                                     app.hooks?.close()
-                                    setActiveWindows(prev => prev.filter(w => w.title !== app.title))
+                                    setActiveWindows(prev => prev.filter(w => w.id !== app.id))
                                 }}
                                 onMinimize={app.hooks?.minimize}
+                                onRestore={app.hooks?.restore}
                                 onOpenProject={(id: string) => appStart.portfolio.openProject(id)}
                             />
                             <appStart.contentComponent
@@ -132,7 +133,7 @@ export default function Taskbar() {
                         isOpen={app.hooks?.isActive()}
                         onClose={()=>{
                             app.hooks?.close()
-                            setActiveWindows(prev => prev.filter(w => w.title !== app.title))
+                            setActiveWindows(prev => prev.filter(w => w.id !== app.id))
                         }}
                         onMinimize={app.hooks?.minimize}
                         onRestore={app.hooks?.restore}

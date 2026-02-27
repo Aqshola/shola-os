@@ -1,6 +1,6 @@
-import { createSignal, Show } from "solid-js";
+import { createSignal, Show, onMount, onCleanup } from "solid-js";
 import { useDraggable } from "@/hooks/useDraggable";
-import { bringToFront, getZIndex } from "@/stores/windowStore";
+import { bringToFront, getZIndex, registerWindow, unregisterWindow } from "@/stores/windowStore";
 import "@/pages/Desktop/style/window.css";
 
 interface ResumeWindowProps {
@@ -16,6 +16,14 @@ const WINDOW_ID = "resume";
 export default function ResumeWindow(props: ResumeWindowProps) {
     const [isMaximized, setIsMaximized] = createSignal(false);
     const draggable = useDraggable({ x: 100, y: 50 });
+
+    onMount(() => {
+        registerWindow(WINDOW_ID);
+    });
+
+    onCleanup(() => {
+        unregisterWindow(WINDOW_ID);
+    });
 
     const handleClose = () => props.onClose();
     const handleMinimize = () => props.onMinimize();

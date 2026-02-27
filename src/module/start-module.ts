@@ -9,6 +9,7 @@ import { useResume } from "@/hooks/useResume";
 import { usePortfolio } from "@/hooks/usePortfolio";
 
 export interface StartApp {
+    id: string;
     title: string;
     icon: string;
     action: () => void;
@@ -27,6 +28,7 @@ export function initializeStartApps() {
 
     const LIST_START_APP: StartApp[] = [
         {
+            id: "portfolio",
             title: "Portfolio",
             icon: "/assets/icons/kodak_imaging.ico",
             action: () => portfolio.open(),
@@ -35,18 +37,21 @@ export function initializeStartApps() {
             hooks: portfolio,
         },
         {
+            id: "github",
             title: "Github",
             icon: "/assets/icons/github.ico",
             action: () => window.open("https://github.com/aqshola", "_blank"),
             type: "external",
         },
         {
+            id: "linkedin",
             title: "LinkedIn",
             icon: "/assets/icons/linkedin.ico",
             action: () => window.open("https://linkedin.com/in/aqshol", "_blank"),
             type: "external",
         },
         {
+            id: "email",
             title: "Email",
             icon: "/assets/icons/mailbox_world.ico",
             action: () => email.open(),
@@ -55,6 +60,7 @@ export function initializeStartApps() {
             hooks: email,
         },
         {
+            id: "resume",
             title: "Resume",
             icon: "/assets/icons/certificate_2.ico",
             action: () => resume.open(),
