@@ -1,30 +1,29 @@
-import { createSignal, Show, onMount, onCleanup } from "solid-js";
+import { For, Show, onMount, onCleanup, createSignal } from "solid-js";
 import { useDraggable } from "@/hooks/useDraggable";
 import { bringToFront, getZIndex, registerWindow, unregisterWindow } from "@/stores/windowStore";
+import { portfolioProjects, PortfolioProject } from "@/data/portfolioData";
 import "@/pages/Desktop/style/window.css";
-import { useDeviceType } from "@/hooks/useDeviceType";
 
-interface ResumeWindowProps {
+interface PortfolioWindowProps {
     isOpen: boolean;
     onClose: () => void;
     onMinimize: () => void;
     onRestore: () => void;
+    onOpenProject: (id: string) => void;
 }
 
-const RESUME_URL = "https://drive.google.com/file/d/1lZ-4Ef8c24O3e3FxLsRvK1vC5VkIKyWk/preview";
-const WINDOW_ID = "resume";
+const WINDOW_ID = "portfolio";
 
-export default function ResumeWindow(props: ResumeWindowProps) {
+export default function PortfolioWindow(props: PortfolioWindowProps) {
     const [isMaximized, setIsMaximized] = createSignal(false);
-    const defaultPosition = { x: window.innerWidth / 2, y: (window.innerHeight / 2) * -1 };
-    const draggable = useDraggable({ x: defaultPosition.x, y: defaultPosition.y });
-    const deviceType = useDeviceType();
+    const draggable = useDraggable({ x: 50, y: 30 });
 
-
+    // Register window on mount
     onMount(() => {
         registerWindow(WINDOW_ID);
     });
 
+    // Unregister on cleanup
     onCleanup(() => {
         unregisterWindow(WINDOW_ID);
     });
@@ -37,40 +36,48 @@ export default function ResumeWindow(props: ResumeWindowProps) {
         bringToFront(WINDOW_ID);
     };
 
+    const handleProjectClick = (project: PortfolioProject) => {
+        props.onOpenProject(project.id);
+    };
+
     return (
         <Show when={props.isOpen}>
             <div
-                class="window resume-window"
-                classList={{
-                    "window-maximized": isMaximized(),
-                    "resume-window-mobile": deviceType() === "mobile" && !isMaximized(),
-                    "resume-window-desktop": deviceType() === "desktop" && !isMaximized()
-                }}
+                class="window portfolio-window"
+                classList={{ "window-maximized": isMaximized() }}
                 style={{
                     position: isMaximized() ? "fixed" : "absolute",
                     left: isMaximized() ? "0" : `${draggable.position().x}px`,
                     top: isMaximized() ? "0" : `${draggable.position().y}px`,
+                    width: isMaximized() ? "100%" : undefined,
+                    height: isMaximized() ? "calc(100vh - 28px)" : undefined,
                     "z-index": getZIndex(WINDOW_ID),
                 }}
                 onMouseDown={handleTitleBarClick}
             >
                 <div
                     class="title-bar"
-                    onMouseDown={!isMaximized() ? draggable.handleMouseDown : undefined}
+                    onMouseDown={draggable.handleMouseDown}
                 >
-                    <div class="title-bar-text">Resume</div>
+                    <div class="title-bar-text">Portfolio</div>
                     <div class="title-bar-controls">
                         <button aria-label="Minimize" onClick={handleMinimize}></button>
                         <button aria-label="Maximize" onClick={handleMaximize}></button>
                         <button aria-label="Close" onClick={handleClose}></button>
                     </div>
                 </div>
-                <div class="window-body" style={{ border: "1px solid black", height: "450px" }}>
-                    <iframe
-                        src={RESUME_URL}
-                        class="resume-iframe"
-                        allow="autoplay"
-                    />
+                <div class="window-body portfolio-content">
+                    <div class="portfolio-grid">
+                        <For each={portfolioProjects}>{(project) => (
+                            <div 
+                                class="portfolio-folder"
+                                onDblClick={() => handleProjectClick(project)}
+                            >
+                                <img src={project.icon} alt={project.name} class="portfolio-folder-icon" />
+                                <span class="portfolio-folder-name">{project.name}</span>
+                            </div>
+                        )}</For>
+                    </div>
                 </div>
             </div>
         </Show>

@@ -1,6 +1,6 @@
-import { createSignal, Show } from "solid-js";
+import { createSignal, Show, onMount, onCleanup } from "solid-js";
 import { useDraggable } from "@/hooks/useDraggable";
-import { bringToFront, getZIndex } from "@/stores/windowStore";
+import { bringToFront, getZIndex, registerWindow, unregisterWindow } from "@/stores/windowStore";
 import "@/pages/Desktop/style/window.css";
 import { useDeviceType } from "@/hooks/useDeviceType";
 
@@ -20,6 +20,14 @@ export default function EmailWindow(props: EmailWindowProps) {
     const deviceType = useDeviceType();
     const defaultPosition = { x: window.innerWidth / 2, y: (window.innerHeight / 2) * -1 };
     const draggable = useDraggable({ x: defaultPosition.x, y: defaultPosition.y });
+
+    onMount(() => {
+        registerWindow(WINDOW_ID);
+    });
+
+    onCleanup(() => {
+        unregisterWindow(WINDOW_ID);
+    });
 
     const handleSend = () => {
         console.log("Send email:", { from: senderEmail(), content: content() });

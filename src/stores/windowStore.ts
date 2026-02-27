@@ -12,11 +12,15 @@ export const bringToFront = (id: string) => {
 
 export const getZIndex = (id: string) => {
   const idx = windowStore.order.indexOf(id);
-  return idx >= 0 ? 10000 + idx : 10000;
+  return idx >= 0 ? 10001 + idx : 10000;
 };
 
 export const registerWindow = (id: string) => {
   if (!windowStore.order.includes(id)) {
     setWindowStore("order", (prev) => [...prev, id]);
   }
+};
+
+export const unregisterWindow = (id: string) => {
+  setWindowStore("order", (prev) => prev.filter((w) => w !== id));
 };

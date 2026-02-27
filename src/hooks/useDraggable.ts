@@ -1,4 +1,4 @@
-import { createSignal, onCleanup, JSX } from "solid-js";
+import { createSignal, JSX } from "solid-js";
 
 interface Position {
   x: number;
@@ -11,6 +11,9 @@ export function useDraggable(initialPosition: Position = { x: 0, y: 0 }) {
   const [offset, setOffset] = createSignal<Position>({ x: 0, y: 0 });
 
   const handleMouseDown: JSX.EventHandler<HTMLDivElement, MouseEvent> = (e) => {
+    // Only left mouse button (button === 0)
+    if (e.button !== 0) return;
+    // Skip if clicking on title bar controls
     if ((e.target as HTMLElement).closest(".title-bar-controls")) return;
     
     setIsDragging(true);
@@ -31,10 +34,12 @@ export function useDraggable(initialPosition: Position = { x: 0, y: 0 }) {
       setIsDragging(false);
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
+      window.removeEventListener("blur", handleMouseUp);
     };
 
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseup", handleMouseUp);
+    window.addEventListener("blur", handleMouseUp);
   };
 
   return {
