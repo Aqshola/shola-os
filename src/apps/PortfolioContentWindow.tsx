@@ -1,22 +1,37 @@
-import { Show } from "solid-js";
+import { Show, createSignal, onMount, onCleanup } from "solid-js";
 import { useDraggable } from "@/hooks/useDraggable";
-import { bringToFront, getZIndex } from "@/stores/windowStore";
+import { bringToFront, getZIndex, registerWindow, unregisterWindow } from "@/stores/windowStore";
 import { portfolioProjects, PortfolioProject } from "@/data/portfolioData";
 import "@/pages/Desktop/style/window.css";
 
 interface PortfolioContentWindowProps {
     projectId: string | null;
     onClose: () => void;
+    onMinimize: () => void;
+    onRestore: () => void;
 }
 
 const WINDOW_ID_PREFIX = "portfolio-content-";
 
 export default function PortfolioContentWindow(props: PortfolioContentWindowProps) {
+    const [isMaximized, setIsMaximized] = createSignal(false);
     const project = () => portfolioProjects.find(p => p.id === props.projectId);
     const windowId = () => props.projectId ? WINDOW_ID_PREFIX + props.projectId : null;
-    const draggable = useDraggable({ x: 100, y: 80 });
+    const draggable = useDraggable({ x: 80, y: 60 });
+
+    onMount(() => {
+        const id = windowId();
+        if (id) registerWindow(id);
+    });
+
+    onCleanup(() => {
+        const id = windowId();
+        if (id) unregisterWindow(id);
+    });
 
     const handleClose = () => props.onClose();
+    const handleMinimize = () => props.onMinimize();
+    const handleMaximize = () => setIsMaximized(!isMaximized());
 
     const handleTitleBarClick = () => {
         const id = windowId();
@@ -37,10 +52,13 @@ export default function PortfolioContentWindow(props: PortfolioContentWindowProp
         <Show when={props.projectId && project()}>
             <div
                 class="window portfolio-content-window"
+                classList={{ "window-maximized": isMaximized() }}
                 style={{
-                    position: "absolute",
-                    left: `${draggable.position().x}px`,
-                    top: `${draggable.position().y}px`,
+                    position: isMaximized() ? "fixed" : "absolute",
+                    left: isMaximized() ? "0" : `${draggable.position().x}px`,
+                    top: isMaximized() ? "0" : `${draggable.position().y}px`,
+                    width: isMaximized() ? "100%" : undefined,
+                    height: isMaximized() ? "calc(100vh - 28px)" : undefined,
                     "z-index": getZIndex(windowId()!),
                 }}
                 onMouseDown={handleTitleBarClick}
@@ -51,6 +69,8 @@ export default function PortfolioContentWindow(props: PortfolioContentWindowProp
                 >
                     <div class="title-bar-text">{project()?.name}</div>
                     <div class="title-bar-controls">
+                        <button aria-label="Minimize" onClick={handleMinimize}></button>
+                        <button aria-label="Maximize" onClick={handleMaximize}></button>
                         <button aria-label="Close" onClick={handleClose}></button>
                     </div>
                 </div>
