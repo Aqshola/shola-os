@@ -7,6 +7,7 @@ import { AppWindow } from "@/hooks/type";
 import { useEmail } from "@/hooks/useEmail";
 import { useResume } from "@/hooks/useResume";
 import { usePortfolio } from "@/hooks/usePortfolio";
+import { MODULE_ID } from "./module-id";
 
 export interface StartApp {
     id: string;
@@ -28,7 +29,7 @@ export function initializeStartApps() {
 
     const LIST_START_APP: StartApp[] = [
         {
-            id: "portfolio",
+            id: MODULE_ID.portofolio,
             title: "Portfolio",
             icon: "/assets/icons/kodak_imaging.ico",
             action: () => portfolio.open(),
@@ -51,7 +52,7 @@ export function initializeStartApps() {
             type: "external",
         },
         {
-            id: "email",
+            id: MODULE_ID.email,
             title: "Email",
             icon: "/assets/icons/mailbox_world.ico",
             action: () => email.open(),
@@ -60,7 +61,7 @@ export function initializeStartApps() {
             hooks: email,
         },
         {
-            id: "resume",
+            id: MODULE_ID.resume,
             title: "Resume",
             icon: "/assets/icons/certificate_2.ico",
             action: () => resume.open(),
@@ -70,7 +71,7 @@ export function initializeStartApps() {
         }
     ];
 
-    return { 
+    return {
         LIST_START_APP,
         portfolio,
         contentComponent: PortfolioContentWindow,

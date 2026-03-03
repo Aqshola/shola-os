@@ -3,6 +3,7 @@ import { useDraggable } from "@/hooks/useDraggable";
 import { bringToFront, getZIndex, registerWindow, unregisterWindow } from "@/stores/windowStore";
 import { portfolioProjects, PortfolioProject } from "@/data/portfolioData";
 import "@/pages/Desktop/style/window.css";
+import { MODULE_ID } from "@/module/module-id";
 
 interface PortfolioWindowProps {
     isOpen: boolean;
@@ -12,17 +13,13 @@ interface PortfolioWindowProps {
     onOpenProject: (id: string) => void;
 }
 
-const WINDOW_ID = "portfolio";
+const WINDOW_ID = MODULE_ID.portofolio;
 
 export default function PortfolioWindow(props: PortfolioWindowProps) {
     const [isMaximized, setIsMaximized] = createSignal(false);
     const defaultPosition = { x: window.innerWidth / 2, y: (window.innerHeight / 2) * -1 };
     const draggable = useDraggable({ x: defaultPosition.x, y: defaultPosition.y });
 
-    // Register window on mount
-    onMount(() => {
-        registerWindow(WINDOW_ID);
-    });
 
     // Unregister on cleanup
     onCleanup(() => {

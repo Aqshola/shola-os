@@ -2,6 +2,7 @@ import { createSignal, Show, onMount, onCleanup } from "solid-js";
 import { useDraggable } from "@/hooks/useDraggable";
 import { bringToFront, getZIndex, registerWindow, unregisterWindow } from "@/stores/windowStore";
 import "@/pages/Desktop/style/window.css";
+import { MODULE_ID } from "@/module/module-id";
 
 interface EmailWindowProps {
     isOpen: boolean;
@@ -10,7 +11,7 @@ interface EmailWindowProps {
     onRestore: () => void;
 }
 
-const WINDOW_ID = "email";
+const WINDOW_ID = MODULE_ID.email;
 
 export default function EmailWindow(props: EmailWindowProps) {
     const [isMaximized, setIsMaximized] = createSignal(false);
@@ -20,9 +21,9 @@ export default function EmailWindow(props: EmailWindowProps) {
 
     const draggable = useDraggable({ x: defaultPosition.x, y: defaultPosition.y });
 
-    onMount(() => {
-        registerWindow(WINDOW_ID);
-    });
+    // onMount(() => {
+    //     registerWindow(WINDOW_ID);
+    // });
 
     onCleanup(() => {
         unregisterWindow(WINDOW_ID);

@@ -16,8 +16,14 @@ export const getZIndex = (id: string) => {
 };
 
 export const registerWindow = (id: string) => {
+
   if (!windowStore.order.includes(id)) {
     setWindowStore("order", (prev) => [...prev, id]);
+  } else {
+    setWindowStore("order", (prev) => [
+      ...prev.filter((item) => item != id),
+      id,
+    ]);
   }
 };
 
