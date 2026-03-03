@@ -3,6 +3,7 @@ import { useDraggable } from "@/hooks/useDraggable";
 import { bringToFront, getZIndex, registerWindow, unregisterWindow } from "@/stores/windowStore";
 import "@/pages/Desktop/style/window.css";
 import { MODULE_ID } from "@/module/module-id";
+import { useDeviceType } from "@/hooks/useDeviceType";
 
 interface ResumeWindowProps {
     isOpen: boolean;
@@ -18,8 +19,7 @@ export default function ResumeWindow(props: ResumeWindowProps) {
     const [isMaximized, setIsMaximized] = createSignal(false);
     const defaultPosition = { x: window.innerWidth / 2, y: (window.innerHeight / 2) * -1 };
     const draggable = useDraggable({ x: defaultPosition.x, y: defaultPosition.y });
-
-
+    const deviceType = useDeviceType();
 
     onCleanup(() => {
         unregisterWindow(WINDOW_ID);
@@ -37,7 +37,11 @@ export default function ResumeWindow(props: ResumeWindowProps) {
         <Show when={props.isOpen}>
             <div
                 class="window resume-window"
-                classList={{ "window-maximized": isMaximized() }}
+                classList={{
+                    "window-maximized": isMaximized(),
+                    "resume-window-mobile": deviceType() === "mobile" && !isMaximized(),
+                    "resume-window-desktop": deviceType() === "desktop" && !isMaximized()
+                }}
                 style={{
                     position: isMaximized() ? "fixed" : "absolute",
                     left: isMaximized() ? "0" : `${draggable.position().x}px`,
@@ -48,7 +52,7 @@ export default function ResumeWindow(props: ResumeWindowProps) {
             >
                 <div
                     class="title-bar"
-                    onMouseDown={draggable.handleMouseDown}
+                    onMouseDown={!isMaximized() ? draggable.handleMouseDown : undefined}
                 >
                     <div class="title-bar-text">Resume</div>
                     <div class="title-bar-controls">

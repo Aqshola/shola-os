@@ -50,12 +50,20 @@
 }
 
 /* Email Window */
+.email-window-mobile {
+    width: 100%;
+    height: 30vh;
+}
+
+.email-window-desktop{
+    width: 400px;
+}
+
 .email-window {
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 400px;
     z-index: 10001;
 }
 
@@ -86,14 +94,22 @@
     margin-top: 8px;
 }
 
+
+.resume-window-mobile {
+    width: 100%;
+    height: calc(60vh);
+}
+
+.resume-window-desktop{
+    width: 600px;
+    height: 500px;
+}
 /* Resume Window */
 .resume-window {
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 600px;
-    height: 500px;
     z-index: 10001;
 }
 

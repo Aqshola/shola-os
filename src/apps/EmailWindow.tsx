@@ -3,6 +3,7 @@ import { useDraggable } from "@/hooks/useDraggable";
 import { bringToFront, getZIndex, registerWindow, unregisterWindow } from "@/stores/windowStore";
 import "@/pages/Desktop/style/window.css";
 import { MODULE_ID } from "@/module/module-id";
+import { useDeviceType } from "@/hooks/useDeviceType";
 
 interface EmailWindowProps {
     isOpen: boolean;
@@ -20,6 +21,8 @@ export default function EmailWindow(props: EmailWindowProps) {
     const defaultPosition = { x: window.innerWidth / 2, y: (window.innerHeight / 2) * -1 };
 
     const draggable = useDraggable({ x: defaultPosition.x, y: defaultPosition.y });
+    const deviceType = useDeviceType();
+
 
     onCleanup(() => {
         unregisterWindow(WINDOW_ID);
@@ -43,7 +46,11 @@ export default function EmailWindow(props: EmailWindowProps) {
         <Show when={props.isOpen}>
             <div
                 class="window email-window"
-                classList={{ "window-maximized": isMaximized() }}
+                classList={{
+                    "window-maximized": isMaximized(),
+                    "email-window-mobile": deviceType() === "mobile" && !isMaximized(),
+                    "email-window-desktop": deviceType() === "desktop" && !isMaximized()
+                }}
                 style={{
                     position: isMaximized() ? "fixed" : "absolute",
                     left: isMaximized() ? "0" : `${draggable.position().x}px`,
@@ -54,7 +61,7 @@ export default function EmailWindow(props: EmailWindowProps) {
             >
                 <div
                     class="title-bar"
-                    onMouseDown={draggable.handleMouseDown}
+                    onMouseDown={!isMaximized() ? draggable.handleMouseDown : undefined}
                 >
                     <div class="title-bar-text">Email</div>
                     <div class="title-bar-controls">
