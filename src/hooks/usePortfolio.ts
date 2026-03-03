@@ -4,6 +4,7 @@ export function usePortfolio() {
     const [isOpen, setIsOpen] = createSignal(false);
     const [isMinimized, setIsMinimized] = createSignal(false);
     const [openProjectId, setOpenProjectId] = createSignal<string | null>(null);
+    const [isContentMinimized, setIsContentMinimized] = createSignal(false);
 
     const open = () => {
         setIsOpen(true);
@@ -14,6 +15,7 @@ export function usePortfolio() {
         setIsOpen(false);
         setIsMinimized(false);
         setOpenProjectId(null);
+        setIsContentMinimized(false);
     };
 
     const minimize = () => {
@@ -37,10 +39,21 @@ export function usePortfolio() {
 
     const openProject = (id: string) => {
         setOpenProjectId(id);
+        setIsContentMinimized(false);
     };
 
     const closeProject = () => {
         setOpenProjectId(null);
+        setIsContentMinimized(false);
+    };
+
+    // Content window (project detail) minimize/restore
+    const minimizeContent = () => {
+        setIsContentMinimized(true);
+    };
+
+    const restoreContent = () => {
+        setIsContentMinimized(false);
     };
 
     return {
@@ -48,6 +61,8 @@ export function usePortfolio() {
         isMinimized,
         isActive: () => isOpen() && !isMinimized(),
         openProjectId,
+        isContentMinimized,
+        isContentActive: () => openProjectId() !== null && !isContentMinimized(),
         open,
         close,
         minimize,
@@ -55,5 +70,7 @@ export function usePortfolio() {
         toggle,
         openProject,
         closeProject,
+        minimizeContent,
+        restoreContent,
     };
 }

@@ -129,6 +129,8 @@ export default function Taskbar() {
                             <appStart.contentComponent
                                 projectId={appStart.portfolio.openProjectId()}
                                 onClose={() => appStart.portfolio.closeProject()}
+                                onMinimize={() => appStart.portfolio.minimizeContent()}
+                                onRestore={() => appStart.portfolio.restoreContent()}
                             />
                         </>
                     );
