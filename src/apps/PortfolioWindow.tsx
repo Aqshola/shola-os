@@ -3,7 +3,6 @@ import { useDraggable } from "@/hooks/useDraggable";
 import { bringToFront, getZIndex, registerWindow, unregisterWindow } from "@/stores/windowStore";
 import { portfolioProjects, PortfolioProject } from "@/data/portfolioData";
 import "@/pages/Desktop/style/window.css";
-import { MODULE_ID } from "@/module/module-id";
 
 interface PortfolioWindowProps {
     isOpen: boolean;
@@ -13,15 +12,16 @@ interface PortfolioWindowProps {
     onOpenProject: (id: string) => void;
 }
 
-const WINDOW_ID = MODULE_ID.portofolio;
+const WINDOW_ID = "portfolio";
 
 export default function PortfolioWindow(props: PortfolioWindowProps) {
     const [isMaximized, setIsMaximized] = createSignal(false);
-    const defaultPosition = { x: window.innerWidth / 2, y: (window.innerHeight / 2) * -1 };
-    const draggable = useDraggable({ x: defaultPosition.x, y: defaultPosition.y });
+    const draggable = useDraggable({ x: 50, y: 30 });
 
+    onMount(() => {
+        registerWindow(WINDOW_ID);
+    });
 
-    // Unregister on cleanup
     onCleanup(() => {
         unregisterWindow(WINDOW_ID);
     });
@@ -65,14 +65,17 @@ export default function PortfolioWindow(props: PortfolioWindowProps) {
                     </div>
                 </div>
                 <div class="window-body portfolio-content">
-                    <div class="portfolio-grid">
+                    <div class="portfolio-card-list">
                         <For each={portfolioProjects}>{(project) => (
-                            <div
-                                class="portfolio-folder"
-                                onDblClick={() => handleProjectClick(project)}
+                            <div 
+                                class="portfolio-card"
+                                onClick={() => handleProjectClick(project)}
                             >
-                                <img src={project.icon} alt={project.name} class="portfolio-folder-icon" />
-                                <span class="portfolio-folder-name">{project.name}</span>
+                                <div class="portfolio-card-header">
+                                    <img src={project.icon} alt="" class="portfolio-card-icon" />
+                                    <span class="portfolio-card-title">{project.name}</span>
+                                </div>
+                                <img src={project.thumbnail} alt={project.name} class="portfolio-card-thumbnail" />
                             </div>
                         )}</For>
                     </div>

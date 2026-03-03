@@ -14,8 +14,7 @@ const WINDOW_ID_PREFIX = "portfolio-content-";
 export default function PortfolioContentWindow(props: PortfolioContentWindowProps) {
     const project = () => portfolioProjects.find(p => p.id === props.projectId);
     const windowId = () => props.projectId ? WINDOW_ID_PREFIX + props.projectId : null;
-    const defaultPosition = { x: window.innerWidth / 2, y: (window.innerHeight / 2) * -1 };
-    const draggable = useDraggable({ x: defaultPosition.x, y: defaultPosition.y });
+    const draggable = useDraggable({ x: 100, y: 80 });
 
     const handleClose = () => props.onClose();
 
@@ -55,18 +54,29 @@ export default function PortfolioContentWindow(props: PortfolioContentWindowProp
                         <button aria-label="Close" onClick={handleClose}></button>
                     </div>
                 </div>
-                <div class="window-body">
-                    <div class="portfolio-project-info">
-                        <img
-                            src={project()?.icon}
-                            alt={project()?.name}
-                            class="portfolio-project-icon"
-                        />
-                        <p class="portfolio-project-description">{project()?.description}</p>
+                <div class="window-body portfolio-detail-content">
+                    {/* Header */}
+                    <div class="portfolio-detail-header">
+                        <img src={project()?.icon} alt="" class="portfolio-detail-icon" />
+                        <span class="portfolio-detail-title">{project()?.name}</span>
                     </div>
-                    <div class="portfolio-project-links">
-                        <button class="default" onClick={openDemo}>View Demo</button>
-                        <button onClick={openRepo}>View Repo</button>
+
+                    {/* Buttons */}
+                    <div class="portfolio-detail-buttons">
+                        <button class="default" onClick={openRepo}>View Repo</button>
+                        <button onClick={openDemo}>View Demo</button>
+                    </div>
+
+                    {/* Screenshot */}
+                    <img 
+                        src={project()?.thumbnail} 
+                        alt={project()?.name} 
+                        class="portfolio-detail-screenshot" 
+                    />
+
+                    {/* Article/Description */}
+                    <div class="portfolio-detail-article">
+                        <p>{project()?.description}</p>
                     </div>
                 </div>
             </div>
