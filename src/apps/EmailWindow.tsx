@@ -1,7 +1,8 @@
-import { createSignal, Show } from "solid-js";
+import { createSignal, Show, onMount, onCleanup } from "solid-js";
 import { useDraggable } from "@/hooks/useDraggable";
-import { bringToFront, getZIndex } from "@/stores/windowStore";
+import { bringToFront, getZIndex, registerWindow, unregisterWindow } from "@/stores/windowStore";
 import "@/pages/Desktop/style/window.css";
+import { MODULE_ID } from "@/module/module-id";
 import { useDeviceType } from "@/hooks/useDeviceType";
 
 interface EmailWindowProps {
@@ -11,15 +12,21 @@ interface EmailWindowProps {
     onRestore: () => void;
 }
 
-const WINDOW_ID = "email";
+const WINDOW_ID = MODULE_ID.email;
 
 export default function EmailWindow(props: EmailWindowProps) {
     const [isMaximized, setIsMaximized] = createSignal(false);
     const [senderEmail, setSenderEmail] = createSignal("");
     const [content, setContent] = createSignal("");
-    const deviceType = useDeviceType();
     const defaultPosition = { x: window.innerWidth / 2, y: (window.innerHeight / 2) * -1 };
+
     const draggable = useDraggable({ x: defaultPosition.x, y: defaultPosition.y });
+    const deviceType = useDeviceType();
+
+
+    onCleanup(() => {
+        unregisterWindow(WINDOW_ID);
+    });
 
     const handleSend = () => {
         console.log("Send email:", { from: senderEmail(), content: content() });

@@ -2,6 +2,8 @@ import { createSignal, onCleanup, Show, For, JSX } from "solid-js";
 import { initializeStartApps, StartApp } from "@/module/start-module"
 import "@/pages/Desktop/style/taskbar.css"
 import { LIST_TASKBAR_APP } from "@/module/taskbar-module";
+import { registerWindow } from "@/stores/windowStore";
+import { MODULE_ID } from "@/module/module-id";
 
 export default function Taskbar() {
     const appStart = initializeStartApps()
@@ -51,9 +53,13 @@ export default function Taskbar() {
                         <div class="start-menu-items">
                             <For each={appStart.LIST_START_APP}>{(app) => (
                                 <button class="start-menu-item" onClick={() => {
-                                    setActiveWindows(prev => [...prev, app]);
-                                    closeStartMenu()
+                                    if (app.type == "window") {
+                                        setActiveWindows(prev => [...prev, app]);
+                                        closeStartMenu()
+                                        registerWindow(app.id)
+                                    }
                                     app.action()
+
 
                                 }
                                 }>
@@ -73,17 +79,25 @@ export default function Taskbar() {
                     <button class="taskbar-button-app">
                         <img src={app.icon} alt={app.alt} class="taskbar-button-icon" />
                     </button>
-                )}</For>              
+                )}</For>
             </div>
 
             <div class="taskbar-windows">
-                  <For each={activeWindows()}>{(win) => win && (
+                <For each={activeWindows()}>{(win) => win && (
                     <button
                         class="taskbar-window-app"
                         classList={{ inactive: win.hooks?.isMinimized() }}
-                        onClick={()=>{
-                            if(win.hooks?.isMinimized()){
+                        onClick={() => {
+                            if (win.hooks?.isMinimized()) {
                                 win.hooks?.restore()
+
+                                if (win.id == MODULE_ID.portofolio) {
+                                    const portofolioHooks = win.hooks as any
+                                    const openProjectId = portofolioHooks.openProjectId()
+                                    if (openProjectId) {
+                                        registerWindow(`portfolio-content-${openProjectId}`)
+                                    }
+                                }
                             } else {
                                 win.hooks?.minimize()
                             }
@@ -105,15 +119,17 @@ export default function Taskbar() {
 
             <For each={appStart.LIST_START_APP.filter(app => app.type === "window")}>{(app) => {
                 const Component = app.component as (props: any) => JSX.Element;
+
                 return (
                     <Component
                         isOpen={app.hooks?.isActive()}
-                        onClose={()=>{
+                        onClose={() => {
                             app.hooks?.close()
-                            setActiveWindows(prev => prev.filter(w => w.title !== app.title))
+                            setActiveWindows(prev => prev.filter(w => w.id !== app.id))
                         }}
                         onMinimize={app.hooks?.minimize}
                         onRestore={app.hooks?.restore}
+                        hooks={app.hooks}
                     />
                 );
             }}</For>

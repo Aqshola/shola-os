@@ -1,7 +1,8 @@
-import { createSignal, Show } from "solid-js";
+import { createSignal, Show, onMount, onCleanup } from "solid-js";
 import { useDraggable } from "@/hooks/useDraggable";
-import { bringToFront, getZIndex } from "@/stores/windowStore";
+import { bringToFront, getZIndex, registerWindow, unregisterWindow } from "@/stores/windowStore";
 import "@/pages/Desktop/style/window.css";
+import { MODULE_ID } from "@/module/module-id";
 import { useDeviceType } from "@/hooks/useDeviceType";
 
 interface ResumeWindowProps {
@@ -12,7 +13,7 @@ interface ResumeWindowProps {
 }
 
 const RESUME_URL = "https://drive.google.com/file/d/1lZ-4Ef8c24O3e3FxLsRvK1vC5VkIKyWk/preview";
-const WINDOW_ID = "resume";
+const WINDOW_ID = MODULE_ID.resume;
 
 export default function ResumeWindow(props: ResumeWindowProps) {
     const [isMaximized, setIsMaximized] = createSignal(false);
@@ -20,6 +21,9 @@ export default function ResumeWindow(props: ResumeWindowProps) {
     const draggable = useDraggable({ x: defaultPosition.x, y: defaultPosition.y });
     const deviceType = useDeviceType();
 
+    onCleanup(() => {
+        unregisterWindow(WINDOW_ID);
+    });
 
     const handleClose = () => props.onClose();
     const handleMinimize = () => props.onMinimize();
