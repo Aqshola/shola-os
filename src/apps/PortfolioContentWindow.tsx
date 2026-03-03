@@ -14,7 +14,8 @@ const WINDOW_ID_PREFIX = "portfolio-content-";
 export default function PortfolioContentWindow(props: PortfolioContentWindowProps) {
     const project = () => portfolioProjects.find(p => p.id === props.projectId);
     const windowId = () => props.projectId ? WINDOW_ID_PREFIX + props.projectId : null;
-    const draggable = useDraggable({ x: 100, y: 80 });
+    const defaultPosition = { x: window.innerWidth / 2, y: (window.innerHeight / 2) * -1 };
+    const draggable = useDraggable({ x: defaultPosition.x, y: defaultPosition.y });
 
     const handleClose = () => props.onClose();
 
@@ -56,10 +57,10 @@ export default function PortfolioContentWindow(props: PortfolioContentWindowProp
                 </div>
                 <div class="window-body">
                     <div class="portfolio-project-info">
-                        <img 
-                            src={project()?.icon} 
-                            alt={project()?.name} 
-                            class="portfolio-project-icon" 
+                        <img
+                            src={project()?.icon}
+                            alt={project()?.name}
+                            class="portfolio-project-icon"
                         />
                         <p class="portfolio-project-description">{project()?.description}</p>
                     </div>

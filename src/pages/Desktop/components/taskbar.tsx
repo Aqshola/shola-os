@@ -3,6 +3,7 @@ import { initializeStartApps, StartApp } from "@/module/start-module"
 import "@/pages/Desktop/style/taskbar.css"
 import { LIST_TASKBAR_APP } from "@/module/taskbar-module";
 import { registerWindow } from "@/stores/windowStore";
+import { MODULE_ID } from "@/module/module-id";
 
 export default function Taskbar() {
     const appStart = initializeStartApps()
@@ -112,7 +113,7 @@ export default function Taskbar() {
                 const Component = app.component as (props: any) => JSX.Element;
 
                 // Special handling for Portfolio
-                if (app.id === "portfolio") {
+                if (app.id === MODULE_ID.portofolio) {
                     return (
                         <>
                             <Component
