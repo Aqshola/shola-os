@@ -16,7 +16,8 @@ const WINDOW_ID = "portfolio";
 
 export default function PortfolioWindow(props: PortfolioWindowProps) {
     const [isMaximized, setIsMaximized] = createSignal(false);
-    const draggable = useDraggable({ x: 50, y: 30 });
+    const defaultPosition = { x: window.innerWidth / 2, y: (window.innerHeight / 2) * -1 };
+    const draggable = useDraggable({ x: defaultPosition.x, y: defaultPosition.y });
 
     // Register window on mount
     onMount(() => {
@@ -69,7 +70,7 @@ export default function PortfolioWindow(props: PortfolioWindowProps) {
                 <div class="window-body portfolio-content">
                     <div class="portfolio-grid">
                         <For each={portfolioProjects}>{(project) => (
-                            <div 
+                            <div
                                 class="portfolio-folder"
                                 onDblClick={() => handleProjectClick(project)}
                             >

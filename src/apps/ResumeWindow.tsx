@@ -10,12 +10,13 @@ interface ResumeWindowProps {
     onRestore: () => void;
 }
 
-const RESUME_URL = "https://drive.google.com/file/d/1lZ-4EvK1vC5VkIKyWk/preview";
+const RESUME_URL = "https://drive.google.com/file/d/1lZ-4Ef8c24O3e3FxLsRvK1vC5VkIKyWk/preview";
 const WINDOW_ID = "resume";
 
 export default function ResumeWindow(props: ResumeWindowProps) {
     const [isMaximized, setIsMaximized] = createSignal(false);
-    const draggable = useDraggable({ x: 100, y: 50 });
+    const defaultPosition = { x: window.innerWidth / 2, y: (window.innerHeight / 2) * -1 };
+    const draggable = useDraggable({ x: defaultPosition.x, y: defaultPosition.y });
 
     onMount(() => {
         registerWindow(WINDOW_ID);
@@ -35,7 +36,7 @@ export default function ResumeWindow(props: ResumeWindowProps) {
 
     return (
         <Show when={props.isOpen}>
-            <div 
+            <div
                 class="window resume-window"
                 classList={{ "window-maximized": isMaximized() }}
                 style={{
@@ -46,7 +47,7 @@ export default function ResumeWindow(props: ResumeWindowProps) {
                 }}
                 onMouseDown={handleTitleBarClick}
             >
-                <div 
+                <div
                     class="title-bar"
                     onMouseDown={draggable.handleMouseDown}
                 >
@@ -57,9 +58,9 @@ export default function ResumeWindow(props: ResumeWindowProps) {
                         <button aria-label="Close" onClick={handleClose}></button>
                     </div>
                 </div>
-                <div class="window-body" style={{border:"1px solid black", height:"450px"}}>
-                    <iframe 
-                        src={RESUME_URL} 
+                <div class="window-body" style={{ border: "1px solid black", height: "450px" }}>
+                    <iframe
+                        src={RESUME_URL}
                         class="resume-iframe"
                         allow="autoplay"
                     />

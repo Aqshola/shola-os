@@ -16,7 +16,9 @@ export default function EmailWindow(props: EmailWindowProps) {
     const [isMaximized, setIsMaximized] = createSignal(false);
     const [senderEmail, setSenderEmail] = createSignal("");
     const [content, setContent] = createSignal("");
-    const draggable = useDraggable({ x: 150, y: 100 });
+    const defaultPosition = { x: window.innerWidth / 2, y: (window.innerHeight / 2) * -1 };
+
+    const draggable = useDraggable({ x: defaultPosition.x, y: defaultPosition.y });
 
     onMount(() => {
         registerWindow(WINDOW_ID);
@@ -42,7 +44,7 @@ export default function EmailWindow(props: EmailWindowProps) {
 
     return (
         <Show when={props.isOpen}>
-            <div 
+            <div
                 class="window email-window"
                 classList={{ "window-maximized": isMaximized() }}
                 style={{
@@ -53,7 +55,7 @@ export default function EmailWindow(props: EmailWindowProps) {
                 }}
                 onMouseDown={handleTitleBarClick}
             >
-                <div 
+                <div
                     class="title-bar"
                     onMouseDown={draggable.handleMouseDown}
                 >
