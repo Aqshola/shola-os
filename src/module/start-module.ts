@@ -3,10 +3,12 @@ import EmailWindow from "@/apps/EmailWindow";
 import ResumeWindow from "@/apps/ResumeWindow";
 import PortfolioWindow from "@/apps/PortfolioWindow";
 import PortfolioContentWindow from "@/apps/PortfolioContentWindow";
+import AboutMeWindow from "@/apps/AboutMeWindow";
 import { AppWindow } from "@/hooks/type";
 import { useEmail } from "@/hooks/useEmail";
 import { useResume } from "@/hooks/useResume";
 import { usePortfolio } from "@/hooks/usePortfolio";
+import { useAboutMe } from "@/hooks/useAboutMe";
 import { MODULE_ID } from "./module-id";
 
 export interface StartApp {
@@ -26,6 +28,7 @@ export function initializeStartApps() {
     const resume = useResume();
     const email = useEmail();
     const portfolio = usePortfolio();
+    const aboutme = useAboutMe();
 
     const LIST_START_APP: StartApp[] = [
         {
@@ -67,6 +70,15 @@ export function initializeStartApps() {
             action: () => resume.open(),
             component: ResumeWindow,
             hooks: resume,
+            type: "window",
+        },
+        {
+            id: MODULE_ID.aboutme,
+            title: "About Me",
+            icon: "/assets/icons/certificate_2.ico",
+            action: () => aboutme.open(),
+            component: AboutMeWindow,
+            hooks: aboutme,
             type: "window",
         }
     ];
