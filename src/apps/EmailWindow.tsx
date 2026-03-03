@@ -21,10 +21,6 @@ export default function EmailWindow(props: EmailWindowProps) {
 
     const draggable = useDraggable({ x: defaultPosition.x, y: defaultPosition.y });
 
-    // onMount(() => {
-    //     registerWindow(WINDOW_ID);
-    // });
-
     onCleanup(() => {
         unregisterWindow(WINDOW_ID);
     });

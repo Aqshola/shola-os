@@ -19,9 +19,7 @@ export default function ResumeWindow(props: ResumeWindowProps) {
     const defaultPosition = { x: window.innerWidth / 2, y: (window.innerHeight / 2) * -1 };
     const draggable = useDraggable({ x: defaultPosition.x, y: defaultPosition.y });
 
-    // onMount(() => {
-    //     registerWindow(WINDOW_ID);
-    // });
+
 
     onCleanup(() => {
         unregisterWindow(WINDOW_ID);

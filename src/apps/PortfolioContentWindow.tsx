@@ -17,12 +17,10 @@ export default function PortfolioContentWindow(props: PortfolioContentWindowProp
     const [isMaximized, setIsMaximized] = createSignal(false);
     const project = () => portfolioProjects.find(p => p.id === props.projectId);
     const windowId = () => props.projectId ? WINDOW_ID_PREFIX + props.projectId : null;
-    const draggable = useDraggable({ x: 80, y: 60 });
+    const defaultPosition = { x: window.innerWidth / 2, y: (window.innerHeight / 2) * -1 };
+    const draggable = useDraggable({ x: defaultPosition.x, y: defaultPosition.y });
 
-    onMount(() => {
-        const id = windowId();
-        if (id) registerWindow(id);
-    });
+
 
     onCleanup(() => {
         const id = windowId();
@@ -55,10 +53,8 @@ export default function PortfolioContentWindow(props: PortfolioContentWindowProp
                 classList={{ "window-maximized": isMaximized() }}
                 style={{
                     position: isMaximized() ? "fixed" : "absolute",
-                    left: isMaximized() ? "0" : `${draggable.position().x}px`,
-                    top: isMaximized() ? "0" : `${draggable.position().y}px`,
-                    width: isMaximized() ? "100%" : undefined,
-                    height: isMaximized() ? "calc(100vh - 28px)" : undefined,
+                    left: isMaximized() ? "" : `${draggable.position().x}px`,
+                    top: isMaximized() ? "" : `${draggable.position().y}px`,
                     "z-index": getZIndex(windowId()!),
                 }}
                 onMouseDown={handleTitleBarClick}
@@ -88,10 +84,10 @@ export default function PortfolioContentWindow(props: PortfolioContentWindowProp
                     </div>
 
                     {/* Screenshot */}
-                    <img 
-                        src={project()?.thumbnail} 
-                        alt={project()?.name} 
-                        class="portfolio-detail-screenshot" 
+                    <img
+                        src={project()?.thumbnail}
+                        alt={project()?.name}
+                        class="portfolio-detail-screenshot"
                     />
 
                     {/* Article/Description */}

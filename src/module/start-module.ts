@@ -73,7 +73,5 @@ export function initializeStartApps() {
 
     return {
         LIST_START_APP,
-        portfolio,
-        contentComponent: PortfolioContentWindow,
     };
 }
