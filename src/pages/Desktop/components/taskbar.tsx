@@ -90,6 +90,14 @@ export default function Taskbar() {
                         onClick={() => {
                             if (win.hooks?.isMinimized()) {
                                 win.hooks?.restore()
+
+                                if (win.id == MODULE_ID.portofolio) {
+                                    const portofolioHooks = win.hooks as any
+                                    const openProjectId = portofolioHooks.openProjectId()
+                                    if (openProjectId) {
+                                        registerWindow(`portfolio-content-${openProjectId}`)
+                                    }
+                                }
                             } else {
                                 win.hooks?.minimize()
                             }
@@ -121,6 +129,7 @@ export default function Taskbar() {
                         }}
                         onMinimize={app.hooks?.minimize}
                         onRestore={app.hooks?.restore}
+                        hooks={app.hooks}
                     />
                 );
             }}</For>

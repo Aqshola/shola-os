@@ -11,6 +11,8 @@ interface PortfolioWindowProps {
     onClose: () => void;
     onMinimize: () => void;
     onRestore: () => void;
+
+    hooks: any
 }
 
 const WINDOW_ID = "portfolio";
@@ -19,7 +21,7 @@ export default function PortfolioWindow(props: PortfolioWindowProps) {
     const [isMaximized, setIsMaximized] = createSignal(false);
     const defaultPosition = { x: window.innerWidth / 2, y: (window.innerHeight / 2) * -1 };
     const draggable = useDraggable({ x: defaultPosition.x, y: defaultPosition.y });
-    const portofolio = usePortfolio()
+    const portofolio = props.hooks as any
 
     onMount(() => {
         registerWindow(WINDOW_ID);
@@ -39,6 +41,7 @@ export default function PortfolioWindow(props: PortfolioWindowProps) {
 
     const handleProjectClick = (project: PortfolioProject) => {
         portofolio.openProject(project.id);
+        registerWindow(`portfolio-content-${project.id}`)
     };
 
 
