@@ -55,7 +55,7 @@
     height: 30vh;
 }
 
-.email-window-desktop{
+.email-window-desktop {
     width: 400px;
 }
 
@@ -100,10 +100,11 @@
     height: calc(60vh);
 }
 
-.resume-window-desktop{
+.resume-window-desktop {
     width: 600px;
     height: 500px;
 }
+
 /* Resume Window */
 .resume-window {
     position: fixed;
@@ -119,6 +120,15 @@
     transform: none;
     width: 100%;
     height: calc(100vh - 28px);
+}
+
+.aboutme-window.window-maximized {
+    top: 0;
+    left: 0;
+    transform: none;
+    width: 100%;
+    height: calc(100vh - 28px);
+
 }
 
 .resume-iframe {
