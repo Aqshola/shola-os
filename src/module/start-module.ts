@@ -2,7 +2,6 @@ import { JSX } from "solid-js";
 import EmailWindow from "@/apps/EmailWindow";
 import ResumeWindow from "@/apps/ResumeWindow";
 import PortfolioWindow from "@/apps/PortfolioWindow";
-import PortfolioContentWindow from "@/apps/PortfolioContentWindow";
 import AboutMeWindow from "@/apps/AboutMeWindow";
 import { AppWindow } from "@/hooks/type";
 import { useEmail } from "@/hooks/useEmail";
@@ -75,7 +74,7 @@ export function initializeStartApps() {
         {
             id: MODULE_ID.aboutme,
             title: "About Me",
-            icon: "/assets/icons/certificate_2.ico",
+            icon: "/assets/icons/profile.png",
             action: () => aboutme.open(),
             component: AboutMeWindow,
             hooks: aboutme,
