@@ -16,7 +16,7 @@ export interface StartApp {
     title: string;
     icon: string;
     action: () => void;
-    type?: "window" | "external";
+    type?: "window" | "external" | "action";
     component?: (props: any) => JSX.Element;
     hooks?: AppWindow;
     contentComponent?: (props: any) => JSX.Element;
@@ -80,6 +80,25 @@ export function initializeStartApps() {
             component: AboutMeWindow,
             hooks: aboutme,
             type: "window",
+        },
+        {
+            id: "shutdown",
+            title: "Shut Down...",
+            icon: "/assets/icons/shutdown.svg",
+            action: () => {
+                // Try to close the window - may not work in all browsers
+                window.open("", "_self")?.close();
+            },
+            type: "action",
+        },
+        {
+            id: "restart",
+            title: "Restart",
+            icon: "/assets/icons/restart.svg",
+            action: () => {
+                window.location.reload();
+            },
+            type: "action",
         }
     ];
 
