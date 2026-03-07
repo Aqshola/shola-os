@@ -19,7 +19,7 @@ body {
   padding: 0;
   width: 100vw;
   height: 100vh;
-  background-image: url('/assets/wallpaper/wallpaper.png');
+  background-image: url('/assets/wallpaper/desktop.webp');
   background-position: center;
   background-size: cover;
   overflow: hidden;
@@ -48,7 +48,7 @@ p {
 
 @media (max-width: 480px) {
   body {
-    background-image: url('/assets/wallpaper/mobile.png');
+    background-image: url('/assets/wallpaper/mobile.webp');
 
   }
 }

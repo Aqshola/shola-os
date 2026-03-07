@@ -103,7 +103,7 @@ export function initializeStartApps() {
         {
             id: MODULE_ID.aboutme,
             title: "About Me",
-            icon: "/assets/icons/profile.png",
+            icon: "/assets/icons/profile.webp",
             action: () => aboutme.open(),
             component: AboutMeWindow,
             hooks: aboutme,

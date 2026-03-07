@@ -61,7 +61,7 @@ export default function SplashScreen(props: SplashScreenProps) {
       <div class="splash-window">
         <div class="splash-content">
           <div class="splash-logo">
-            <img src="/assets/icons/SO_Logo.png" alt="Shola OS" />
+            <img src="/assets/icons/SO_Logo.webp" alt="Shola OS" />
           </div>
           <div class="splash-title">Shola OS</div>
           
