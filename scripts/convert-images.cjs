@@ -2,7 +2,7 @@ const sharp = require('sharp');
 const fs = require('fs');
 const path = require('path');
 
-const iconsDir = path.join(__dirname, '../public/assets/icons');
+const iconsDir = path.join(__dirname, '../public/assets/wallpaper');
 
 // Extensions to convert
 const extensions = ['.png', '.jpg', '.jpeg'];
