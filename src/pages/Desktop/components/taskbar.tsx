@@ -41,14 +41,14 @@ export default function Taskbar() {
                     classList={{ active: startMenuOpen() }}
                     onClick={toggleStartMenu}
                 >
-                    <img src="/assets/icons/start.svg" alt="Start" class="taskbar-button-start-icon" />
+                    <img src="/assets/icons/SO_Logo.png" alt="Start" class="taskbar-button-start-icon" />
                     <span>Start</span>
                 </button>
 
                 <Show when={startMenuOpen()}>
                     <div class="window start-menu show">
                         <div class="start-menu-sidebar">
-                            <span>Aqshol OS</span>
+                            <span>Shola OS</span>
                         </div>
                         <div class="start-menu-items">
                             <For each={appStart.LIST_START_APP}>{(app) => (
