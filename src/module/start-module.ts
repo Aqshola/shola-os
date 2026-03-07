@@ -9,6 +9,7 @@ import { useResume } from "@/hooks/useResume";
 import { usePortfolio } from "@/hooks/usePortfolio";
 import { useAboutMe } from "@/hooks/useAboutMe";
 import { MODULE_ID } from "./module-id";
+import { removeFromLocalStorage } from "@/lib/localstorage";
 
 export interface StartApp {
     id: string;
@@ -118,6 +119,7 @@ export function initializeStartApps() {
             title: "Restart",
             icon: "/assets/icons/restart.svg",
             action: () => {
+                removeFromLocalStorage("SHOLA_OS_LOADED")
                 window.location.reload();
             },
             type: "action",
@@ -130,7 +132,7 @@ export function initializeStartApps() {
             title: "Shut Down...",
             icon: "/assets/icons/shutdown.svg",
             action: () => {
-                // Try to close the window - may not work in all browsers
+                removeFromLocalStorage("SHOLA_OS_LOADED")
                 window.open("", "_self")?.close();
             },
             type: "action",

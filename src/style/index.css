@@ -5,7 +5,7 @@
   --win-silver: #c0c0c0;
   --win-gray: #808080;
   --win-blue: #000080;
-  
+
   font-family: 'MS Sans Serif', 'Microsoft Sans Serif', Arial, sans-serif;
   color: #222;
 }
@@ -19,16 +19,23 @@ body {
   padding: 0;
   width: 100vw;
   height: 100vh;
-  /* background-color: var(--win-teal); */
   background-image: url('/assets/wallpaper/wallpaper.png');
   background-position: center;
   background-size: cover;
-  overflow: hidden; /* Prevent scrolling on desktop */
-  image-rendering: pixelated; /* Help icons look crispy */
+  overflow: hidden;
+  /* Prevent scrolling on desktop */
+  image-rendering: pixelated;
+  /* Help icons look crispy */
 }
 
 /* Base resets for typography to match 98.css expectations */
-h1, h2, h3, h4, h5, h6, p {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
   margin: 0;
 }
 
@@ -37,4 +44,11 @@ h1, h2, h3, h4, h5, h6, p {
   height: 100%;
   display: flex;
   flex-direction: column;
+}
+
+@media (max-width: 480px) {
+  body {
+    background-image: url('/assets/wallpaper/mobile.png');
+
+  }
 }
