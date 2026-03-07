@@ -27,3 +27,7 @@ export function loadFromLocalStorage(key: string): any {
         return null;
     }
 }        
+
+export function clearLocalStorage(){
+    localStorage.clear()
+}

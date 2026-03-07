@@ -2,10 +2,11 @@ import { createSignal, onMount } from 'solid-js';
 import '@/pages/Desktop/style/window.css'
 import { windowStore, addActiveWindow, registerWindow } from '@/stores/windowStore'
 import { useDeviceType } from '@/hooks/useDeviceType';
+import { appStore } from '@/stores/appStore';
 
 export default function Window() {
     const deviceType = useDeviceType();
-    const desktopApp = windowStore.appList.filter(app => app.showIn?.desktop);
+    const desktopApp = appStore().filter(app => app.showIn?.desktop);
     
     const handleClick = (app: any) => {
         if (deviceType() === "mobile") {

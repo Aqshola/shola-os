@@ -1,12 +1,12 @@
+import { appStore } from "@/stores/appStore";
 import { removeActiveWindow, windowStore } from "@/stores/windowStore";
-import { For, JSX } from "solid-js";
+import { createMemo, For, JSX } from "solid-js";
 
 export default function App() {
-
+    const appList=createMemo(()=>appStore().filter(app => app.type === "window"))
     return (
-        <For each={windowStore.appList.filter(app => app.type === "window")}>{(app) => {
+        <For each={appList()}>{(app) => {
             const Component = app.component as (props: any) => JSX.Element;
-
             return (
                 <Component
                     isOpen={app.hooks?.isActive()}
