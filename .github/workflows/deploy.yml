@@ -36,11 +36,8 @@ jobs:
         run: pnpm build
 
       - name: Deploy to Cloudflare Pages
-        uses: cloudflare/pages-action@v1
+        uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: shola-os
-          directory: dist
-          # Optional: branch to deploy (default: production)
-          # branch: main
+          command: pages deploy dist --project-name=shola-os
