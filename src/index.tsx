@@ -8,7 +8,8 @@ import Desktop from './pages/Desktop';
 import SplashScreen from './components/SplashScreen';
 import  './style/index.css'
 import { loadFromLocalStorage, saveToLocalStorage } from './lib/localstorage';
-import { initAppList } from './stores/windowStore';
+import { initAppList } from './stores/appStore';
+
 const root = document.getElementById('root');
 
 if (import.meta.env.DEV && !(root instanceof HTMLElement)) {
@@ -18,7 +19,6 @@ if (import.meta.env.DEV && !(root instanceof HTMLElement)) {
 }
 
 render(() => {
-
   initAppList()
   const isAlreadyLoaded= loadFromLocalStorage("SHOLA_OS_LOADED") === "true";
   const [showSplash, setShowSplash] = createSignal(isAlreadyLoaded ? false : true);

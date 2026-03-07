@@ -1,15 +1,23 @@
-import { initializeStartApps, StartApp } from "@/module/start-module";
+import { StartApp } from "@/module/start-module";
 import { createStore } from "solid-js/store";
+import { makePersisted } from "@solid-primitives/storage";
 
-export const [windowStore, setWindowStore] = createStore({
-  order: [] as string[],
-  activeId: null as string | null,
-  activeWindows: [] as StartApp[],
-  appList: [] as StartApp[],
-});
+// Persistable state using makePersisted
+export const [windowStore, setWindowStore, init] = makePersisted(
+  createStore({
+    order: [] as string[],
+    activeId: null as string | null,
+    activeWindows: [] as string[],
+  }),
+  { name: "shola-os-window-store" }
+);
 
+// Non-persisted state using regular createStore
+
+// Sync persisted store changes to windowStore wrapper
 export const bringToFront = (id: string) => {
-  setWindowStore("order", (prev) => [...prev.filter((w) => w !== id), id]);
+  const newOrder = [...windowStore.order.filter((w) => w !== id), id];
+  setWindowStore("order", newOrder);
   setWindowStore("activeId", id);
 };
 
@@ -19,32 +27,29 @@ export const getZIndex = (id: string) => {
 };
 
 export const registerWindow = (id: string) => {
-
+  let newOrder: string[];
   if (!windowStore.order.includes(id)) {
-    setWindowStore("order", (prev) => [...prev, id]);
+    newOrder = [...windowStore.order, id];
   } else {
-    setWindowStore("order", (prev) => [
-      ...prev.filter((item) => item != id),
-      id,
-    ]);
+    newOrder = [...windowStore.order.filter((item) => item != id), id];
   }
+  setWindowStore("order", newOrder);
 };
 
 export const unregisterWindow = (id: string) => {
-  setWindowStore("order", (prev) => prev.filter((w) => w !== id));
+  const newOrder = windowStore.order.filter((w) => w !== id);
+  setWindowStore("order", newOrder);
 };
 
 export const addActiveWindow = (app: StartApp) => {
-  if (!windowStore.activeWindows.some((w) => w.id === app.id)) {
-    setWindowStore("activeWindows", (prev) => [...prev, app]);
+  if (!windowStore.activeWindows.some((w) => w === app.id)) {
+    const newActiveWindows = [...windowStore.activeWindows, app.id];
+    setWindowStore("activeWindows", newActiveWindows);
   }
-}
+};
 
 export const removeActiveWindow = (app: StartApp) => {
-  setWindowStore("activeWindows", (prev) => prev.filter((w) => w.id !== app.id));
-}
+  const newActiveWindows = windowStore.activeWindows.filter((w) =>w !== app.id);
+  setWindowStore("activeWindows", newActiveWindows);
+};
 
-export const initAppList=()=>{
-  const appList=initializeStartApps()
-  setWindowStore("appList", appList.LIST_START_APP);
-}

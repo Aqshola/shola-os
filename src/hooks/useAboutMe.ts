@@ -1,48 +1,59 @@
-import { createSignal } from "solid-js";
+import { createStore } from "solid-js/store";
+import { makePersisted } from "@solid-primitives/storage";
 import { AppWindow } from "@/hooks/type";
 
-
 export function useAboutMe(): AppWindow {
-    const [isOpen, setIsOpen] = createSignal(false);
-    const [isMinimized, setIsMinimized] = createSignal(false);
+  const [state, setState] = makePersisted(
+    createStore({
+      isOpen: false,
+      isMinimized: false,
+    }),
+    { name: "shola-os-about-me-module" }
+  );
 
-    const open = () => {
-        setIsOpen(true);
-        setIsMinimized(false);
-    };
+  const open = () => {
+    setState({
+      isOpen: true,
+      isMinimized: false,
+    });
+  };
 
-    const close = () => {
-        setIsOpen(false);
-        setIsMinimized(false);
-    };
+  const close = () => {
+    setState({
+      isOpen: false,
+      isMinimized: false,
+    });
+  };
 
-    const minimize = () => {
-        setIsMinimized(true);
-    };
+  const minimize = () => {
+    setState("isMinimized", true);
+  };
 
-    const restore = () => {
-        setIsMinimized(false);
-        setIsOpen(true);
-    };
+  const restore = () => {
+    setState({
+      isMinimized: false,
+      isOpen: true,
+    });
+  };
 
-    const toggle = () => {
-        if (isMinimized()) {
-            restore();
-        } else if (isOpen()) {
-            minimize();
-        } else {
-            open();
-        }
-    };
+  const toggle = () => {
+    if (state.isMinimized) {
+      restore();
+    } else if (state.isOpen) {
+      minimize();
+    } else {
+      open();
+    }
+  };
 
-    return {
-        isOpen,
-        isMinimized,
-        isActive: () => isOpen() && !isMinimized(),
-        open,
-        close,
-        minimize,
-        restore,
-        toggle,
-    };
+  return {
+    isOpen: () => state.isOpen,
+    isMinimized: () => state.isMinimized,
+    isActive: () => state.isOpen && !state.isMinimized,
+    open,
+    close,
+    minimize,
+    restore,
+    toggle,
+  };
 }

@@ -9,7 +9,7 @@ import { useResume } from "@/hooks/useResume";
 import { usePortfolio } from "@/hooks/usePortfolio";
 import { useAboutMe } from "@/hooks/useAboutMe";
 import { MODULE_ID } from "./module-id";
-import { removeFromLocalStorage } from "@/lib/localstorage";
+import { clearLocalStorage, removeFromLocalStorage } from "@/lib/localstorage";
 
 export interface StartApp {
     id: string;
@@ -132,8 +132,8 @@ export function initializeStartApps() {
             title: "Shut Down...",
             icon: "/assets/icons/shutdown.svg",
             action: () => {
-                removeFromLocalStorage("SHOLA_OS_LOADED")
-                window.open("", "_self")?.close();
+                clearLocalStorage()
+                window.location.href = "/";
             },
             type: "action",
             showIn: {

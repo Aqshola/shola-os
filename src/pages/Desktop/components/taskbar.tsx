@@ -1,8 +1,9 @@
-import { createSignal, onCleanup, Show, For, JSX } from "solid-js";
+import { createSignal, onCleanup, Show, For, JSX, createMemo } from "solid-js";
 import "@/pages/Desktop/style/taskbar.css"
 // import { LIST_TASKBAR_APP } from "@/module/taskbar-module";
 import { registerWindow, windowStore, addActiveWindow, removeActiveWindow } from "@/stores/windowStore";
 import { MODULE_ID } from "@/module/module-id";
+import { appStore } from "@/stores/appStore";
 
 export default function Taskbar() {
     const [time, setTime] = createSignal(new Date());
@@ -27,8 +28,16 @@ export default function Taskbar() {
     };
 
 
-    const startApp = windowStore.appList.filter(app => app.showIn.start)
-    const taskbarApp = windowStore.appList.filter(app => app.showIn.taskbar)
+    const startApp = appStore().filter(app => app.showIn.start)
+    const taskbarApp = appStore().filter(app => app.showIn.taskbar)
+
+    const activeApps = createMemo(() =>
+        windowStore.activeWindows
+            .map(id => appStore().find(a => a.id === id))
+            .filter(Boolean)
+    );
+
+
 
 
     return (
@@ -87,7 +96,7 @@ export default function Taskbar() {
             </div>
 
             <div class="taskbar-windows">
-                <For each={windowStore.activeWindows}>{(win) => win && (
+                <For each={activeApps() }>{(win) => win && (
                     <button
                         class="taskbar-window-app"
                         classList={{ inactive: win.hooks?.isMinimized() }}
