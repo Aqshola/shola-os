@@ -19,7 +19,10 @@ body {
   padding: 0;
   width: 100vw;
   height: 100vh;
-  background-color: var(--win-teal);
+  /* background-color: var(--win-teal); */
+  background-image: url('/assets/wallpaper/wallpaper.png');
+  background-position: center;
+  background-size: cover;
   overflow: hidden; /* Prevent scrolling on desktop */
   image-rendering: pixelated; /* Help icons look crispy */
 }
