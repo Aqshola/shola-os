@@ -20,6 +20,12 @@ export interface StartApp {
     hooks?: AppWindow;
     contentComponent?: (props: any) => JSX.Element;
     contentHooks?: AppWindow;
+    showIn: {
+        desktop?: boolean;
+        taskbar?: boolean;
+        start?: boolean;
+    }
+
 }
 
 
@@ -38,6 +44,10 @@ export function initializeStartApps() {
             type: "window",
             component: PortfolioWindow,
             hooks: portfolio,
+            showIn: {
+                desktop: true,
+                start: true,
+            },
         },
         {
             id: "github",
@@ -45,6 +55,10 @@ export function initializeStartApps() {
             icon: "/assets/icons/github.ico",
             action: () => window.open("https://github.com/aqshola", "_blank"),
             type: "external",
+            showIn: {
+                start: true,
+                taskbar: true,
+            },
         },
         {
             id: "linkedin",
@@ -52,6 +66,11 @@ export function initializeStartApps() {
             icon: "/assets/icons/linkedin.ico",
             action: () => window.open("https://linkedin.com/in/aqshol", "_blank"),
             type: "external",
+            showIn: {
+                start: true,
+                taskbar: true,
+            },
+
         },
         {
             id: MODULE_ID.email,
@@ -61,6 +80,11 @@ export function initializeStartApps() {
             type: "window",
             component: EmailWindow,
             hooks: email,
+            showIn: {
+                start: true,
+                taskbar: true,
+                desktop: true,
+            },
         },
         {
             id: MODULE_ID.resume,
@@ -70,6 +94,10 @@ export function initializeStartApps() {
             component: ResumeWindow,
             hooks: resume,
             type: "window",
+            showIn: {
+                start: true,
+                desktop: true,
+            },
         },
         {
             id: MODULE_ID.aboutme,
@@ -79,8 +107,12 @@ export function initializeStartApps() {
             component: AboutMeWindow,
             hooks: aboutme,
             type: "window",
+            showIn: {
+                start: true,
+                desktop: true,
+            },
         },
-  
+
         {
             id: "restart",
             title: "Restart",
@@ -89,8 +121,11 @@ export function initializeStartApps() {
                 window.location.reload();
             },
             type: "action",
+            showIn: {
+                start: true,
+            },
         },
-              {
+        {
             id: "shutdown",
             title: "Shut Down...",
             icon: "/assets/icons/shutdown.svg",
@@ -99,6 +134,9 @@ export function initializeStartApps() {
                 window.open("", "_self")?.close();
             },
             type: "action",
+            showIn: {
+                start: true,
+            },
         },
     ];
 

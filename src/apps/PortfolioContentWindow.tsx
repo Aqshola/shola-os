@@ -17,7 +17,7 @@ export default function PortfolioContentWindow(props: PortfolioContentWindowProp
     const [isMaximized, setIsMaximized] = createSignal(false);
     const project = () => portfolioProjects.find(p => p.id === props.projectId);
     const windowId = () => props.projectId ? WINDOW_ID_PREFIX + props.projectId : null;
-    const defaultPosition = { x: window.innerWidth / 2, y: (window.innerHeight / 2) * -1 };
+    const defaultPosition = { x: window.innerWidth / 2, y: (window.innerHeight / 2) };
     const draggable = useDraggable({ x: defaultPosition.x, y: defaultPosition.y });
 
 

@@ -16,7 +16,7 @@ const WINDOW_ID = MODULE_ID.aboutme;
 
 export default function AboutMeWindow(props: AboutMeWindowProps) {
     const [isMaximized, setIsMaximized] = createSignal(false);
-    const defaultPosition = { x: window.innerWidth / 2, y: (window.innerHeight / 2) * -1 };
+    const defaultPosition = { x: window.innerWidth / 2, y: (window.innerHeight / 2) };
     const draggable = useDraggable({ x: defaultPosition.x, y: defaultPosition.y });
     const deviceType = useDeviceType();
 
