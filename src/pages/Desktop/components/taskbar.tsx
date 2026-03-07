@@ -1,7 +1,7 @@
 import { createSignal, onCleanup, Show, For, JSX } from "solid-js";
 import "@/pages/Desktop/style/taskbar.css"
-import { LIST_TASKBAR_APP } from "@/module/taskbar-module";
-import { registerWindow,windowStore,addActiveWindow, removeActiveWindow } from "@/stores/windowStore";
+// import { LIST_TASKBAR_APP } from "@/module/taskbar-module";
+import { registerWindow, windowStore, addActiveWindow, removeActiveWindow } from "@/stores/windowStore";
 import { MODULE_ID } from "@/module/module-id";
 
 export default function Taskbar() {
@@ -27,6 +27,9 @@ export default function Taskbar() {
     };
 
 
+    const startApp = windowStore.appList.filter(app => app.showIn.start)
+    const taskbarApp = windowStore.appList.filter(app => app.showIn.taskbar)
+
 
     return (
         <div class="taskbar">
@@ -47,7 +50,7 @@ export default function Taskbar() {
                             <span>Aqshol OS</span>
                         </div>
                         <div class="start-menu-items">
-                            <For each={windowStore.appList}>{(app) => (
+                            <For each={startApp}>{(app) => (
                                 <button class="start-menu-item" onClick={() => {
                                     if (app.type == "window") {
                                         addActiveWindow(app)
@@ -55,8 +58,6 @@ export default function Taskbar() {
                                         registerWindow(app.id)
                                     }
                                     app.action()
-
-
                                 }
                                 }>
                                     <img src={app.icon} alt="" />
@@ -71,9 +72,16 @@ export default function Taskbar() {
             <div class="taskbar-divider"></div>
 
             <div class="taskbar-apps">
-                <For each={LIST_TASKBAR_APP}>{(app) => (
-                    <button class="taskbar-button-app">
-                        <img src={app.icon} alt={app.alt} class="taskbar-button-icon" />
+                <For each={taskbarApp}>{(app) => (
+                    <button class="taskbar-button-app" onClick={() => {
+                        if (app.type == "window") {
+                            addActiveWindow(app)
+                            closeStartMenu()
+                            registerWindow(app.id)
+                        }
+                        app.action()
+                    }}>
+                        <img src={app.icon} alt={app.title} class="taskbar-button-icon" />
                     </button>
                 )}</For>
             </div>
@@ -113,7 +121,7 @@ export default function Taskbar() {
             </div>
 
 
-      
+
 
 
         </div>
