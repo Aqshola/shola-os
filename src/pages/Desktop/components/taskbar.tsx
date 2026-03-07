@@ -1,16 +1,12 @@
 import { createSignal, onCleanup, Show, For, JSX } from "solid-js";
-import { initializeStartApps, StartApp } from "@/module/start-module"
 import "@/pages/Desktop/style/taskbar.css"
 import { LIST_TASKBAR_APP } from "@/module/taskbar-module";
-import { registerWindow } from "@/stores/windowStore";
+import { registerWindow,windowStore,addActiveWindow, removeActiveWindow } from "@/stores/windowStore";
 import { MODULE_ID } from "@/module/module-id";
 
 export default function Taskbar() {
-    const appStart = initializeStartApps()
-
     const [time, setTime] = createSignal(new Date());
     const [startMenuOpen, setStartMenuOpen] = createSignal(false);
-    const [activeWindows, setActiveWindows] = createSignal<StartApp[]>([]);
 
     const timer = setInterval(() => setTime(new Date()), 1000);
     onCleanup(() => clearInterval(timer));
@@ -41,20 +37,20 @@ export default function Taskbar() {
                     classList={{ active: startMenuOpen() }}
                     onClick={toggleStartMenu}
                 >
-                    <img src="/assets/icons/SO_Logo.png" alt="Start" class="taskbar-button-start-icon" />
+                    <img src="/assets/icons/start.svg" alt="Start" class="taskbar-button-start-icon" />
                     <span>Start</span>
                 </button>
 
                 <Show when={startMenuOpen()}>
                     <div class="window start-menu show">
                         <div class="start-menu-sidebar">
-                            <span>Shola OS</span>
+                            <span>Aqshol OS</span>
                         </div>
                         <div class="start-menu-items">
-                            <For each={appStart.LIST_START_APP}>{(app) => (
+                            <For each={windowStore.appList}>{(app) => (
                                 <button class="start-menu-item" onClick={() => {
                                     if (app.type == "window") {
-                                        setActiveWindows(prev => [...prev, app]);
+                                        addActiveWindow(app)
                                         closeStartMenu()
                                         registerWindow(app.id)
                                     }
@@ -83,7 +79,7 @@ export default function Taskbar() {
             </div>
 
             <div class="taskbar-windows">
-                <For each={activeWindows()}>{(win) => win && (
+                <For each={windowStore.activeWindows}>{(win) => win && (
                     <button
                         class="taskbar-window-app"
                         classList={{ inactive: win.hooks?.isMinimized() }}
@@ -117,22 +113,7 @@ export default function Taskbar() {
             </div>
 
 
-            <For each={appStart.LIST_START_APP.filter(app => app.type === "window")}>{(app) => {
-                const Component = app.component as (props: any) => JSX.Element;
-
-                return (
-                    <Component
-                        isOpen={app.hooks?.isActive()}
-                        onClose={() => {
-                            app.hooks?.close()
-                            setActiveWindows(prev => prev.filter(w => w.id !== app.id))
-                        }}
-                        onMinimize={app.hooks?.minimize}
-                        onRestore={app.hooks?.restore}
-                        hooks={app.hooks}
-                    />
-                );
-            }}</For>
+      
 
 
         </div>

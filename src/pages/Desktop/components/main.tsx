@@ -11,5 +11,6 @@ export default function Window() {
                 </div>
                 ))}
             </div>
-        </div>)
+        </div>
+        )
 }

@@ -7,6 +7,8 @@ import { Route, Router } from '@solidjs/router';
 import Desktop from './pages/Desktop';
 import SplashScreen from './components/SplashScreen';
 import  './style/index.css'
+import { loadFromLocalStorage, saveToLocalStorage } from './lib/localstorage';
+import { initAppList } from './stores/windowStore';
 const root = document.getElementById('root');
 
 if (import.meta.env.DEV && !(root instanceof HTMLElement)) {
@@ -16,11 +18,18 @@ if (import.meta.env.DEV && !(root instanceof HTMLElement)) {
 }
 
 render(() => {
-  const [showSplash, setShowSplash] = createSignal(true);
+
+  initAppList()
+  const isAlreadyLoaded= loadFromLocalStorage("SHOLA_OS_LOADED") === "true";
+  const [showSplash, setShowSplash] = createSignal(isAlreadyLoaded ? false : true);
 
   return (
     <Show when={!showSplash()} fallback={
-      <SplashScreen onComplete={() => setShowSplash(false)} />
+      <SplashScreen onComplete={() => {
+        setShowSplash(false)
+        saveToLocalStorage("SHOLA_OS_LOADED", "true")
+      }
+      } />
     }>
       <Router>
         <Route path={"/"} component={Desktop}/>
