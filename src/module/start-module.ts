@@ -81,7 +81,17 @@ export function initializeStartApps() {
             hooks: aboutme,
             type: "window",
         },
+  
         {
+            id: "restart",
+            title: "Restart",
+            icon: "/assets/icons/restart.svg",
+            action: () => {
+                window.location.reload();
+            },
+            type: "action",
+        },
+              {
             id: "shutdown",
             title: "Shut Down...",
             icon: "/assets/icons/shutdown.svg",
@@ -91,15 +101,6 @@ export function initializeStartApps() {
             },
             type: "action",
         },
-        {
-            id: "restart",
-            title: "Restart",
-            icon: "/assets/icons/restart.svg",
-            action: () => {
-                window.location.reload();
-            },
-            type: "action",
-        }
     ];
 
     return {
