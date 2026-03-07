@@ -7,7 +7,7 @@ interface SplashScreenProps {
 
 const MESSAGES = [
   "Detecting hardware...",
-  "Loading Windows 98...",
+  "Loading Aqshol OS...",
   "Starting desktop...",
 ];
 
@@ -61,12 +61,12 @@ export default function SplashScreen(props: SplashScreenProps) {
       <div class="splash-window">
         <div class="splash-content">
           <div class="splash-logo">
-            <img src="/assets/icons/windows_98_logo.png" alt="Windows 98" />
+            <img src="/assets/icons/SO_Logo.png" alt="Shola OS" />
           </div>
-          <div class="splash-title">Windows 98</div>
+          <div class="splash-title">Shola OS</div>
           
           <Show when={!isComplete()} fallback={
-            <div class="splash-starting">Starting Windows...</div>
+            <div class="splash-starting">Starting Shola OS...</div>
           }>
             <div class="splash-message">
               {displayedText()}
@@ -79,7 +79,7 @@ export default function SplashScreen(props: SplashScreenProps) {
           </div>
         </div>
         <div class="splash-footer">
-          <span>Microsoft® Windows™</span>
+          <span>Shola OS™</span>
           <span>Version 4.10.1998</span>
         </div>
       </div>
