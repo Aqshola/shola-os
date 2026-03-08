@@ -3,6 +3,8 @@ import { useDraggable } from "@/hooks/useDraggable";
 import { bringToFront, getZIndex, registerWindow, unregisterWindow } from "@/stores/windowStore";
 import "@/pages/Desktop/style/window.css";
 import PortfolioContentWindow from "./PortfolioContentWindow";
+import { Portfolio } from "@/services/portofolio";
+import { getFileUrl } from "@/lib/pocketbase";
 
 interface PortfolioWindowProps {
     isOpen: boolean;
@@ -72,7 +74,7 @@ export default function PortfolioWindow(props: PortfolioWindowProps) {
                     <div class="window-body portfolio-content">
                         <Show when={portofolio.loading()} fallback={
                             <div class="portfolio-card-list">
-                                <For each={portofolio.portfolioList()}>{(project) => (
+                                <For each={portofolio.portfolioList() as Portfolio[]}>{(project) => (
                                     <div
                                         class="portfolio-card"
                                         onClick={() => handleProjectClick(project)}
@@ -81,7 +83,7 @@ export default function PortfolioWindow(props: PortfolioWindowProps) {
                                             <img src="/assets/icons/kodak_imaging.ico" alt="" class="portfolio-card-icon" />
                                             <span class="portfolio-card-title">{project.title}</span>
                                         </div>
-                                        <img src={project.image_cover || "/assets/placeholder.png"} alt={project.title} class="portfolio-card-thumbnail" />
+                                        <img src={ getFileUrl(project.collectionId||"",project.id,project.image_cover||"")  || "/assets/placeholder.png"} alt={project.title} class="portfolio-card-thumbnail" />
                                     </div>
                                 )}</For>
                             </div>

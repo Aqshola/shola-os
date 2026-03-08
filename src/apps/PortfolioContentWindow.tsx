@@ -3,6 +3,8 @@ import { useDraggable } from "@/hooks/useDraggable";
 import { bringToFront, getZIndex, registerWindow, unregisterWindow } from "@/stores/windowStore";
 import { Portfolio } from "@/services/portofolio";
 import "@/pages/Desktop/style/window.css";
+import { getFileUrl } from "@/lib/pocketbase";
+import { getPortofolioBadgeClassStatus } from "@/lib/common";
 
 interface PortfolioContentWindowProps {
     projectId: string | null;
@@ -81,26 +83,27 @@ export default function PortfolioContentWindow(props: PortfolioContentWindowProp
 
                         {/* Buttons */}
                         <div class="portfolio-detail-buttons">
-                            <Show when={project()?.repo}>
+                            <Show when={!project()?.private}>
                                 <button class="default" onClick={openRepo}>View Repo</button>
                             </Show>
                             <Show when={project()?.link}>
-                                <button onClick={openDemo}>View Demo</button>
+                                <button onClick={openDemo}>Visit</button>
                             </Show>
+                            <div class={getPortofolioBadgeClassStatus(project()?.status??"Published")}>{project()?.status}</div>
                         </div>
 
                         {/* Screenshot */}
                         <Show when={project()?.image_cover}>
                             <img
-                                src={project()?.image_cover}
+                                src={getFileUrl(project()?.collectionId||"",project()?.id||"",project()?.image_cover||"")  || "/assets/placeholder.png"}
                                 alt={project()?.title}
                                 class="portfolio-detail-screenshot"
                             />
                         </Show>
 
                         {/* Article/Description */}
-                        <div class="portfolio-detail-article">
-                            <p>{project()?.content || "No description available."}</p>
+                        <div class="portfolio-detail-article" innerHTML={project()?.content}>
+                           
                         </div>
                     </div>
                 }>

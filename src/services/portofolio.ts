@@ -1,5 +1,7 @@
 import { pb } from "@/lib/pocketbase";
 
+
+export type PortofolioStatus="Discontinue" |"Published"|"Development"|"Initial"
 export type Portfolio = {
     id: string;
 
@@ -13,7 +15,7 @@ export type Portfolio = {
 
     link?: string;
 
-    status?: string;
+    status?: PortofolioStatus;
 
     private?: boolean;
 
