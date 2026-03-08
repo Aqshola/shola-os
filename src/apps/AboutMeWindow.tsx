@@ -4,6 +4,7 @@ import { bringToFront, getZIndex, registerWindow, unregisterWindow } from "@/sto
 import "@/pages/Desktop/style/window.css";
 import { MODULE_ID } from "@/module/module-id";
 import { useDeviceType } from "@/hooks/useDeviceType";
+import { useAboutMe } from "@/hooks/useAboutMe";
 
 interface AboutMeWindowProps {
     isOpen: boolean;
@@ -19,6 +20,7 @@ export default function AboutMeWindow(props: AboutMeWindowProps) {
     const defaultPosition = { x: window.innerWidth / 2, y: (window.innerHeight / 2) };
     const draggable = useDraggable({ x: defaultPosition.x, y: defaultPosition.y });
     const deviceType = useDeviceType();
+    const { bio, loading } = useAboutMe();
 
     onCleanup(() => {
         unregisterWindow(WINDOW_ID);
@@ -61,22 +63,24 @@ export default function AboutMeWindow(props: AboutMeWindowProps) {
                     </div>
                 </div>
                 <div class="window-body aboutme-content" style={{ "background-color": "white", padding: "20px" }}>
-                    <div class="aboutme-name" style={{
-                        "font-size": "32px",
-                        "font-weight": "bold",
-                        "text-align": "center",
-                        "margin-bottom": "20px"
-                    }}>
-                        Aqshol A
-                    </div>
-                    <div class="aboutme-description" style={{
-                        "text-align": "center",
-                        "font-size": "16px",
-                        "color": "#333"
-                    }}>
-                        <p>Developer & Creator</p>
-                        <p>Building cool things for the web</p>
-                    </div>
+                    <Show when={!loading()} fallback={<div style={{ "text-align": "center", padding: "20px" }}>Loading...</div>}>
+                        <Show when={bio()}>
+                            <div class="aboutme-name" style={{
+                                "font-size": "32px",
+                                "font-weight": "bold",
+                                "text-align": "center",
+                                "margin-bottom": "20px"
+                            }}>
+                                {bio()!.name}
+                            </div>
+                            <div class="aboutme-description" style={{
+                                "text-align": "center",
+                                "font-size": "16px",
+                                "color": "#333"
+                            }} innerHTML={bio()!.desc}>
+                            </div>
+                        </Show>
+                    </Show>
                 </div>
             </div>
         </Show>

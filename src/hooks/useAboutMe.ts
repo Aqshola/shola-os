@@ -1,8 +1,14 @@
+import { createSignal } from "solid-js";
 import { createStore } from "solid-js/store";
 import { makePersisted } from "@solid-primitives/storage";
 import { AppWindow } from "@/hooks/type";
+import { getBio, Bio } from "@/services/bio";
 
-export function useAboutMe(): AppWindow {
+export function useAboutMe(): AppWindow & {
+  bio: () => Bio | undefined;
+  loading: () => boolean;
+  fetchBio: () => Promise<void>;
+} {
   const [state, setState] = makePersisted(
     createStore({
       isOpen: false,
@@ -11,11 +17,27 @@ export function useAboutMe(): AppWindow {
     { name: "shola-os-about-me-module" }
   );
 
+  const [bio, setBio] = createSignal<Bio | undefined>(undefined);
+  const [loading, setLoading] = createSignal(false);
+
+  const fetchBio = async () => {
+    setLoading(true);
+    try {
+      const bioData = await getBio();
+      setBio(bioData);
+    } catch (error) {
+      console.error("Failed to fetch bio:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const open = () => {
     setState({
       isOpen: true,
       isMinimized: false,
     });
+    fetchBio();
   };
 
   const close = () => {
@@ -34,6 +56,7 @@ export function useAboutMe(): AppWindow {
       isMinimized: false,
       isOpen: true,
     });
+    fetchBio();
   };
 
   const toggle = () => {
@@ -55,5 +78,8 @@ export function useAboutMe(): AppWindow {
     minimize,
     restore,
     toggle,
+    bio,
+    loading,
+    fetchBio,
   };
 }
