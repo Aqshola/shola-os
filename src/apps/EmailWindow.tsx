@@ -5,6 +5,7 @@ import "@/pages/Desktop/style/window.css";
 import { MODULE_ID } from "@/module/module-id";
 import { useDeviceType } from "@/hooks/useDeviceType";
 import { sendEmail } from "@/services/email";
+import MessageBox from "@/apps/MessageBox";
 
 interface EmailWindowProps {
     isOpen: boolean;
@@ -19,6 +20,11 @@ export default function EmailWindow(props: EmailWindowProps) {
     const [isMaximized, setIsMaximized] = createSignal(false);
     const [senderEmail, setSenderEmail] = createSignal("");
     const [content, setContent] = createSignal("");
+    const [messageBox, setMessageBox] = createSignal<{ isOpen: boolean; type: "success" | "error"; message: string }>({
+        isOpen: false,
+        type: "success",
+        message: ""
+    });
     const defaultPosition = { x: window.innerWidth / 2, y: (window.innerHeight / 2) };
 
     const draggable = useDraggable({ x: defaultPosition.x, y: defaultPosition.y });
@@ -31,18 +37,17 @@ export default function EmailWindow(props: EmailWindowProps) {
 
     const handleSend = async () => {
         if (!senderEmail() || !content()) {
-            alert("Please fill in all fields.");
+            setMessageBox({ isOpen: true, type: "error", message: "Please fill in all fields." });
             return;
         }
         
         const success = await sendEmail(senderEmail(), content());
         if (success) {
-            alert("Email sent!");
+            setMessageBox({ isOpen: true, type: "success", message: "Email sent successfully!" });
             setSenderEmail("");
             setContent("");
-            props.onClose();
         } else {
-            alert("Failed to send email. Please try again.");
+            setMessageBox({ isOpen: true, type: "error", message: "Failed to send email. Please try again." });
         }
     };
 
@@ -110,6 +115,13 @@ export default function EmailWindow(props: EmailWindowProps) {
                     </div>
                 </div>
             </div>
+            <MessageBox
+                isOpen={messageBox().isOpen}
+                title={messageBox().type === "success" ? "Success" : "Error"}
+                message={messageBox().message}
+                type={messageBox().type}
+                onClose={() => setMessageBox((prev) => ({ ...prev, isOpen: false }))}
+            />
         </Show>
     );
 }
