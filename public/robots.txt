@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://shola-os.pages.dev/sitemap.xml
