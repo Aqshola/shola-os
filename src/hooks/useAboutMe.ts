@@ -25,6 +25,7 @@ export function useAboutMe(): AppWindow & {
     try {
       const bioData = await getBio();
       setState({bio:bioData});
+      console.log(state.bio)
     } catch (error) {
       console.error("Failed to fetch bio:", error);
     } finally {
@@ -33,11 +34,12 @@ export function useAboutMe(): AppWindow & {
   };
 
   const open = () => {
+    fetchBio();
+
     setState({
       isOpen: true,
       isMinimized: false,
     });
-    fetchBio();
   };
 
   const close = () => {
@@ -52,11 +54,11 @@ export function useAboutMe(): AppWindow & {
   };
 
   const restore = () => {
+    fetchBio();
     setState({
       isMinimized: false,
       isOpen: true,
     });
-    fetchBio();
   };
 
   const toggle = () => {
