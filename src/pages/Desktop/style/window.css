@@ -355,3 +355,120 @@
         height: calc(100vh - 100px);
     }
 }
+
+/* Notes Window */
+.notes-window .window-body {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    height: calc(100% - 40px);
+    overflow: hidden;
+}
+
+.notes-header {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 8px;
+}
+
+.notes-create-form {
+    background: #f0f0f0;
+    padding: 12px;
+    border: 1px solid #808080;
+    margin-bottom: 8px;
+}
+
+.notes-create-form .field-row {
+    margin-bottom: 8px;
+}
+
+.notes-create-form .field-row-stacked {
+    margin-bottom: 8px;
+}
+
+.notes-list {
+    flex-grow: 1;
+    overflow-y: auto;
+    border: 1px solid #808080;
+    background: #ffffff;
+    padding: 4px;
+}
+
+.note-item {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    cursor: pointer;
+    border-bottom: 1px solid #e0e0e0;
+    gap: 8px;
+}
+
+.note-item:hover {
+    background: #e8e8e8;
+}
+
+.note-icon {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.note-info {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-width: 0;
+}
+
+.note-title {
+    font-weight: bold;
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.note-preview {
+    font-size: 11px;
+    color: #666;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.no-notes {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+    font-style: italic;
+}
+
+/* Note Detail Window */
+.note-detail-window .window-body {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    height: calc(100% - 40px);
+}
+
+.note-detail-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    height: 100%;
+}
+
+.note-detail-form textarea {
+    flex-grow: 1;
+    width: 100%;
+    resize: none;
+    font-family: inherit;
+}
+
+.note-create-mode {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #666;
+}

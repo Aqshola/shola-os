@@ -3,11 +3,13 @@ import EmailWindow from "@/apps/EmailWindow";
 import ResumeWindow from "@/apps/ResumeWindow";
 import PortfolioWindow from "@/apps/PortfolioWindow";
 import AboutMeWindow from "@/apps/AboutMeWindow";
+import NotesWindow from "@/apps/NotesWindow";
 import { AppWindow } from "@/hooks/type";
 import { useEmail } from "@/hooks/useEmail";
 import { useResume } from "@/hooks/useResume";
 import { usePortfolio } from "@/hooks/usePortfolio";
 import { useAboutMe } from "@/hooks/useAboutMe";
+import { useNotes } from "@/hooks/useNotes";
 import { MODULE_ID } from "./module-id";
 import { clearLocalStorage, removeFromLocalStorage } from "@/lib/localstorage";
 
@@ -35,6 +37,7 @@ export function initializeStartApps() {
     const email = useEmail();
     const portfolio = usePortfolio();
     const aboutme = useAboutMe();
+    const notes = useNotes();
 
     const LIST_START_APP: StartApp[] = [
         {
@@ -107,6 +110,19 @@ export function initializeStartApps() {
             action: () => aboutme.open(),
             component: AboutMeWindow,
             hooks: aboutme,
+            type: "window",
+            showIn: {
+                start: true,
+                desktop: true,
+            },
+        },
+        {
+            id: MODULE_ID.notes,
+            title: "Notepad",
+            icon: "/assets/icons/kodak_imaging.ico",
+            action: () => notes.open(),
+            component: NotesWindow,
+            hooks: notes,
             type: "window",
             showIn: {
                 start: true,
