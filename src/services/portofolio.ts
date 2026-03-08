@@ -28,3 +28,8 @@ export async function getListPortofolio():Promise<Portfolio[]>  {
     const records = await pb.collection('portofolio').getFullList() as Portfolio[]
     return records
 }
+
+export async function getDetailPortofolio(id: string): Promise<Portfolio> {
+    const record = await pb.collection('portofolio').getOne(id) as Portfolio;
+    return record;
+}

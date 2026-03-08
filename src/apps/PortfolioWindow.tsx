@@ -1,7 +1,6 @@
 import { For, Show, onMount, onCleanup, createSignal } from "solid-js";
 import { useDraggable } from "@/hooks/useDraggable";
 import { bringToFront, getZIndex, registerWindow, unregisterWindow } from "@/stores/windowStore";
-import { portfolioProjects, PortfolioProject } from "@/data/portfolioData";
 import "@/pages/Desktop/style/window.css";
 import PortfolioContentWindow from "./PortfolioContentWindow";
 
@@ -38,12 +37,10 @@ export default function PortfolioWindow(props: PortfolioWindowProps) {
         bringToFront(WINDOW_ID);
     };
 
-    const handleProjectClick = (project: PortfolioProject) => {
+    const handleProjectClick = (project: any) => {
         portofolio.openProject(project.id);
         registerWindow(`portfolio-content-${project.id}`)
     };
-
-
 
     return (
         <>
@@ -73,25 +70,31 @@ export default function PortfolioWindow(props: PortfolioWindowProps) {
                         </div>
                     </div>
                     <div class="window-body portfolio-content">
-                        <div class="portfolio-card-list">
-                            <For each={portfolioProjects}>{(project) => (
-                                <div
-                                    class="portfolio-card"
-                                    onClick={() => handleProjectClick(project)}
-                                >
-                                    <div class="portfolio-card-header">
-                                        <img src={project.icon} alt="" class="portfolio-card-icon" />
-                                        <span class="portfolio-card-title">{project.name}</span>
+                        <Show when={portofolio.loading()} fallback={
+                            <div class="portfolio-card-list">
+                                <For each={portofolio.portfolioList()}>{(project) => (
+                                    <div
+                                        class="portfolio-card"
+                                        onClick={() => handleProjectClick(project)}
+                                    >
+                                        <div class="portfolio-card-header">
+                                            <img src="/assets/icons/kodak_imaging.ico" alt="" class="portfolio-card-icon" />
+                                            <span class="portfolio-card-title">{project.title}</span>
+                                        </div>
+                                        <img src={project.image_cover || "/assets/placeholder.png"} alt={project.title} class="portfolio-card-thumbnail" />
                                     </div>
-                                    <img src={project.thumbnail} alt={project.name} class="portfolio-card-thumbnail" />
-                                </div>
-                            )}</For>
-                        </div>
+                                )}</For>
+                            </div>
+                        }>
+                            <div class="loading">Loading portfolio...</div>
+                        </Show>
                     </div>
                 </div>
 
                 <PortfolioContentWindow
                     projectId={portofolio.openProjectId()}
+                    selectedProject={portofolio.selectedProject}
+                    loading={portofolio.loading}
                     onClose={() => portofolio.closeProject()}
                     onMinimize={() => handleMinimize()}
                     onRestore={() => portofolio.restoreContent()}
