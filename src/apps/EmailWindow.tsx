@@ -4,6 +4,7 @@ import { bringToFront, getZIndex, registerWindow, unregisterWindow } from "@/sto
 import "@/pages/Desktop/style/window.css";
 import { MODULE_ID } from "@/module/module-id";
 import { useDeviceType } from "@/hooks/useDeviceType";
+import { sendEmail } from "@/services/email";
 
 interface EmailWindowProps {
     isOpen: boolean;
@@ -28,12 +29,21 @@ export default function EmailWindow(props: EmailWindowProps) {
         unregisterWindow(WINDOW_ID);
     });
 
-    const handleSend = () => {
-        console.log("Send email:", { from: senderEmail(), content: content() });
-        alert("Email sent! (Service not configured yet)");
-        setSenderEmail("");
-        setContent("");
-        props.onClose();
+    const handleSend = async () => {
+        if (!senderEmail() || !content()) {
+            alert("Please fill in all fields.");
+            return;
+        }
+        
+        const success = await sendEmail(senderEmail(), content());
+        if (success) {
+            alert("Email sent!");
+            setSenderEmail("");
+            setContent("");
+            props.onClose();
+        } else {
+            alert("Failed to send email. Please try again.");
+        }
     };
 
     const handleMaximize = () => setIsMaximized(!isMaximized());
