@@ -23,13 +23,7 @@ export default function PortfolioWindow(props: PortfolioWindowProps) {
     const draggable = useDraggable({ x: defaultPosition.x, y: defaultPosition.y });
     const portofolio = props.hooks as any
 
-    onMount(() => {
-        registerWindow(WINDOW_ID);
-    });
-
-    onCleanup(() => {
-        unregisterWindow(WINDOW_ID);
-    });
+ 
 
     const handleClose = () => props.onClose();
     const handleMinimize = () => props.onMinimize();

@@ -10,13 +10,13 @@ export function usePortfolio() {
       isMinimized: false,
       openProjectId: null as string | null,
       isContentMinimized: false,
+      portfolioList:[] as Portfolio[],
+      selectedProject:null as Portfolio|null
     }),
     { name: "shola-os-portfolio-module" }
   );
 
-  // Signals for portfolio data
-  const [portfolioList, setPortfolioList] = createSignal<Portfolio[]>([]);
-  const [selectedProject, setSelectedProject] = createSignal<Portfolio | null>(null);
+
   const [loading, setLoading] = createSignal(false);
 
   // Fetch portfolio list
@@ -24,7 +24,7 @@ export function usePortfolio() {
     setLoading(true);
     try {
       const data = await getListPortofolio();
-      setPortfolioList(data);
+      setState({portfolioList: data});
     } catch (error) {
       console.error("Failed to fetch portfolio:", error);
     } finally {
@@ -37,7 +37,7 @@ export function usePortfolio() {
     setLoading(true);
     try {
       const data = await getDetailPortofolio(id);
-      setSelectedProject(data);
+      setState({selectedProject: data});
     } catch (error) {
       console.error("Failed to fetch project detail:", error);
     } finally {
@@ -61,7 +61,8 @@ export function usePortfolio() {
       openProjectId: null,
       isContentMinimized: false,
     });
-    setSelectedProject(null);
+          setState({selectedProject: null});
+
   };
 
   const minimize = () => {
@@ -99,7 +100,8 @@ export function usePortfolio() {
       openProjectId: null,
       isContentMinimized: false,
     });
-    setSelectedProject(null);
+          setState({selectedProject: null});
+
   };
 
   const minimizeContent = () => {
@@ -121,8 +123,8 @@ export function usePortfolio() {
       state.openProjectId !== null && !state.isContentMinimized,
 
     // Expose signals
-    portfolioList,
-    selectedProject,
+    portfolioList:()=>state.portfolioList,
+    selectedProject:()=>state.selectedProject,
     loading,
 
     open,
