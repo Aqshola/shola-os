@@ -3,7 +3,6 @@ import { useDraggable } from "@/hooks/useDraggable";
 import { bringToFront, getZIndex, registerWindow, unregisterWindow } from "@/stores/windowStore";
 import { portfolioProjects, PortfolioProject } from "@/data/portfolioData";
 import "@/pages/Desktop/style/window.css";
-import { usePortfolio } from "@/hooks/usePortfolio";
 import PortfolioContentWindow from "./PortfolioContentWindow";
 
 interface PortfolioWindowProps {
