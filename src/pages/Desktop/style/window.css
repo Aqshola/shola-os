@@ -156,6 +156,22 @@
     z-index: 10001;
 }
 
+.aboutme-window{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 500px;
+    height: fit-content;
+    z-index: 10001;
+    
+}
+
+.aboutme-description{
+        font-family: Arial, sans-serif;
+
+}
+
 .portfolio-window.window-maximized {
     width: 100% !important;
     height: calc(100vh - 28px) !important;
