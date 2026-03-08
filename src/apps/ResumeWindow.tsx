@@ -13,10 +13,9 @@ interface ResumeWindowProps {
     onRestore: () => void;
 }
 
-const RESUME_URL = social.resume;
-const WINDOW_ID = MODULE_ID.resume;
 
 export default function ResumeWindow(props: ResumeWindowProps) {
+    const WINDOW_ID = MODULE_ID.resume;
     const [isMaximized, setIsMaximized] = createSignal(false);
     const defaultPosition = { x: window.innerWidth / 2, y: (window.innerHeight / 2) };
     const draggable = useDraggable({ x: defaultPosition.x, y: defaultPosition.y });
@@ -64,7 +63,7 @@ export default function ResumeWindow(props: ResumeWindowProps) {
                 </div>
                 <div class="window-body" style={{ border: "1px solid black", height: "450px" }}>
                     <iframe
-                        src={RESUME_URL}
+                        src={social.resume}
                         class="resume-iframe"
                         allow="autoplay"
                     />
