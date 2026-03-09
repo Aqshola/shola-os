@@ -120,7 +120,7 @@ export function initializeStartApps() {
         {
             id: MODULE_ID.notes,
             title: "Notepad",
-            icon: "/assets/icons/kodak_imaging.ico",
+            icon: "/assets/icons/note.png",
             action: () => notes.open(),
             component: NotesWindow,
             hooks: notes,

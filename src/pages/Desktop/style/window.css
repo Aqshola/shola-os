@@ -156,7 +156,7 @@
     z-index: 10001;
 }
 
-.aboutme-window{
+.aboutme-window {
     position: fixed;
     top: 50%;
     left: 50%;
@@ -164,11 +164,11 @@
     width: 500px;
     height: fit-content;
     z-index: 10001;
-    
+
 }
 
-.aboutme-description{
-        font-family: Arial, sans-serif;
+.aboutme-description {
+    font-family: Arial, sans-serif;
 
 }
 
@@ -291,8 +291,10 @@
     min-width: 75px;
 
     display: flex;
-    align-items: center;     /* vertical center */
-    justify-content: center; /* horizontal center */
+    align-items: center;
+    /* vertical center */
+    justify-content: center;
+    /* horizontal center */
     letter-spacing: 0.5px;
 
 }
@@ -306,8 +308,10 @@
     min-width: 75px;
 
     display: flex;
-    align-items: center;     /* vertical center */
-    justify-content: center; /* horizontal center */
+    align-items: center;
+    /* vertical center */
+    justify-content: center;
+    /* horizontal center */
     letter-spacing: 0.5px;
 
 }
@@ -321,8 +325,10 @@
     min-width: 75px;
 
     display: flex;
-    align-items: center;     /* vertical center */
-    justify-content: center; /* horizontal center */
+    align-items: center;
+    /* vertical center */
+    justify-content: center;
+    /* horizontal center */
     letter-spacing: 0.5px;
 
 }
@@ -336,8 +342,10 @@
     min-width: 75px;
 
     display: flex;
-    align-items: center;     /* vertical center */
-    justify-content: center; /* horizontal center */
+    align-items: center;
+    /* vertical center */
+    justify-content: center;
+    /* horizontal center */
     letter-spacing: 0.5px;
 
 }
@@ -366,19 +374,24 @@
 
 
 @media (max-width: 480px) {
-    .portfolio-window,.portfolio-content-window,.aboutme-window {
+
+    .portfolio-window,
+    .portfolio-content-window,
+    .aboutme-window {
         width: calc(100vw - 100px);
         height: calc(100vh - 100px);
     }
 }
 
 /* Notes Window */
-.notes-window .window-body {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    height: calc(100% - 40px);
-    overflow: hidden;
+.notes-window {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 500px;
+    height: 700px;
+    z-index: 10001;
 }
 
 .notes-header {

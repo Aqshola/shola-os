@@ -1,4 +1,4 @@
-import { Show, createSignal, createEffect, onCleanup } from "solid-js";
+import { Show, createSignal, createEffect, onCleanup, onMount, on } from "solid-js";
 import { useDraggable } from "@/hooks/useDraggable";
 import { bringToFront, getZIndex, registerWindow, unregisterWindow } from "@/stores/windowStore";
 import "@/pages/Desktop/style/window.css";
@@ -25,20 +25,22 @@ export default function NoteWindow(props: NoteWindowProps) {
 
     const notes = props.hooks;
 
-    // Load note data when noteId changes
-    createEffect(() => {
-        const noteId = props.noteId;
-        if (noteId) {
+
+    createEffect(
+        on(() => props.noteId, (noteId) => {
+            if (!noteId) return;
+
             const noteList = notes.notes();
             const note = noteList.find((n: Note) => n.id === noteId);
+
             if (note) {
                 setTitle(note.title);
                 setContent(note.content);
                 setIsSaved(true);
                 registerWindow(`${WINDOW_ID_PREFIX}${noteId}`);
             }
-        }
-    });
+        })
+    );
 
     onCleanup(() => {
         if (props.noteId) {
@@ -144,8 +146,8 @@ export default function NoteWindow(props: NoteWindowProps) {
                                 />
                             </div>
                             <div class="button-row">
-                                <button 
-                                    class="default" 
+                                <button
+                                    class="default"
                                     onClick={handleSave}
                                     disabled={isSaved() || !title().trim()}
                                 >

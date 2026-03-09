@@ -84,7 +84,7 @@ export default function NotesWindow(props: NotesWindowProps) {
                             <button aria-label="Close" onClick={handleClose}></button>
                         </div>
                     </div>
-                    <div class="window-body">
+                    <div class="window-body notes-content">
                         <div class="notes-header">
                             <button class="default" onClick={() => setShowCreateModal(true)}>
                                 + Create Note
@@ -127,7 +127,7 @@ export default function NotesWindow(props: NotesWindowProps) {
                                         class="note-item"
                                         onClick={() => handleNoteClick(note)}
                                     >
-                                        <img src="/assets/icons/kodak_imaging.ico" alt="" class="note-icon" />
+                                        <img src="/assets/icons/note.png" alt="" class="note-icon" />
                                         <div class="note-info">
                                             <span class="note-title">{note.title}</span>
                                             <span class="note-preview">
