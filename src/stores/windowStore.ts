@@ -1,13 +1,14 @@
 import { StartApp } from "@/module/start-module";
 import { createStore } from "solid-js/store";
 import { makePersisted } from "@solid-primitives/storage";
+import { MODULE_ID } from "@/module/module-id";
 
 // Persistable state using makePersisted
 export const [windowStore, setWindowStore, init] = makePersisted(
   createStore({
     order: [] as string[],
     activeId: null as string | null,
-    activeWindows: [] as string[],
+    activeWindows: [MODULE_ID.aboutme] as string[],
   }),
   { name: "shola-os-window-store" }
 );

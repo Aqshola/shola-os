@@ -4,4 +4,5 @@ export const MODULE_ID = {
     portofolio: "PORTOFOLIO_APP",
     email: "EMAIL_APP",
     aboutme: "ABOUTME_APP",
+    notes: "NOTES_APP",
 }
