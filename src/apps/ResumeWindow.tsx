@@ -4,6 +4,7 @@ import { bringToFront, getZIndex, registerWindow, unregisterWindow } from "@/sto
 import "@/pages/Desktop/style/window.css";
 import { MODULE_ID } from "@/module/module-id";
 import { useDeviceType } from "@/hooks/useDeviceType";
+import { social } from "@/stores/socialStore";
 
 interface ResumeWindowProps {
     isOpen: boolean;
@@ -12,7 +13,7 @@ interface ResumeWindowProps {
     onRestore: () => void;
 }
 
-const RESUME_URL = "https://drive.google.com/file/d/1lZ-4Ef8c24O3e3FxLsRvK1vC5VkIKyWk/preview";
+const RESUME_URL = social.resume;
 const WINDOW_ID = MODULE_ID.resume;
 
 export default function ResumeWindow(props: ResumeWindowProps) {

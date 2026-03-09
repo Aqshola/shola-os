@@ -10,6 +10,7 @@ import  './style/index.css'
 import { loadFromLocalStorage, saveToLocalStorage } from './lib/localstorage';
 import { initAppList } from './stores/appStore';
 import { initPocketBase } from './lib/pocketbase';
+import { initSocial } from './stores/socialStore';
 
 const root = document.getElementById('root');
 
@@ -21,6 +22,7 @@ if (import.meta.env.DEV && !(root instanceof HTMLElement)) {
 
 render(() => {
   initPocketBase()
+  initSocial()
   initAppList()
   const isAlreadyLoaded= loadFromLocalStorage("SHOLA_OS_LOADED") === "true";
   const [showSplash, setShowSplash] = createSignal(isAlreadyLoaded ? false : true);
