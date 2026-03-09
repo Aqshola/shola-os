@@ -11,7 +11,7 @@ export function useAboutMe(): AppWindow & {
 } {
   const [state, setState] = makePersisted(
     createStore({
-      isOpen: false,
+      isOpen: true,
       isMinimized: false,
       bio: null as Bio | null
     }),

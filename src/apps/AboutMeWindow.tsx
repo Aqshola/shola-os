@@ -1,10 +1,9 @@
-import { createSignal, Show, onCleanup } from "solid-js";
+import { createSignal, Show, onCleanup, onMount } from "solid-js";
 import { useDraggable } from "@/hooks/useDraggable";
 import { bringToFront, getZIndex, registerWindow, unregisterWindow } from "@/stores/windowStore";
 import "@/pages/Desktop/style/window.css";
 import { MODULE_ID } from "@/module/module-id";
 import { useDeviceType } from "@/hooks/useDeviceType";
-import { useAboutMe } from "@/hooks/useAboutMe";
 
 interface AboutMeWindowProps {
     isOpen: boolean;
@@ -22,6 +21,12 @@ export default function AboutMeWindow(props: AboutMeWindowProps) {
     const draggable = useDraggable({ x: defaultPosition.x, y: defaultPosition.y });
     const deviceType = useDeviceType();
 
+
+    //INITIAL
+    onMount(()=>{
+        props.hooks.fetchBio()
+        registerWindow(WINDOW_ID)
+    })
     onCleanup(() => {
         unregisterWindow(WINDOW_ID);
     });
