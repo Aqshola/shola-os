@@ -12,6 +12,7 @@ import { useAboutMe } from "@/hooks/useAboutMe";
 import { useNotes } from "@/hooks/useNotes";
 import { MODULE_ID } from "./module-id";
 import { clearLocalStorage, removeFromLocalStorage } from "@/lib/localstorage";
+import { openShutdown } from "@/stores/shutdownStore";
 
 export interface StartApp {
     id: string;
@@ -135,8 +136,10 @@ export function initializeStartApps() {
             title: "Restart",
             icon: "/assets/icons/restart.svg",
             action: () => {
-                removeFromLocalStorage("SHOLA_OS_LOADED")
-                window.location.reload();
+                openShutdown("restart", () => {
+                    removeFromLocalStorage("SHOLA_OS_LOADED");
+                    window.location.reload();
+                });
             },
             type: "action",
             showIn: {
@@ -148,8 +151,10 @@ export function initializeStartApps() {
             title: "Shut Down...",
             icon: "/assets/icons/shutdown.svg",
             action: () => {
-                clearLocalStorage()
-                window.location.href = "/";
+                openShutdown("shutdown", () => {
+                    clearLocalStorage();
+                    window.location.href = "/";
+                });
             },
             type: "action",
             showIn: {
