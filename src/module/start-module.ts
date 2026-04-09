@@ -13,6 +13,7 @@ import { useNotes } from "@/hooks/useNotes";
 import { MODULE_ID } from "./module-id";
 import { clearLocalStorage, removeFromLocalStorage } from "@/lib/localstorage";
 import { openShutdown } from "@/stores/shutdownStore";
+import { setCurrentApp } from "@/stores/deepLinkStore";
 
 export interface StartApp {
     id: string;
@@ -45,7 +46,7 @@ export function initializeStartApps() {
             id: MODULE_ID.portofolio,
             title: "Portfolio",
             icon: "/assets/icons/kodak_imaging.ico",
-            action: () => portfolio.open(),
+            action: () => { portfolio.open(); setCurrentApp(MODULE_ID.portofolio); },
             type: "window",
             component: PortfolioWindow,
             hooks: portfolio,
@@ -81,7 +82,7 @@ export function initializeStartApps() {
             id: MODULE_ID.email,
             title: "Email",
             icon: "/assets/icons/mailbox_world.ico",
-            action: () => email.open(),
+            action: () => { email.open(); setCurrentApp(MODULE_ID.email); },
             type: "window",
             component: EmailWindow,
             hooks: email,
@@ -95,7 +96,7 @@ export function initializeStartApps() {
             id: MODULE_ID.resume,
             title: "Resume",
             icon: "/assets/icons/certificate_2.ico",
-            action: () => resume.open(),
+            action: () => { resume.open(); setCurrentApp(MODULE_ID.resume); },
             component: ResumeWindow,
             hooks: resume,
             type: "window",
@@ -108,7 +109,7 @@ export function initializeStartApps() {
             id: MODULE_ID.aboutme,
             title: "About Me",
             icon: "/assets/icons/profile.webp",
-            action: () => aboutme.open(),
+            action: () => { aboutme.open(); setCurrentApp(MODULE_ID.aboutme); },
             component: AboutMeWindow,
             hooks: aboutme,
             type: "window",
@@ -121,7 +122,7 @@ export function initializeStartApps() {
             id: MODULE_ID.notes,
             title: "Notepad",
             icon: "/assets/icons/kodak_imaging.ico",
-            action: () => notes.open(),
+            action: () => { notes.open(); setCurrentApp(MODULE_ID.notes); },
             component: NotesWindow,
             hooks: notes,
             type: "window",
