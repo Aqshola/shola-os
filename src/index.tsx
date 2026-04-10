@@ -11,6 +11,7 @@ import { loadFromLocalStorage, saveToLocalStorage } from './lib/localstorage';
 import { initAppList } from './stores/appStore';
 import { initPocketBase } from './lib/pocketbase';
 import { initSocial } from './stores/socialStore';
+import { getAppFromParam, getBlogSlugFromParam, setBlogSlug } from './stores/deepLinkStore';
 
 const root = document.getElementById('root');
 
@@ -32,6 +33,15 @@ render(() => {
     return params.get("app_name");
   };
 
+  const getBlogSlugFromParam = () => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get("blog_slug");
+  };
+
+  // Store app_name and blog_slug for Desktop to use
+  window.__APP_NAME__ = getAppFromParam();
+  window.__BLOG_SLUG__ = getBlogSlugFromParam();
+
   return (
     <Show when={!showSplash()} fallback={
       <SplashScreen onComplete={() => {
@@ -41,7 +51,7 @@ render(() => {
       } />
     }>
       <Router>
-        <Route path={"/"} component={() => <Desktop appName={getAppFromParam()} />} />
+        <Route path={"/"} component={() => <Desktop appName={getAppFromParam()} blogSlug={getBlogSlugFromParam()} />} />
       </Router>
     </Show>
   );
