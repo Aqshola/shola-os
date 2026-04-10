@@ -5,4 +5,5 @@ export const MODULE_ID = {
     email: "EMAIL_APP",
     aboutme: "ABOUTME_APP",
     notes: "NOTES_APP",
+    blog: "BLOG_APP",
 }

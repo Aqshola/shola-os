@@ -386,6 +386,15 @@
     }
 }
 
+.blog-window{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 500px;
+    height: 700px;
+    z-index: 10001; 
+}
 /* Notes Window */
 .notes-window {
     position: fixed;

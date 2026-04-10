@@ -4,12 +4,14 @@ import ResumeWindow from "@/apps/ResumeWindow";
 import PortfolioWindow from "@/apps/PortfolioWindow";
 import AboutMeWindow from "@/apps/AboutMeWindow";
 import NotesWindow from "@/apps/NotesWindow";
+import BlogWindow from "@/apps/BlogWindow";
 import { AppWindow } from "@/hooks/type";
 import { useEmail } from "@/hooks/useEmail";
 import { useResume } from "@/hooks/useResume";
 import { usePortfolio } from "@/hooks/usePortfolio";
 import { useAboutMe } from "@/hooks/useAboutMe";
 import { useNotes } from "@/hooks/useNotes";
+import { useBlog } from "@/hooks/useBlog";
 import { MODULE_ID } from "./module-id";
 import { clearLocalStorage, removeFromLocalStorage } from "@/lib/localstorage";
 import { openShutdown } from "@/stores/shutdownStore";
@@ -41,6 +43,7 @@ export function initializeStartApps() {
     const portfolio = usePortfolio();
     const aboutme = useAboutMe();
     const notes = useNotes();
+    const blog = useBlog();
 
     const LIST_START_APP: StartApp[] = [
         {
@@ -127,6 +130,19 @@ export function initializeStartApps() {
             component: NotesWindow,
             hooks: notes,
             type: "window",
+            showIn: {
+                start: true,
+                desktop: true,
+            },
+        },
+        {
+            id: MODULE_ID.blog,
+            hooks: blog,
+            title: "Blog",
+            icon: "/assets/icons/blog.png",
+            action: () => { blog.open(); setCurrentApp(MODULE_ID.blog); },
+            type: "window",
+            component: BlogWindow,
             showIn: {
                 start: true,
                 desktop: true,
