@@ -137,14 +137,12 @@ export function initializeStartApps() {
         },
         {
             id: MODULE_ID.blog,
+            hooks: blog,
             title: "Blog",
-            icon: "/assets/icons/blog.ico",
+            icon: "/assets/icons/blog.png",
             action: () => { blog.open(); setCurrentApp(MODULE_ID.blog); },
             type: "window",
             component: BlogWindow,
-            hooks: blog,
-            contentComponent: PostWindow,
-            contentHooks: blog,
             showIn: {
                 start: true,
                 desktop: true,

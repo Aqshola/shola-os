@@ -18,7 +18,7 @@ const WINDOW_ID = "blog";
 export default function BlogWindow(props: BlogWindowProps) {
     const [isMaximized, setIsMaximized] = createSignal(false);
 
-    const defaultPosition = { x: window.innerWidth / 2 - 225, y: (window.innerHeight / 2) - 175 };
+        const defaultPosition = { x: window.innerWidth / 2, y: (window.innerHeight / 2) };
     const draggable = useDraggable({ x: defaultPosition.x, y: defaultPosition.y });
 
     const blog = props.hooks;
@@ -39,6 +39,7 @@ export default function BlogWindow(props: BlogWindowProps) {
         blog.openPost(post.slug);
         registerWindow(`post-${post.slug}`);
     };
+    
 
     return (
         <>
@@ -50,8 +51,6 @@ export default function BlogWindow(props: BlogWindowProps) {
                         position: isMaximized() ? "fixed" : "absolute",
                         left: isMaximized() ? "0" : `${draggable.position().x}px`,
                         top: isMaximized() ? "0" : `${draggable.position().y}px`,
-                        width: isMaximized() ? "100%" : "450px",
-                        height: isMaximized() ? "calc(100vh - 28px)" : "350px",
                         "z-index": getZIndex(WINDOW_ID),
                     }}
                     onMouseDown={handleTitleBarClick}

@@ -2,18 +2,27 @@ import { createSignal } from "solid-js";
 import { getListPosts, getPostBySlug, BlogPost } from "@/services/blog";
 import { MODULE_ID } from "@/module/module-id";
 import { setCurrentApp, setBlogSlug } from "@/stores/deepLinkStore";
+import { makePersisted } from "@solid-primitives/storage";
+import { createStore } from "solid-js/store";
 
 export function useBlog() {
-    const [posts, setPosts] = createSignal<BlogPost[]>([]);
-    const [selectedPost, setSelectedPost] = createSignal<BlogPost | null>(null);
+
+    const [state, setState] = makePersisted(
+        createStore({
+            isOpen: false,
+            isMinimized: false,
+            posts: [] as BlogPost[],
+            selectedPost: null as BlogPost | null,
+        }),
+        { name: "shola-os-notes-module" }
+    );
     const [loading, setLoading] = createSignal(false);
-    const [isOpen, setIsOpen] = createSignal(false);
 
     const fetchPosts = async () => {
         setLoading(true);
         try {
             const result = await getListPosts();
-            setPosts(result);
+            setState({ posts: result });
         } catch (error) {
             console.error("Failed to fetch posts:", error);
         } finally {
@@ -25,7 +34,7 @@ export function useBlog() {
         setLoading(true);
         try {
             const post = await getPostBySlug(slug);
-            setSelectedPost(post);
+            setState({ selectedPost: post });
             return post;
         } catch (error) {
             console.error("Failed to fetch post:", error);
@@ -36,39 +45,68 @@ export function useBlog() {
     };
 
     const openPost = (slug: string) => {
-        setSelectedPost(null);
+        setState({ selectedPost: null });
         setBlogSlug(slug);
         setCurrentApp(MODULE_ID.blog);
     };
 
     const closePost = () => {
-        setSelectedPost(null);
+        setState({ selectedPost: null });
     };
 
     const open = () => {
-        setIsOpen(true);
-        fetchPosts();
+        setState({ isOpen: true });
+        // fetchPosts();
         setCurrentApp(MODULE_ID.blog);
     };
 
     const close = () => {
-        setIsOpen(false);
+        setState({ isOpen: false });
         closePost();
     };
 
-    const isPostActive = () => selectedPost() !== null;
+    const minimize = () => {
+        setState("isMinimized", true);
+    };
+
+    const restore = () => {
+        setState({
+            isMinimized: false,
+            isOpen: true,
+        });
+    };
+
+    const toggle = () => {
+        if (state.isMinimized) {
+            restore();
+        } else if (state.isOpen) {
+            minimize();
+        } else {
+            open();
+        }
+    };
+
+    const isPostActive = () => state.selectedPost !== null;
 
     return {
-        posts,
-        selectedPost,
-        loading,
-        isOpen,
+         isMinimized: () => state.isMinimized,
+    isActive: () => state.isOpen && !state.isMinimized,
+    
+        posts: () => state.posts,
+        selectedPost: () => state.selectedPost,
+        loading: () => loading(),
+        isOpen: () => state.isOpen,
         fetchPosts,
         fetchPostBySlug,
         openPost,
         closePost,
+
+        isPostActive,
+
         open,
         close,
-        isPostActive,
+        minimize,
+        restore,
+        toggle,
     };
 }
