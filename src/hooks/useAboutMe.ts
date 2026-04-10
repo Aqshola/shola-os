@@ -5,26 +5,27 @@ import { AppWindow } from "@/hooks/type";
 import { getBio, Bio } from "@/services/bio";
 
 export function useAboutMe(): AppWindow & {
-  bio: () => Bio | undefined;
+  bio: () => Bio | null;
   loading: () => boolean;
   fetchBio: () => Promise<void>;
 } {
   const [state, setState] = makePersisted(
     createStore({
-      isOpen: false,
+      isOpen: true,
       isMinimized: false,
+      bio: null as Bio | null
     }),
     { name: "shola-os-about-me-module" }
   );
 
-  const [bio, setBio] = createSignal<Bio | undefined>(undefined);
   const [loading, setLoading] = createSignal(false);
 
   const fetchBio = async () => {
     setLoading(true);
     try {
       const bioData = await getBio();
-      setBio(bioData);
+      setState({bio:bioData});
+      console.log(state.bio)
     } catch (error) {
       console.error("Failed to fetch bio:", error);
     } finally {
@@ -33,11 +34,12 @@ export function useAboutMe(): AppWindow & {
   };
 
   const open = () => {
+    fetchBio();
+
     setState({
       isOpen: true,
       isMinimized: false,
     });
-    fetchBio();
   };
 
   const close = () => {
@@ -52,11 +54,11 @@ export function useAboutMe(): AppWindow & {
   };
 
   const restore = () => {
+    fetchBio();
     setState({
       isMinimized: false,
       isOpen: true,
     });
-    fetchBio();
   };
 
   const toggle = () => {
@@ -78,7 +80,7 @@ export function useAboutMe(): AppWindow & {
     minimize,
     restore,
     toggle,
-    bio,
+    bio:()=>state.bio,
     loading,
     fetchBio,
   };

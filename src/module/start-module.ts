@@ -14,6 +14,7 @@ import { MODULE_ID } from "./module-id";
 import { clearLocalStorage, removeFromLocalStorage } from "@/lib/localstorage";
 import { openShutdown } from "@/stores/shutdownStore";
 import { setCurrentApp } from "@/stores/deepLinkStore";
+import { social } from "@/stores/socialStore";
 
 export interface StartApp {
     id: string;
@@ -59,7 +60,7 @@ export function initializeStartApps() {
             id: "github",
             title: "Github",
             icon: "/assets/icons/github.ico",
-            action: () => window.open("https://github.com/aqshola", "_blank"),
+            action: () => window.open(social.github, "_blank"),
             type: "external",
             showIn: {
                 start: true,
@@ -70,7 +71,7 @@ export function initializeStartApps() {
             id: "linkedin",
             title: "LinkedIn",
             icon: "/assets/icons/linkedin.ico",
-            action: () => window.open("https://linkedin.com/in/aqshol", "_blank"),
+            action: () => window.open(social.linkedin, "_blank"),
             type: "external",
             showIn: {
                 start: true,
@@ -121,8 +122,8 @@ export function initializeStartApps() {
         {
             id: MODULE_ID.notes,
             title: "Notepad",
-            icon: "/assets/icons/kodak_imaging.ico",
-            action: () => { notes.open(); setCurrentApp(MODULE_ID.notes); },
+            icon: "/assets/icons/note.png",
+            action: () => {notes.open(); setCurrentApp(MODULE_ID.notes);},
             component: NotesWindow,
             hooks: notes,
             type: "window",

@@ -1,16 +1,16 @@
-import { createSignal, Show, onCleanup } from "solid-js";
+import { createSignal, Show, onCleanup, onMount } from "solid-js";
 import { useDraggable } from "@/hooks/useDraggable";
 import { bringToFront, getZIndex, registerWindow, unregisterWindow } from "@/stores/windowStore";
 import "@/pages/Desktop/style/window.css";
 import { MODULE_ID } from "@/module/module-id";
 import { useDeviceType } from "@/hooks/useDeviceType";
-import { useAboutMe } from "@/hooks/useAboutMe";
 
 interface AboutMeWindowProps {
     isOpen: boolean;
     onClose: () => void;
     onMinimize: () => void;
     onRestore: () => void;
+    hooks: any
 }
 
 const WINDOW_ID = MODULE_ID.aboutme;
@@ -20,8 +20,13 @@ export default function AboutMeWindow(props: AboutMeWindowProps) {
     const defaultPosition = { x: window.innerWidth / 2, y: (window.innerHeight / 2) };
     const draggable = useDraggable({ x: defaultPosition.x, y: defaultPosition.y });
     const deviceType = useDeviceType();
-    const { bio, loading } = useAboutMe();
 
+
+    //INITIAL
+    onMount(()=>{
+        props.hooks.fetchBio()
+        registerWindow(WINDOW_ID)
+    })
     onCleanup(() => {
         unregisterWindow(WINDOW_ID);
     });
@@ -63,21 +68,21 @@ export default function AboutMeWindow(props: AboutMeWindowProps) {
                     </div>
                 </div>
                 <div class="window-body aboutme-content" style={{ "background-color": "white", padding: "20px" }}>
-                    <Show when={!loading()} fallback={<div style={{ "text-align": "center", padding: "20px" }}>Loading...</div>}>
-                        <Show when={bio()}>
+                    <Show when={!props.hooks.loading()} fallback={<div style={{ "text-align": "center", padding: "20px" }}>Loading...</div>}>
+                        <Show when={props.hooks.bio()}>
                             <div class="aboutme-name" style={{
                                 "font-size": "32px",
                                 "font-weight": "bold",
                                 "text-align": "center",
                                 "margin-bottom": "20px"
                             }}>
-                                {bio()!.name}
+                                {props.hooks.bio()!.name}
                             </div>
                             <div class="aboutme-description" style={{
                                 "text-align": "center",
                                 "font-size": "16px",
                                 "color": "#333"
-                            }} innerHTML={bio()!.desc}>
+                            }} innerHTML={props.hooks.bio()!.desc}>
                             </div>
                         </Show>
                     </Show>
