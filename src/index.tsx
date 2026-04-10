@@ -27,6 +27,11 @@ render(() => {
   const isAlreadyLoaded= loadFromLocalStorage("SHOLA_OS_LOADED") === "true";
   const [showSplash, setShowSplash] = createSignal(isAlreadyLoaded ? false : true);
 
+  const getAppFromParam = () => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get("app_name");
+  };
+
   return (
     <Show when={!showSplash()} fallback={
       <SplashScreen onComplete={() => {
@@ -36,7 +41,7 @@ render(() => {
       } />
     }>
       <Router>
-        <Route path={"/"} component={Desktop}/>
+        <Route path={"/"} component={() => <Desktop appName={getAppFromParam()} />} />
       </Router>
     </Show>
   );
