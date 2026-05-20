@@ -56,8 +56,8 @@ export function useBlog() {
 
     const open = () => {
         setState({ isOpen: true });
-        // fetchPosts();
         setCurrentApp(MODULE_ID.blog);
+        fetchPosts();
     };
 
     const close = () => {

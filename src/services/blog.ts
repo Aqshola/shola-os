@@ -15,7 +15,7 @@ export interface BlogPost {
 
 export async function getListPosts(): Promise<BlogPost[]> {
     const records = await pb.collection("posts").getList<BlogPost>(1, 50, {
-        filter: 'status = "published"',
+        filter: 'status = "post"',
         sort: "-created",
     });
     

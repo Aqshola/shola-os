@@ -124,7 +124,7 @@ export default function PostWindow(props: PostWindowProps) {
                                 <span class="post-author">By {post()!.author}</span>
                                 <span class="post-date">{formatDate(post()!.created)}</span>
                             </div>
-                            <h1 class="post-title">{post()!.title}</h1>
+                            <h4 class="post-title">{post()!.title}</h4>
                             <div class="post-body" innerHTML={post()!.content} />
                         </article>
                     </Show>

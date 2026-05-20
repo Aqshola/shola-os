@@ -17,8 +17,9 @@ const WINDOW_ID = "blog";
 
 export default function BlogWindow(props: BlogWindowProps) {
     const [isMaximized, setIsMaximized] = createSignal(false);
+    const [activePostSlug, setActivePostSlug] = createSignal<string | null>(null);
 
-        const defaultPosition = { x: window.innerWidth / 2, y: (window.innerHeight / 2) };
+    const defaultPosition = { x: window.innerWidth / 2, y: (window.innerHeight / 2) };
     const draggable = useDraggable({ x: defaultPosition.x, y: defaultPosition.y });
 
     const blog = props.hooks;
@@ -36,10 +37,11 @@ export default function BlogWindow(props: BlogWindowProps) {
     };
 
     const handlePostClick = (post: BlogPost) => {
+        setActivePostSlug(post.slug);
         blog.openPost(post.slug);
         registerWindow(`post-${post.slug}`);
     };
-    
+
 
     return (
         <>
@@ -51,6 +53,8 @@ export default function BlogWindow(props: BlogWindowProps) {
                         position: isMaximized() ? "fixed" : "absolute",
                         left: isMaximized() ? "0" : `${draggable.position().x}px`,
                         top: isMaximized() ? "0" : `${draggable.position().y}px`,
+                        width: isMaximized() ? "100%" : undefined,
+                        height: isMaximized() ? "calc(100vh - 28px)" : undefined,
                         "z-index": getZIndex(WINDOW_ID),
                     }}
                     onMouseDown={handleTitleBarClick}
@@ -75,11 +79,11 @@ export default function BlogWindow(props: BlogWindowProps) {
                                         onClick={() => handlePostClick(post)}
                                     >
                                         <Show when={post.thumbnail}>
-                                            <img src={post.thumbnail} alt="" class="blog-thumbnail" />
+                                            <img src={post.thumbnail} alt="" class="blog-item-thumbnail" />
                                         </Show>
-                                        <div class="blog-info">
-                                            <span class="blog-title">{post.title}</span>
-                                            <span class="blog-excerpt">
+                                        <div class="blog-item-info">
+                                            <span class="blog-item-title">{post.title}</span>
+                                            <span class="blog-item-excerpt">
                                                 {post.excerpt.substring(0, 80)}
                                                 {post.excerpt.length > 80 ? "..." : ""}
                                             </span>
@@ -97,12 +101,13 @@ export default function BlogWindow(props: BlogWindowProps) {
                 </div>
 
                 <PostWindow
-                    postSlug={blog.selectedPost()?.slug || null}
+                    postSlug={activePostSlug()}
                     onClose={() => {
+                        setActivePostSlug(null);
                         blog.closePost();
                     }}
                     onMinimize={() => handleMinimize()}
-                    onRestore={() => {}}
+                    onRestore={() => { }}
                     hooks={blog}
                 />
             </Show>
