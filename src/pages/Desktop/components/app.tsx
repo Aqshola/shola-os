@@ -1,5 +1,5 @@
 import { appStore } from "@/stores/appStore";
-import { removeActiveWindow, windowStore } from "@/stores/windowStore";
+import { removeActiveWindow,  } from "@/stores/windowStore";
 import { createMemo, For, JSX } from "solid-js";
 
 export default function App() {

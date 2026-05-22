@@ -140,7 +140,7 @@ export default function NotesWindow(props: NotesWindowProps) {
                             }>
                                 <div class="loading">Loading notes...</div>
                             </Show>
-                            <Show when={notes.notes().length === 0 && !notes.loading()}>
+                            <Show when={notes.notes() && notes.notes().length === 0 && !notes.loading()}>
                                 <div class="no-notes">No notes yet. Click "Create Note" to add one.</div>
                             </Show>
                         </div>

@@ -1,7 +1,6 @@
 import { createSignal, onCleanup, Show, For, JSX, createMemo } from "solid-js";
 import "@/pages/Desktop/style/taskbar.css"
-// import { LIST_TASKBAR_APP } from "@/module/taskbar-module";
-import { registerWindow, windowStore, addActiveWindow, removeActiveWindow } from "@/stores/windowStore";
+import { registerWindow, windowStore, addActiveWindow } from "@/stores/windowStore";
 import { MODULE_ID } from "@/module/module-id";
 import { appStore } from "@/stores/appStore";
 

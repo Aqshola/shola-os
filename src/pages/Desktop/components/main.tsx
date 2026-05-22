@@ -1,6 +1,5 @@
-import { createSignal, onMount } from 'solid-js';
 import '@/pages/Desktop/style/window.css'
-import { windowStore, addActiveWindow, registerWindow } from '@/stores/windowStore'
+import {  addActiveWindow, registerWindow } from '@/stores/windowStore'
 import { useDeviceType } from '@/hooks/useDeviceType';
 import { appStore } from '@/stores/appStore';
 
