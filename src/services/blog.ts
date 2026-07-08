@@ -1,4 +1,4 @@
-import { pb, getFileUrl } from "@/lib/pocketbase";
+import { supabase, getFileUrl } from "@/lib/supabase";
 
 export interface BlogPost {
     id: string;
@@ -14,25 +14,34 @@ export interface BlogPost {
 }
 
 export async function getListPosts(): Promise<BlogPost[]> {
-    const records = await pb.collection("posts").getList<BlogPost>(1, 50, {
-        filter: 'status = "post"',
-        sort: "-created",
-    });
-    
-    return records.items.map(record => ({
+    const { data } = await supabase
+        .from('posts')
+        .select('*')
+        .eq('status', 'post')
+        .order('created', { ascending: false })
+        .range(0, 49)
+
+    return (data ?? []).map(record => ({
         ...record,
-        thumbnail: record.thumbnail ? getFileUrl("posts", record.id, record.thumbnail) : undefined,
-    }));
+        thumbnail: record.thumbnail ? getFileUrl(record.thumbnail) : undefined,
+    }))
 }
 
 export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
     try {
-        const record = await pb.collection("posts").getFirstListItem<BlogPost>(`slug = "${slug}"`);
+        const { data, error } = await supabase
+            .from('posts')
+            .select('*')
+            .eq('slug', slug)
+            .single()
+
+        if (error || !data) return null
+
         return {
-            ...record,
-            thumbnail: record.thumbnail ? getFileUrl("posts", record.id, record.thumbnail) : undefined,
-        };
+            ...data,
+            thumbnail: data.thumbnail ? getFileUrl(data.thumbnail) : undefined,
+        }
     } catch (e) {
-        return null;
+        return null
     }
 }

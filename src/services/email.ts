@@ -1,11 +1,12 @@
-import { pb } from "@/lib/pocketbase";
+import { supabase } from "@/lib/supabase";
 
 export async function sendEmail(sender: string, content: string): Promise<boolean> {
     try {
-        await pb.collection('email').create({ sender, content });
-        return true;
+        const { error } = await supabase.from('email').insert({ sender, content })
+        if (error) throw error
+        return true
     } catch (error) {
         console.error('Failed to send email:', error);
-        return false;
+        return false
     }
 }

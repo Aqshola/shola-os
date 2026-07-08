@@ -1,17 +1,14 @@
-import { pb } from "@/lib/pocketbase";
+import { supabase } from "@/lib/supabase";
 
 export interface Social {
   id: string;
-
   name?: string;
-
   url?: string;
-
-  created: string; // ISO date string
-  updated: string; // ISO date string
+  created: string;
+  updated: string;
 }
 
-export async function getListSocial():Promise<Social[]>  {
-    const records = await pb.collection('social').getFullList() as Social[]
-    return records
+export async function getListSocial(): Promise<Social[]> {
+    const { data } = await supabase.from('social').select('*')
+    return (data ?? []) as Social[]
 }

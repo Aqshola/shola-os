@@ -3,7 +3,7 @@ import { useDraggable } from "@/hooks/useDraggable";
 import { bringToFront, getZIndex, registerWindow, unregisterWindow } from "@/stores/windowStore";
 import { Portfolio } from "@/services/portofolio";
 import "@/pages/Desktop/style/window.css";
-import { getFileUrl } from "@/lib/pocketbase";
+import { getFileUrl } from "@/lib/supabase";
 import { getPortofolioBadgeClassStatus } from "@/lib/common";
 
 interface PortfolioContentWindowProps {
@@ -95,7 +95,7 @@ export default function PortfolioContentWindow(props: PortfolioContentWindowProp
                         {/* Screenshot */}
                         <Show when={project()?.image_cover}>
                             <img
-                                src={getFileUrl(project()?.collectionId||"",project()?.id||"",project()?.image_cover||"")  || "/assets/placeholder.png"}
+                                src={getFileUrl(project()?.image_cover||"")  || "/assets/placeholder.png"}
                                 alt={project()?.title}
                                 class="portfolio-detail-screenshot"
                             />
