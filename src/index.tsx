@@ -9,7 +9,6 @@ import SplashScreen from './components/SplashScreen';
 import  './style/index.css'
 import { loadFromLocalStorage, saveToLocalStorage } from './lib/localstorage';
 import { initAppList } from './stores/appStore';
-import { initPocketBase } from './lib/pocketbase';
 import { initSocial } from './stores/socialStore';
 import { getAppFromParam, getBlogSlugFromParam, setBlogSlug } from './stores/deepLinkStore';
 
@@ -22,7 +21,6 @@ if (import.meta.env.DEV && !(root instanceof HTMLElement)) {
 }
 
 render(() => {
-  initPocketBase()
   initSocial()
   initAppList()
   const isAlreadyLoaded= loadFromLocalStorage("SHOLA_OS_LOADED") === "true";

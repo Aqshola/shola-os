@@ -1,4 +1,4 @@
-import { pb } from "@/lib/pocketbase";
+import { supabase } from "@/lib/supabase";
 
 export interface Bio {
   id: string;
@@ -10,6 +10,6 @@ export interface Bio {
 }
 
 export async function getBio(): Promise<Bio> {
-  const records = await pb.collection('bio').getFullList<Bio>();
-  return records[0];
+  const { data } = await supabase.from('bio').select('*')
+  return data?.[0]
 }
