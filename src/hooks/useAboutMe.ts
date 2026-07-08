@@ -25,7 +25,6 @@ export function useAboutMe(): AppWindow & {
     try {
       const bioData = await getBio();
       setState({bio:bioData});
-      console.log(state.bio)
     } catch (error) {
       console.error("Failed to fetch bio:", error);
     } finally {
