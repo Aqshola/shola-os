@@ -1,10 +1,10 @@
-import { JSX } from "solid-js";
-import EmailWindow from "@/apps/EmailWindow";
-import ResumeWindow from "@/apps/ResumeWindow";
-import PortfolioWindow from "@/apps/PortfolioWindow";
-import AboutMeWindow from "@/apps/AboutMeWindow";
-import NotesWindow from "@/apps/NotesWindow";
-import BlogWindow from "@/apps/BlogWindow";
+import { JSX, lazy } from "solid-js";
+const EmailWindow = lazy(() => import("@/apps/EmailWindow"));
+const ResumeWindow = lazy(() => import("@/apps/ResumeWindow"));
+const PortfolioWindow = lazy(() => import("@/apps/PortfolioWindow"));
+const AboutMeWindow = lazy(() => import("@/apps/AboutMeWindow"));
+const NotesWindow = lazy(() => import("@/apps/NotesWindow"));
+const BlogWindow = lazy(() => import("@/apps/BlogWindow"));
 import { AppWindow } from "@/hooks/type";
 import { useEmail } from "@/hooks/useEmail";
 import { useResume } from "@/hooks/useResume";

@@ -15,11 +15,31 @@ export type Portfolio = {
 };
 
 export async function getListPortofolio(): Promise<Portfolio[]> {
-    const { data } = await supabase.from('portofolio').select('*')
-    return (data ?? []) as Portfolio[]
+    try {
+        if (typeof window !== 'undefined' && window.location.origin && !import.meta.env.DEV) {
+            const edgeRes = await fetch('/api/portfolio');
+            if (edgeRes.ok) {
+                const data = await edgeRes.json();
+                return (data ?? []) as Portfolio[];
+            }
+        }
+    } catch (_) {}
+
+    const { data } = await supabase.from('portofolio').select('*');
+    return (data ?? []) as Portfolio[];
 }
 
 export async function getDetailPortofolio(id: string): Promise<Portfolio> {
-    const { data } = await supabase.from('portofolio').select('*').eq('id', id).single()
-    return data as Portfolio
+    try {
+        if (typeof window !== 'undefined' && window.location.origin && !import.meta.env.DEV) {
+            const edgeRes = await fetch(`/api/portfolio?id=${encodeURIComponent(id)}`);
+            if (edgeRes.ok) {
+                const data = await edgeRes.json();
+                if (data && data.id) return data as Portfolio;
+            }
+        }
+    } catch (_) {}
+
+    const { data } = await supabase.from('portofolio').select('*').eq('id', id).single();
+    return data as Portfolio;
 }
