@@ -1,0 +1,43 @@
+interface Env {
+  VITE_SUPABASE_URL?: string;
+  VITE_SUPABASE_ANON_KEY?: string;
+  SUPABASE_URL?: string;
+  SUPABASE_ANON_KEY?: string;
+}
+
+export const onRequestGet: PagesFunction<Env> = async (context) => {
+  const supabaseUrl = context.env.SUPABASE_URL || context.env.VITE_SUPABASE_URL;
+  const supabaseKey = context.env.SUPABASE_ANON_KEY || context.env.VITE_SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !supabaseKey) {
+    return new Response(JSON.stringify({ error: 'Supabase configuration missing' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  try {
+    const res = await fetch(`${supabaseUrl}/rest/v1/bio?select=*`, {
+      headers: {
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`,
+      },
+    });
+
+    const data = await res.text();
+
+    return new Response(data, {
+      status: res.status,
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=300, s-maxage=3600, stale-while-revalidate=86400',
+        'Access-Control-Allow-Origin': '*',
+      },
+    });
+  } catch (error: any) {
+    return new Response(JSON.stringify({ error: error.message || 'Failed to fetch bio' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+};
