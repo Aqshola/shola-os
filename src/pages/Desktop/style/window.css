@@ -22,7 +22,8 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-
+    cursor: pointer;
+    user-select: none;
 }
 
 .desktop-icon-image {
@@ -47,6 +48,18 @@
     overflow: hidden;
     padding: 2px 4px;
     overflow-wrap: break-word;
+    box-sizing: border-box;
+}
+
+.desktop-icon.selected .desktop-icon-text {
+    background-color: #000080;
+    color: #ffffff;
+    outline: 1px dotted #ffffff;
+    text-shadow: none;
+}
+
+.desktop-icon.selected .desktop-icon-image {
+    filter: drop-shadow(0 0 0 #000080) brightness(0.85) contrast(1.1);
 }
 
 /* Email Window */
