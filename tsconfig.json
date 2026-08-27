@@ -15,9 +15,10 @@
 
     // Type Checking & Safety
     "strict": true,
-    "types": ["vite/client"],
+    "types": ["vite/client","@cloudflare/workers-types"],
 
     // Paths
+    
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
