@@ -22,6 +22,7 @@
     "@solid-primitives/storage": "^4.3.4",
     "@solidjs/router": "^0.15.4",
     "98.css": "^0.1.21",
+    "jsnes": "^2.1.0",
     "solid-js": "^1.9.5"
   }
 }

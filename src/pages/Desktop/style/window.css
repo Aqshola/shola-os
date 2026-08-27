@@ -673,3 +673,502 @@
     left: 0 !important;
     transform: none !important;
 }
+
+/* ============================================================
+   Game Showcase Window & NES Emulator Modal
+   ============================================================ */
+
+.game-window {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 580px;
+    height: 600px;
+    z-index: 10001;
+    display: flex;
+    flex-direction: column;
+}
+
+.game-window.window-maximized {
+    width: 100% !important;
+    height: calc(100vh - 28px) !important;
+    top: 0 !important;
+    left: 0 !important;
+    transform: none !important;
+}
+
+.game-window-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    gap: 12px;
+    padding: 8px;
+}
+
+.game-header-banner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #000080;
+    color: #ffffff;
+    padding: 8px 12px;
+    border: 2px inset #dfdfdf;
+}
+
+.game-header-icon {
+    font-size: 28px;
+}
+
+.game-header-text h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+
+.game-header-text p {
+    margin: 2px 0 0 0;
+    font-size: 11px;
+    color: #c0c0c0;
+}
+
+.game-list-container {
+    flex: 1;
+}
+
+.game-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.game-showcase-card {
+    display: flex;
+    gap: 12px;
+    border: 2px solid #808080;
+    background: #c0c0c0;
+    padding: 10px;
+    box-shadow: 1px 1px 0 #fff inset, -1px -1px 0 #000 inset;
+}
+
+.game-card-media {
+    width: 130px;
+    height: 110px;
+    flex-shrink: 0;
+    background: #000;
+    border: 2px inset #808080;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.game-card-cover {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    image-rendering: pixelated;
+}
+
+.game-card-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.game-card-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.game-card-title {
+    margin: 0;
+    font-size: 15px;
+    font-weight: bold;
+    color: #000080;
+}
+
+.game-card-genre-badge {
+    background: #000080;
+    color: #fff;
+    font-size: 10px;
+    padding: 2px 6px;
+    font-weight: bold;
+    border-radius: 2px;
+}
+
+.game-card-meta {
+    margin: 0 0 6px 0;
+    font-size: 11px;
+    color: #555;
+}
+
+.game-card-description {
+    margin: 0 0 10px 0;
+    font-size: 12px;
+    line-height: 1.4;
+    color: #222;
+}
+
+.game-card-actions {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.play-btn {
+    font-weight: bold;
+    padding: 4px 16px;
+    font-size: 12px;
+}
+
+.game-instructions-box fieldset {
+    margin: 0;
+    padding: 8px 12px;
+}
+
+.game-instructions-box legend {
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.controls-legend-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 6px 12px;
+}
+
+.legend-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+}
+
+.legend-key kbd {
+    background: #dfdfdf;
+    border: 1px solid #808080;
+    border-bottom: 2px solid #000;
+    border-right: 2px solid #000;
+    padding: 2px 6px;
+    font-size: 10px;
+    font-family: monospace;
+    font-weight: bold;
+    color: #000;
+}
+
+.legend-action {
+    color: #333;
+}
+
+/* NES Emulator Window */
+.game-emulator-window {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 560px;
+    height: 620px;
+    z-index: 10002;
+    display: flex;
+    flex-direction: column;
+}
+
+.game-emulator-window.window-maximized {
+    width: 100% !important;
+    height: calc(100vh - 28px) !important;
+    top: 0 !important;
+    left: 0 !important;
+    transform: none !important;
+}
+
+.game-player-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 6px;
+    gap: 6px;
+    background: #c0c0c0;
+    overflow: hidden;
+}
+
+.emulator-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #808080;
+}
+
+.emulator-toolbar-group {
+    display: flex;
+    gap: 6px;
+}
+
+.emulator-toolbar-group button.active {
+    box-shadow: 1px 1px 0 #000 inset, -1px -1px 0 #fff inset;
+    background: #b0b0b0;
+}
+
+.emulator-status-pill {
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.status-running {
+    color: #006600;
+}
+
+.status-loading {
+    color: #b87800;
+}
+
+.status-error {
+    color: #cc0000;
+}
+
+.emulator-screen-wrapper {
+    flex: 1;
+    background: #000000;
+    border: 3px inset #808080;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    min-height: 240px;
+}
+
+.emulator-screen-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.emulator-screen-container canvas {
+    max-width: 100%;
+    max-height: 100%;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+}
+
+
+.emulator-loading-box,
+.emulator-error-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    padding: 20px;
+    text-align: center;
+}
+
+.emulator-loading-box p,
+.emulator-error-box p {
+    margin: 6px 0;
+    font-size: 13px;
+}
+
+.emulator-loading-box small {
+    color: #a0a0a0;
+    font-size: 11px;
+}
+
+.loading-spinner {
+    width: 24px;
+    height: 24px;
+    border: 3px solid #555;
+    border-top: 3px solid #00f;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 8px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Virtual Gamepad */
+.virtual-gamepad-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #2a2a2a;
+    border: 2px inset #808080;
+    padding: 8px 12px;
+    border-radius: 4px;
+    user-select: none;
+}
+
+.dpad-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.dpad-row {
+    display: flex;
+    justify-content: center;
+}
+
+.dpad-middle {
+    align-items: center;
+}
+
+.dpad-center {
+    width: 32px;
+    height: 32px;
+    background: #1a1a1a;
+}
+
+.dpad-btn {
+    width: 32px;
+    height: 32px;
+    background: #444;
+    color: #fff;
+    border: 1px solid #666;
+    font-size: 14px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 1px 1px 2px #000;
+}
+
+.dpad-btn:active {
+    background: #222;
+    transform: scale(0.95);
+}
+
+.gamepad-middle-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.pill-btn-group {
+    display: flex;
+    gap: 8px;
+}
+
+.pill-btn {
+    background: #444;
+    color: #ccc;
+    font-size: 9px;
+    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 10px;
+    border: 1px solid #666;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+}
+
+.pill-btn:active {
+    background: #222;
+    color: #fff;
+}
+
+.action-buttons-container {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.action-row {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.action-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #cc0000;
+    color: #fff;
+    font-weight: bold;
+    font-size: 14px;
+    border: 2px solid #880000;
+    cursor: pointer;
+    box-shadow: 1px 1px 3px #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.action-btn:active {
+    background: #990000;
+    transform: scale(0.92);
+}
+
+.turbo-btn {
+    width: 30px;
+    height: 30px;
+    font-size: 10px;
+    background: #d97706;
+    border-color: #92400e;
+}
+
+.turbo-btn:active {
+    background: #b45309;
+}
+
+.emulator-controls-hint {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 12px;
+    font-size: 11px;
+    background: #e0e0e0;
+    border: 1px solid #808080;
+    padding: 4px 8px;
+}
+
+.hint-title {
+    font-weight: bold;
+    color: #000080;
+}
+
+.hint-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #333;
+}
+
+.hint-item kbd {
+    background: #fff;
+    border: 1px solid #808080;
+    border-bottom: 2px solid #444;
+    padding: 1px 4px;
+    font-size: 10px;
+    font-family: monospace;
+    font-weight: bold;
+}
+
+@media (max-width: 600px) {
+    .game-window, .game-emulator-window {
+        width: calc(100vw - 20px) !important;
+        height: calc(100vh - 40px) !important;
+    }
+
+    .game-showcase-card {
+        flex-direction: column;
+    }
+
+    .game-card-media {
+        width: 100%;
+        height: 120px;
+    }
+}
