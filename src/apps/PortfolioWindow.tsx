@@ -4,7 +4,6 @@ import { bringToFront, getZIndex, registerWindow, unregisterWindow } from "@/sto
 import "@/pages/Desktop/style/window.css";
 import PortfolioContentWindow from "./PortfolioContentWindow";
 import { Portfolio } from "@/services/portofolio";
-import { getFileUrl } from "@/lib/supabase";
 
 interface PortfolioWindowProps {
     isOpen: boolean;
@@ -77,7 +76,7 @@ export default function PortfolioWindow(props: PortfolioWindowProps) {
                                             <img src="/assets/icons/kodak_imaging.ico" alt="" class="portfolio-card-icon" />
                                             <span class="portfolio-card-title">{project.title}</span>
                                         </div>
-                                        <img src={ getFileUrl(project.image_cover||"")  || "/assets/placeholder.png"} alt={project.title} class="portfolio-card-thumbnail" />
+                                        <img src={project.image_cover || "/assets/placeholder.png"} alt={project.title} class="portfolio-card-thumbnail" />
                                     </div>
                                 )}</For>
                             </div>
