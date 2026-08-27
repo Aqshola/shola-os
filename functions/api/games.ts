@@ -9,6 +9,16 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   const emdashUrl = context.env.VITE_EMDASH_URL;
   const emdashKey = context.env.VITE_EMDASH_API_KEY;
 
+  if (!emdashUrl) {
+    return new Response(
+      JSON.stringify({ error: 'Internal Server Error: VITE_EMDASH_URL is not configured' }),
+      {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
+  }
+
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
   };
