@@ -1,4 +1,5 @@
 import { createSignal, Show, onCleanup, onMount } from "solid-js";
+import { PortableText } from "@portabletext/solid";
 import { useDraggable } from "@/hooks/useDraggable";
 import { bringToFront, getZIndex, registerWindow, unregisterWindow } from "@/stores/windowStore";
 import "@/pages/Desktop/style/window.css";
@@ -82,7 +83,13 @@ export default function AboutMeWindow(props: AboutMeWindowProps) {
                                 "text-align": "center",
                                 "font-size": "16px",
                                 "color": "#333"
-                            }} innerHTML={props.hooks.bio()!.desc}>
+                            }}>
+                                <Show
+                                    when={Array.isArray(props.hooks.bio()!.desc)}
+                                    fallback={<div innerHTML={typeof props.hooks.bio()!.desc === "string" ? props.hooks.bio()!.desc : ""} />}
+                                >
+                                    <PortableText value={props.hooks.bio()!.desc as any} />
+                                </Show>
                             </div>
                         </Show>
                     </Show>
