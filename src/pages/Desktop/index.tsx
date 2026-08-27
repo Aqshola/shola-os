@@ -27,15 +27,11 @@ export default function Desktop(props: DesktopProps) {
     const blog = useBlog();
 
     onMount(() => {
-        // Handle blog with slug first (deep linking)
+        // Handle blog with slug first (deep linking on desktop)
         if (props.appName === MODULE_ID.blog && props.blogSlug) {
             blog.open();
-            blog.fetchPostBySlug(props.blogSlug).then((post) => {
-                if (post) {
-                    blog.openPost(post.slug);
-                    registerWindow(`post-${post.slug}`);
-                }
-            });
+            blog.openPost(props.blogSlug);
+            registerWindow(`post-${props.blogSlug}`);
             return;
         }
 

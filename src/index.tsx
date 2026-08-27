@@ -1,16 +1,18 @@
 /* @refresh reload */
 import { render } from 'solid-js/web';
-import { createSignal, Show } from 'solid-js';
+import { createSignal, Show, lazy } from 'solid-js';
 import 'solid-devtools';
 
 import { Route, Router } from '@solidjs/router';
 import Desktop from './pages/Desktop';
 import SplashScreen from './components/SplashScreen';
-import  './style/index.css'
+import './style/index.css';
 import { loadFromLocalStorage, saveToLocalStorage } from './lib/localstorage';
 import { initAppList } from './stores/appStore';
 import { initSocial } from './stores/socialStore';
-import { getAppFromParam, getBlogSlugFromParam, setBlogSlug } from './stores/deepLinkStore';
+
+const BlogsPage = lazy(() => import('./pages/Blogs'));
+const BlogPostDetailPage = lazy(() => import('./pages/Blogs/PostDetail'));
 
 const root = document.getElementById('root');
 
@@ -21,10 +23,11 @@ if (import.meta.env.DEV && !(root instanceof HTMLElement)) {
 }
 
 render(() => {
-  initSocial()
-  initAppList()
-  const isAlreadyLoaded= loadFromLocalStorage("SHOLA_OS_LOADED") === "true";
-  const [showSplash, setShowSplash] = createSignal(isAlreadyLoaded ? false : true);
+  initSocial();
+  initAppList();
+  const isAlreadyLoaded = loadFromLocalStorage("SHOLA_OS_LOADED") === "true";
+  const isDirectBlogRoute = typeof window !== 'undefined' && window.location.pathname.startsWith('/blog');
+  const [showSplash, setShowSplash] = createSignal(isAlreadyLoaded || isDirectBlogRoute ? false : true);
 
   const getAppFromParam = () => {
     const params = new URLSearchParams(window.location.search);
@@ -37,19 +40,23 @@ render(() => {
   };
 
   // Store app_name and blog_slug for Desktop to use
-  window.__APP_NAME__ = getAppFromParam();
-  window.__BLOG_SLUG__ = getBlogSlugFromParam();
+  if (typeof window !== 'undefined') {
+    window.__APP_NAME__ = getAppFromParam();
+    window.__BLOG_SLUG__ = getBlogSlugFromParam();
+  }
 
   return (
     <Show when={!showSplash()} fallback={
       <SplashScreen onComplete={() => {
-        setShowSplash(false)
-        saveToLocalStorage("SHOLA_OS_LOADED", "true")
-      }
-      } />
+        setShowSplash(false);
+        saveToLocalStorage("SHOLA_OS_LOADED", "true");
+      }} />
     }>
       <Router>
-        <Route path={"/"} component={() => <Desktop appName={getAppFromParam()} blogSlug={getBlogSlugFromParam()} />} />
+        <Route path="/" component={() => <Desktop appName={getAppFromParam()} blogSlug={getBlogSlugFromParam()} />} />
+        <Route path="/blogs" component={BlogsPage} />
+        <Route path="/blog/:slug" component={BlogPostDetailPage} />
+        <Route path="/blogs/:slug" component={BlogPostDetailPage} />
       </Router>
     </Show>
   );

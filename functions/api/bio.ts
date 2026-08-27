@@ -1,16 +1,12 @@
 interface Env {
-  EMDASH_URL?: string;
   VITE_EMDASH_URL?: string;
-  EMDASH_API_KEY?: string;
-  EMDASH_TOKEN?: string;
   VITE_EMDASH_API_KEY?: string;
-  VITE_EMDASH_TOKEN?: string;
 }
 
 export const onRequestGet: PagesFunction<Env> = async (context) => {
   const url = new URL(context.request.url);
-  const emdashUrl = context.env.EMDASH_URL || context.env.VITE_EMDASH_URL || url.origin;
-  const emdashKey = context.env.VITE_EMDASH_API_KEY 
+  const emdashUrl = context.env.VITE_EMDASH_URL;
+  const emdashKey = context.env.VITE_EMDASH_API_KEY;
 
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -49,4 +45,3 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     });
   }
 };
-

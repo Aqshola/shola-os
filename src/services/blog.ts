@@ -1,10 +1,19 @@
-import { supabase, getFileUrl } from "@/lib/supabase";
+import { getEmDashContent, getEmDashEntry, EmDashEntry } from "@/lib/emdash";
+import type { PortableTextBlock } from "@portabletext/types";
+
+export interface BlogPostData {
+    title: string;
+    excerpt?: string;
+    thumbnail?: any;
+    author?: string;
+    content?: PortableTextBlock[] | string;
+}
 
 export interface BlogPost {
     id: string;
     title: string;
     slug: string;
-    content: string;
+    content: PortableTextBlock[] | string;
     excerpt: string;
     thumbnail?: string;
     author: string;
@@ -13,63 +22,123 @@ export interface BlogPost {
     updated: string;
 }
 
-export async function getListPosts(): Promise<BlogPost[]> {
-    try {
-        if (typeof window !== 'undefined' && window.location.origin && !import.meta.env.DEV) {
-            const edgeRes = await fetch('/api/posts');
-            if (edgeRes.ok) {
-                const data = await edgeRes.json();
-                return (data ?? []).map((record: any) => ({
-                    ...record,
-                    thumbnail: record.thumbnail ? getFileUrl(record.thumbnail) : undefined,
-                }));
-            }
-        }
-    } catch (_) {}
-
-    const { data } = await supabase
-        .from('posts')
-        .select('*')
-        .eq('status', 'post')
-        .order('created', { ascending: false })
-        .range(0, 49);
-
-    return (data ?? []).map(record => ({
-        ...record,
-        thumbnail: record.thumbnail ? getFileUrl(record.thumbnail) : undefined,
-    }));
+export interface PaginatedBlogPosts {
+    items: BlogPost[];
+    total: number;
 }
 
-export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
-    try {
-        if (typeof window !== 'undefined' && window.location.origin && !import.meta.env.DEV) {
-            const edgeRes = await fetch(`/api/posts?slug=${encodeURIComponent(slug)}`);
+export interface GetListPostsOptions {
+    page?: number;
+    limit?: number;
+    status?: string;
+}
+
+export function mapEntryToBlogPost(entry: EmDashEntry<BlogPostData>): BlogPost {
+    const thumbnail = entry.data?.thumbnail;
+    let imageUrl = "";
+    if (typeof thumbnail === "string") {
+        imageUrl = thumbnail;
+    } else if (thumbnail && typeof thumbnail === "object") {
+        imageUrl = thumbnail.url 
+            || (thumbnail.meta?.storageKey ? `/_emdash/api/media/file/${thumbnail.meta.storageKey}` : "")
+            || (thumbnail.storageKey ? `/_emdash/api/media/file/${thumbnail.storageKey}` : "");
+    }
+
+    return {
+        id: entry.id,
+        title: entry.data?.title || "Untitled Post",
+        slug: entry.slug || entry.id,
+        content: entry.data?.content || "",
+        excerpt: entry.data?.excerpt || "",
+        thumbnail: imageUrl || undefined,
+        author: entry.data?.author || "Aqshol",
+        status: entry.status || "published",
+        created: entry.publishedAt || entry.createdAt,
+        updated: entry.updatedAt,
+    };
+}
+
+export async function getListPosts(options: GetListPostsOptions = {}): Promise<PaginatedBlogPosts> {
+    const page = Math.max(1, options.page || 1);
+    const limit = options.limit || 10;
+    const offset = (page - 1) * limit;
+
+    // 1. Try Cloudflare Pages edge cache (/api/posts) in production
+    if (typeof window !== 'undefined' && window.location.origin && !import.meta.env.DEV) {
+        try {
+            const edgeRes = await fetch(`/api/posts?limit=${limit}&offset=${offset}`);
             if (edgeRes.ok) {
                 const data = await edgeRes.json();
-                if (data && data.title) {
+                if (data && Array.isArray(data.items)) {
                     return {
-                        ...data,
-                        thumbnail: data.thumbnail ? getFileUrl(data.thumbnail) : undefined,
+                        items: data.items.map(mapEntryToBlogPost),
+                        total: data.total ?? data.items.length,
+                    };
+                } else if (Array.isArray(data)) {
+                    return {
+                        items: data.map(mapEntryToBlogPost),
+                        total: data.length,
                     };
                 }
             }
-        }
-    } catch (_) {}
+        } catch (_) {}
+    }
 
+    // 2. Fetch directly from Emdash CMS
     try {
-        const { data, error } = await supabase
-            .from('posts')
-            .select('*')
-            .eq('slug', slug)
-            .single();
-
-        if (error || !data) return null;
-
+        const response = await getEmDashContent<BlogPostData>('posts', {
+            limit,
+            offset,
+            status: options.status || 'published',
+            orderBy: 'createdAt',
+            order: 'desc',
+        });
         return {
-            ...data,
-            thumbnail: data.thumbnail ? getFileUrl(data.thumbnail) : undefined,
+            items: (response.items || []).map(mapEntryToBlogPost),
+            total: response.total ?? (response.items?.length || 0),
         };
-    } catch (e) {
+    } catch (error) {
+        console.error('Failed to fetch posts from Emdash:', error);
+        return { items: [], total: 0 };
+    }
+}
+
+export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
+    if (!slug) return null;
+
+    // 1. Try Cloudflare Pages edge cache (/api/posts?slug=...) in production
+    if (typeof window !== 'undefined' && window.location.origin && !import.meta.env.DEV) {
+        try {
+            const edgeRes = await fetch(`/api/posts?slug=${encodeURIComponent(slug)}`);
+            if (edgeRes.ok) {
+                const item = await edgeRes.json();
+                if (item && (item.id || item.slug)) {
+                    return mapEntryToBlogPost(item);
+                }
+            }
+        } catch (_) {}
+    }
+
+    // 2. Fetch directly from Emdash CMS
+    try {
+        // Try getting by slug or ID
+        const entry = await getEmDashEntry<BlogPostData>('posts', slug);
+        if (entry) {
+            return mapEntryToBlogPost(entry);
+        }
+
+        // Fallback: search by slug filter
+        const response = await getEmDashContent<BlogPostData>('posts', {
+            slug,
+            limit: 1,
+        });
+        if (response.items && response.items.length > 0) {
+            return mapEntryToBlogPost(response.items[0]);
+        }
+
+        return null;
+    } catch (error) {
+        console.error(`Failed to fetch post for slug ${slug} from Emdash:`, error);
         return null;
     }
 }

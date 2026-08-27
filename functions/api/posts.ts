@@ -1,46 +1,69 @@
 interface Env {
-  VITE_SUPABASE_URL?: string;
-  VITE_SUPABASE_ANON_KEY?: string;
-  SUPABASE_URL?: string;
-  SUPABASE_ANON_KEY?: string;
+  VITE_EMDASH_URL?: string;
+  VITE_EMDASH_API_KEY?: string;
 }
 
 export const onRequestGet: PagesFunction<Env> = async (context) => {
   const url = new URL(context.request.url);
   const slug = url.searchParams.get('slug');
+  const limit = url.searchParams.get('limit') || '10';
+  const offset = url.searchParams.get('offset') || '0';
 
-  const supabaseUrl = context.env.SUPABASE_URL || context.env.VITE_SUPABASE_URL;
-  const supabaseKey = context.env.SUPABASE_ANON_KEY || context.env.VITE_SUPABASE_ANON_KEY;
-
-  if (!supabaseUrl || !supabaseKey) {
-    return new Response(JSON.stringify({ error: 'Supabase configuration missing' }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  }
-
-  const queryParams = slug
-    ? `slug=eq.${encodeURIComponent(slug)}&select=*`
-    : `status=eq.post&order=created.desc&limit=50&offset=0&select=*`;
+  const emdashUrl = context.env.VITE_EMDASH_URL;
+  const emdashKey = context.env.VITE_EMDASH_API_KEY;
 
   const headers: Record<string, string> = {
-    apikey: supabaseKey,
-    Authorization: `Bearer ${supabaseKey}`,
+    'Content-Type': 'application/json',
   };
-
-  if (slug) {
-    headers['Accept'] = 'application/vnd.pgrst.object+json';
+  if (emdashKey) {
+    headers['Authorization'] = `Bearer ${emdashKey}`;
   }
 
+  const endpoint = slug
+    ? `${emdashUrl}/_emdash/api/content/posts/${encodeURIComponent(slug)}`
+    : `${emdashUrl}/_emdash/api/content/posts?status=published&orderBy=createdAt&order=desc&limit=${limit}&offset=${offset}`;
+
   try {
-    const res = await fetch(`${supabaseUrl}/rest/v1/posts?${queryParams}`, {
-      headers,
-    });
+    const res = await fetch(endpoint, { headers });
+    if (!res.ok) {
+      if (slug && res.status === 404) {
+        // Try querying by slug query param
+        const fallbackRes = await fetch(
+          `${emdashUrl}/_emdash/api/content/posts?slug=${encodeURIComponent(slug)}&limit=1`,
+          { headers }
+        );
+        if (fallbackRes.ok) {
+          const fallbackJson: any = await fallbackRes.json();
+          const item = fallbackJson.data?.items?.[0] || null;
+          if (item) {
+            return new Response(JSON.stringify(item), {
+              status: 200,
+              headers: {
+                'Content-Type': 'application/json',
+                'Cache-Control': 'public, max-age=300, s-maxage=3600, stale-while-revalidate=86400',
+                'Access-Control-Allow-Origin': '*',
+              },
+            });
+          }
+        }
+      }
 
-    const data = await res.text();
+      return new Response(JSON.stringify({ error: `Emdash error: ${res.statusText}` }), {
+        status: res.status,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
 
-    return new Response(data, {
-      status: res.status,
+    const json: any = await res.json();
+    const data = slug
+      ? (json.data?.item ?? json.data ?? null)
+      : {
+          items: json.data?.items ?? [],
+          total: json.data?.total ?? (json.data?.items?.length || 0),
+        };
+
+    return new Response(JSON.stringify(data), {
+      status: 200,
       headers: {
         'Content-Type': 'application/json',
         'Cache-Control': 'public, max-age=300, s-maxage=3600, stale-while-revalidate=86400',

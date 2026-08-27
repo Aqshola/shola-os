@@ -18,6 +18,7 @@ export interface EmDashListResponse<T = Record<string, any>> {
 
 export interface EmDashContentOptions {
   limit?: number;
+  offset?: number;
   status?: string;
   orderBy?: string;
   order?: "asc" | "desc";
@@ -56,6 +57,7 @@ export async function getEmDashContent<T = Record<string, any>>(
   const params = new URLSearchParams();
 
   if (options?.limit) params.set("limit", options.limit.toString());
+  if (options?.offset !== undefined) params.set("offset", options.offset.toString());
   if (options?.status) params.set("status", options.status);
   if (options?.orderBy) params.set("orderBy", options.orderBy);
   if (options?.order) params.set("order", options.order);
