@@ -1,4 +1,4 @@
-import { createSignal } from "solid-js";
+import { createSignal, createMemo } from "solid-js";
 import { getListPosts, getPostBySlug, BlogPost } from "@/services/blog";
 import { MODULE_ID } from "@/module/module-id";
 import { setCurrentApp, setBlogSlug } from "@/stores/deepLinkStore";
@@ -6,27 +6,62 @@ import { makePersisted } from "@solid-primitives/storage";
 import { createStore } from "solid-js/store";
 
 export function useBlog() {
-
     const [state, setState] = makePersisted(
         createStore({
             isOpen: false,
             isMinimized: false,
             posts: [] as BlogPost[],
             selectedPost: null as BlogPost | null,
+            page: 1,
+            pageSize: 6,
+            total: 0,
         }),
-        { name: "shola-os-notes-module" }
+        { name: "shola-os-blog-module" }
     );
     const [loading, setLoading] = createSignal(false);
 
-    const fetchPosts = async () => {
+    const totalPages = createMemo(() => {
+        const total = state.total || 0;
+        const size = state.pageSize || 6;
+        return Math.max(1, Math.ceil(total / size));
+    });
+
+    const fetchPosts = async (targetPage?: number, targetPageSize?: number) => {
+        const pageToFetch = targetPage ?? state.page;
+        const limitToFetch = targetPageSize ?? state.pageSize;
         setLoading(true);
         try {
-            const result = await getListPosts();
-            setState({ posts: result });
+            const result = await getListPosts({
+                page: pageToFetch,
+                limit: limitToFetch,
+            });
+            setState({
+                posts: result.items,
+                total: result.total,
+                page: pageToFetch,
+                pageSize: limitToFetch,
+            });
         } catch (error) {
             console.error("Failed to fetch posts:", error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const goToPage = (page: number) => {
+        if (page < 1 || page > totalPages() || page === state.page) return;
+        fetchPosts(page);
+    };
+
+    const nextPage = () => {
+        if (state.page < totalPages()) {
+            goToPage(state.page + 1);
+        }
+    };
+
+    const prevPage = () => {
+        if (state.page > 1) {
+            goToPage(state.page - 1);
         }
     };
 
@@ -57,7 +92,7 @@ export function useBlog() {
     const open = () => {
         setState({ isOpen: true });
         setCurrentApp(MODULE_ID.blog);
-        fetchPosts();
+        fetchPosts(state.page);
     };
 
     const close = () => {
@@ -89,20 +124,24 @@ export function useBlog() {
     const isPostActive = () => state.selectedPost !== null;
 
     return {
-         isMinimized: () => state.isMinimized,
-    isActive: () => state.isOpen && !state.isMinimized,
-    
+        isMinimized: () => state.isMinimized,
+        isActive: () => state.isOpen && !state.isMinimized,
         posts: () => state.posts,
         selectedPost: () => state.selectedPost,
+        page: () => state.page,
+        pageSize: () => state.pageSize,
+        total: () => state.total,
+        totalPages,
         loading: () => loading(),
         isOpen: () => state.isOpen,
         fetchPosts,
+        goToPage,
+        nextPage,
+        prevPage,
         fetchPostBySlug,
         openPost,
         closePost,
-
         isPostActive,
-
         open,
         close,
         minimize,

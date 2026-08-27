@@ -1,8 +1,6 @@
 interface Env {
-  VITE_SUPABASE_URL?: string;
-  VITE_SUPABASE_ANON_KEY?: string;
-  SUPABASE_URL?: string;
-  SUPABASE_ANON_KEY?: string;
+  VITE_EMDASH_URL?: string;
+  VITE_EMDASH_API_KEY?: string;
 }
 
 const CRAWLER_USER_AGENTS = [
@@ -45,59 +43,82 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   if (
     pathname.startsWith('/assets/') ||
     pathname.startsWith('/api/') ||
+    pathname.startsWith('/_emdash/') ||
     /\.(js|css|webp|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|json|xml|txt)$/i.test(pathname)
   ) {
     return context.next();
   }
 
   const userAgent = context.request.headers.get('user-agent');
-  const blogSlug = url.searchParams.get('blog_slug');
+  let blogSlug = url.searchParams.get('blog_slug');
+  if (!blogSlug) {
+    if (pathname.startsWith('/blog/') && pathname.length > 6) {
+      blogSlug = decodeURIComponent(pathname.slice(6).split('/')[0]);
+    } else if (pathname.startsWith('/blogs/') && pathname.length > 7) {
+      blogSlug = decodeURIComponent(pathname.slice(7).split('/')[0]);
+    }
+  }
 
   // If not a crawler or no blog slug specified, serve the standard SPA
   if (!isCrawler(userAgent) || !blogSlug) {
     return context.next();
   }
 
-  const supabaseUrl = context.env.SUPABASE_URL || context.env.VITE_SUPABASE_URL;
-  const supabaseKey = context.env.SUPABASE_ANON_KEY || context.env.VITE_SUPABASE_ANON_KEY;
+  const emdashUrl = context.env.VITE_EMDASH_URL;
+  const emdashKey = context.env.VITE_EMDASH_API_KEY;
 
-  if (!supabaseUrl || !supabaseKey) {
-    return context.next();
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
+  if (emdashKey) {
+    headers['Authorization'] = `Bearer ${emdashKey}`;
   }
 
   try {
-    const postRes = await fetch(
-      `${supabaseUrl}/rest/v1/posts?slug=eq.${encodeURIComponent(blogSlug)}&select=*`,
-      {
-        headers: {
-          apikey: supabaseKey,
-          Authorization: `Bearer ${supabaseKey}`,
-          Accept: 'application/vnd.pgrst.object+json',
-        },
-      }
+    let postRes = await fetch(
+      `${emdashUrl}/_emdash/api/content/posts/${encodeURIComponent(blogSlug)}`,
+      { headers }
     );
+
+    if (!postRes.ok) {
+      // Try by slug filter
+      postRes = await fetch(
+        `${emdashUrl}/_emdash/api/content/posts?slug=${encodeURIComponent(blogSlug)}&limit=1`,
+        { headers }
+      );
+    }
 
     if (!postRes.ok) {
       return context.next();
     }
 
-    const post = (await postRes.json()) as {
-      title?: string;
-      excerpt?: string;
-      thumbnail?: string;
-      slug?: string;
-    };
+    const postJson: any = await postRes.json();
+    const item = postJson.data?.item || postJson.data?.items?.[0] || postJson.data;
 
-    if (!post || !post.title) {
+    if (!item || (!item.data?.title && !item.title)) {
       return context.next();
     }
 
+    const titleText = item.data?.title || item.title || 'Blog Post';
+    const excerptText = item.data?.excerpt || item.excerpt || titleText;
+    const rawThumbnail = item.data?.thumbnail || item.thumbnail;
+
+    let thumbnailUrl = 'https://shola.pro/assets/wallpaper/desktop.webp';
+    if (typeof rawThumbnail === 'string' && rawThumbnail.length > 0) {
+      thumbnailUrl = rawThumbnail;
+    } else if (rawThumbnail && typeof rawThumbnail === 'object') {
+      if (rawThumbnail.url) {
+        thumbnailUrl = rawThumbnail.url;
+      } else if (rawThumbnail.meta?.storageKey) {
+        thumbnailUrl = `${url.origin}/_emdash/api/media/file/${rawThumbnail.meta.storageKey}`;
+      } else if (rawThumbnail.storageKey) {
+        thumbnailUrl = `${url.origin}/_emdash/api/media/file/${rawThumbnail.storageKey}`;
+      }
+    }
+
     const response = await context.next();
-    const title = escapeHtml(post.title);
-    const description = escapeHtml(post.excerpt || post.title);
-    const thumbnailUrl = post.thumbnail
-      ? `${supabaseUrl}/storage/v1/object/public/media/${post.thumbnail}`
-      : 'https://shola.pro/assets/wallpaper/desktop.webp';
+    const title = escapeHtml(titleText);
+    const description = escapeHtml(excerptText);
     const canonicalUrl = url.toString();
 
     // Use Cloudflare HTMLRewriter to dynamically inject OpenGraph / Twitter tags for crawlers

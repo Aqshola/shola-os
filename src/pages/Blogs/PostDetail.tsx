@@ -1,92 +1,53 @@
-import { Show, createSignal, createEffect, onCleanup } from "solid-js";
-import { useNavigate } from "@solidjs/router";
+import { createSignal, createEffect, Show } from "solid-js";
+import { useParams, useNavigate } from "@solidjs/router";
 import { PortableText } from "@portabletext/solid";
-import { useDraggable } from "@/hooks/useDraggable";
-import { bringToFront, getZIndex, registerWindow, unregisterWindow } from "@/stores/windowStore";
-import "@/pages/Desktop/style/window.css";
-import "@/pages/Blogs/style/blogs.css";
 import { getPostBySlug, BlogPost } from "@/services/blog";
+import "./style/blogs.css";
 
-interface PostWindowProps {
-    postSlug: string | null;
-    onClose: () => void;
-    onMinimize: () => void;
-    onRestore: () => void;
-    hooks?: any;
-}
-
-const WINDOW_ID_PREFIX = "post-";
-
-export default function PostWindow(props: PostWindowProps) {
+export default function BlogPostDetailPage() {
+    const params = useParams();
     const navigate = useNavigate();
-    const [isMaximized, setIsMaximized] = createSignal(false);
+
     const [post, setPost] = createSignal<BlogPost | null>(null);
-    const [loading, setLoading] = createSignal(false);
+    const [loading, setLoading] = createSignal(true);
     const [error, setError] = createSignal<string | null>(null);
     const [copied, setCopied] = createSignal(false);
 
-    const defaultPosition = { x: window.innerWidth / 2 - 320, y: (window.innerHeight / 2) - 80  };
-    const draggable = useDraggable({ x: defaultPosition.x, y: defaultPosition.y });
-
     createEffect(async () => {
-        const slug = props.postSlug;
+        const slug = params.slug;
         if (!slug) {
-            setPost(null);
+            setError("No article slug provided.");
+            setLoading(false);
             return;
         }
 
         setLoading(true);
         setError(null);
-
         try {
             const result = await getPostBySlug(slug);
             if (result) {
                 setPost(result);
-                registerWindow(`${WINDOW_ID_PREFIX}${slug}`);
             } else {
                 setError(`Post "${slug}" was not found.`);
             }
-        } catch (e: any) {
-            setError(e?.message || "Failed to load post.");
+        } catch (err: any) {
+            setError(err?.message || "Failed to load post.");
         } finally {
             setLoading(false);
         }
     });
 
-    onCleanup(() => {
-        if (props.postSlug) {
-            unregisterWindow(`${WINDOW_ID_PREFIX}${props.postSlug}`);
-        }
-    });
-
-    const handleClose = () => {
-        props.onClose();
-        if (props.postSlug) {
-            unregisterWindow(`${WINDOW_ID_PREFIX}${props.postSlug}`);
-        }
+    const handleBackToBlogs = () => {
+        navigate("/blogs");
     };
 
-    const handleMinimize = () => props.onMinimize();
-    const handleMaximize = () => setIsMaximized(!isMaximized());
-
-    const handleTitleBarClick = () => {
-        if (props.postSlug) {
-            bringToFront(`${WINDOW_ID_PREFIX}${props.postSlug}`);
-        }
-    };
-
-    const handleOpenFullPage = () => {
-        if (props.postSlug) {
-
-            window.open(`/blog/${props.postSlug}`,'_blank')
-            
-        }
+    const handleGoToDesktop = () => {
+        navigate("/");
     };
 
     const handleCopyLink = () => {
-        if (props.postSlug && typeof window !== "undefined") {
-            const url = `${window.location.origin}/blog/${props.postSlug}`;
-            navigator.clipboard.writeText(url);
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(window.location.href);
             setCopied(true);
             setTimeout(() => setCopied(false), 2000);
         }
@@ -106,53 +67,36 @@ export default function PostWindow(props: PostWindowProps) {
     };
 
     return (
-        <Show when={props.postSlug}>
-            <div
-                class="window post-detail-window"
-                classList={{ "window-maximized": isMaximized() }}
-                style={{
-                    position: isMaximized() ? "fixed" : "absolute",
-                    left: isMaximized() ? "0" : `${draggable.position().x}px`,
-                    top: isMaximized() ? "0" : `${draggable.position().y}px`,
-                    width: isMaximized() ? "100%" : "660px",
-                    height: isMaximized() ? "calc(100vh - 28px)" : "580px",
-                    "z-index": getZIndex(`${WINDOW_ID_PREFIX}${props.postSlug}`),
-                    display: "flex",
-                    "flex-direction": "column",
-                }}
-                onMouseDown={handleTitleBarClick}
-            >
+        <div class="blogs-page-container">
+            <div class="window blogs-browser-window">
                 {/* Title Bar */}
-                <div
-                    class="title-bar"
-                    onMouseDown={!isMaximized() ? draggable.handleMouseDown : undefined}
-                >
-                    <div class="title-bar-text" style={{ display: "flex", "align-items": "center", gap: "6px" }}>
-                        <img src="/assets/icons/blog.png" alt="" style={{ width: "16px", height: "16px" }} />
+                <div class="title-bar">
+                    <div class="title-bar-text">
+                        <img src="/assets/icons/blog.png" alt="" class="blogs-titlebar-icon" />
                         {post()?.title || "Article Reader"} - Shola OS Web Explorer
                     </div>
                     <div class="title-bar-controls">
-                        <button aria-label="Minimize" onClick={handleMinimize}></button>
-                        <button aria-label="Maximize" onClick={handleMaximize}></button>
-                        <button aria-label="Close" onClick={handleClose}></button>
+                        <button aria-label="Minimize" onClick={handleGoToDesktop}></button>
+                        <button aria-label="Maximize"></button>
+                        <button aria-label="Close" onClick={handleBackToBlogs}></button>
                     </div>
                 </div>
 
                 {/* Menu Bar */}
                 <div class="blogs-menubar">
-                    <span class="blogs-menu-item" onClick={handleClose}>&larr; Back to Blogs</span>
-                    <span class="blogs-menu-item" onClick={handleOpenFullPage}>Full Page Mode</span>
+                    <span class="blogs-menu-item" onClick={handleBackToBlogs}>&larr; Back to Blogs</span>
+                    <span class="blogs-menu-item" onClick={handleGoToDesktop}>Desktop</span>
                     <span class="blogs-menu-item" onClick={handleCopyLink}>{copied() ? "Link Copied!" : "Copy Link"}</span>
                 </div>
 
                 {/* Navigation Toolbar */}
                 <div class="blogs-toolbar">
                     <div class="blogs-toolbar-row">
-                        <button class="blogs-nav-btn" onClick={handleClose}>
-                            &larr; Back to Blogs
+                        <button class="blogs-nav-btn" onClick={handleBackToBlogs}>
+                            &larr; All Articles
                         </button>
-                        <button class="blogs-nav-btn" onClick={handleOpenFullPage}>
-                            🌐 Full Page Mode
+                        <button class="blogs-nav-btn" onClick={handleGoToDesktop}>
+                            🖥️ Desktop
                         </button>
                         <button class="blogs-nav-btn" onClick={handleCopyLink}>
                             🔗 {copied() ? "Copied!" : "Share Link"}
@@ -163,32 +107,32 @@ export default function PostWindow(props: PostWindowProps) {
                             <input
                                 type="text"
                                 class="blogs-address-input"
-                                value={`http://shola.os/blog/${props.postSlug || ""}`}
+                                value={typeof window !== "undefined" ? window.location.href : `http://shola.os/blog/${params.slug || ""}`}
                                 readonly
                             />
                         </div>
                     </div>
                 </div>
 
-                {/* Main Content Body */}
-                <div class="blogs-window-body" style={{ flex: "1", "overflow-y": "auto", margin: "2px", padding: "16px 20px" }}>
+                {/* Main Article Body */}
+                <div class="blogs-window-body">
                     <Show when={!loading()} fallback={<div class="blogs-loading">Fetching article from Emdash CMS...</div>}>
                         <Show when={!error()} fallback={
                             <div class="blogs-error">
                                 <h2>Error Loading Article</h2>
                                 <p>{error()}</p>
-                                <button onClick={handleClose} style={{ "margin-top": "12px" }}>
-                                    &larr; Return to Blogs Window
+                                <button onClick={handleBackToBlogs} style={{ "margin-top": "12px" }}>
+                                    &larr; Return to Articles Index
                                 </button>
                             </div>
                         }>
                             <Show when={post()}>
-                                <div class="article-reader-container" style={{ "max-width": "100%" }}>
+                                <div class="article-reader-container">
                                     {/* Breadcrumb */}
                                     <div class="article-breadcrumb">
-                                        <a onClick={handleClose}>🖥️ Shola OS</a>
+                                        <a onClick={handleGoToDesktop}>🖥️ Shola OS</a>
                                         <span>&gt;</span>
-                                        <a onClick={handleClose}>📚 Articles</a>
+                                        <a onClick={handleBackToBlogs}>📚 Articles</a>
                                         <span>&gt;</span>
                                         <span>{post()!.title}</span>
                                     </div>
@@ -218,7 +162,7 @@ export default function PostWindow(props: PostWindowProps) {
                                         </div>
                                     </Show>
 
-                                    {/* Article Body with PortableText */}
+                                    {/* Article Body */}
                                     <article class="article-body">
                                         <Show
                                             when={Array.isArray(post()!.content)}
@@ -232,11 +176,11 @@ export default function PostWindow(props: PostWindowProps) {
 
                                     {/* Footer Navigation */}
                                     <div class="article-footer-nav">
-                                        <button onClick={handleClose} class="default">
-                                            &larr; Back to Blogs
+                                        <button onClick={handleBackToBlogs} class="default">
+                                            &larr; Back to All Articles
                                         </button>
-                                        <button onClick={handleOpenFullPage}>
-                                            🌐 Open Full Page Mode
+                                        <button onClick={handleGoToDesktop}>
+                                            🖥️ Return to Desktop
                                         </button>
                                     </div>
                                 </div>
@@ -252,13 +196,13 @@ export default function PostWindow(props: PostWindowProps) {
                         <span>{loading() ? "Loading..." : "Done"}</span>
                     </div>
                     <div class="blogs-status-field">
-                        <span>{post()?.slug || props.postSlug}</span>
+                        <span>{post()?.slug || params.slug}</span>
                     </div>
                     <div class="blogs-status-field">
                         <span>Internet Zone</span>
                     </div>
                 </div>
             </div>
-        </Show>
+        </div>
     );
 }
