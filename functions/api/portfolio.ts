@@ -1,46 +1,43 @@
 interface Env {
-  VITE_SUPABASE_URL?: string;
-  VITE_SUPABASE_ANON_KEY?: string;
-  SUPABASE_URL?: string;
-  SUPABASE_ANON_KEY?: string;
+  EMDASH_URL?: string;
+  VITE_EMDASH_URL?: string;
+  EMDASH_API_KEY?: string;
+  EMDASH_TOKEN?: string;
+  VITE_EMDASH_API_KEY?: string;
+  VITE_EMDASH_TOKEN?: string;
 }
 
 export const onRequestGet: PagesFunction<Env> = async (context) => {
   const url = new URL(context.request.url);
   const id = url.searchParams.get('id');
-
-  const supabaseUrl = context.env.SUPABASE_URL || context.env.VITE_SUPABASE_URL;
-  const supabaseKey = context.env.SUPABASE_ANON_KEY || context.env.VITE_SUPABASE_ANON_KEY;
-
-  if (!supabaseUrl || !supabaseKey) {
-    return new Response(JSON.stringify({ error: 'Supabase configuration missing' }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  }
-
-  const queryParams = id
-    ? `id=eq.${encodeURIComponent(id)}&select=*`
-    : `select=*`;
+  const emdashUrl = context.env.EMDASH_URL || context.env.VITE_EMDASH_URL || url.origin;
+  const emdashKey = context.env.EMDASH_API_KEY || context.env.VITE_EMDASH_API_KEY;
 
   const headers: Record<string, string> = {
-    apikey: supabaseKey,
-    Authorization: `Bearer ${supabaseKey}`,
+    'Content-Type': 'application/json',
   };
-
-  if (id) {
-    headers['Accept'] = 'application/vnd.pgrst.object+json';
+  if (emdashKey) {
+    headers['Authorization'] = `Bearer ${emdashKey}`;
   }
 
+  const endpoint = id
+    ? `${emdashUrl}/_emdash/api/content/portfolio/${encodeURIComponent(id)}`
+    : `${emdashUrl}/_emdash/api/content/portfolio?status=published`;
+
   try {
-    const res = await fetch(`${supabaseUrl}/rest/v1/portofolio?${queryParams}`, {
-      headers,
-    });
+    const res = await fetch(endpoint, { headers });
+    if (!res.ok) {
+      return new Response(JSON.stringify({ error: `Emdash error: ${res.statusText}` }), {
+        status: res.status,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
 
-    const data = await res.text();
+    const json: any = await res.json();
+    const data = id ? (json.data?.item ?? json.data ?? null) : (json.data?.items ?? []);
 
-    return new Response(data, {
-      status: res.status,
+    return new Response(JSON.stringify(data), {
+      status: 200,
       headers: {
         'Content-Type': 'application/json',
         'Cache-Control': 'public, max-age=300, s-maxage=3600, stale-while-revalidate=86400',
@@ -54,3 +51,4 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     });
   }
 };
+

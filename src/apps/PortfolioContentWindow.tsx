@@ -1,9 +1,9 @@
 import { Show, createSignal, onCleanup, Accessor } from "solid-js";
+import { PortableText } from "@portabletext/solid";
 import { useDraggable } from "@/hooks/useDraggable";
 import { bringToFront, getZIndex, registerWindow, unregisterWindow } from "@/stores/windowStore";
 import { Portfolio } from "@/services/portofolio";
 import "@/pages/Desktop/style/window.css";
-import { getFileUrl } from "@/lib/supabase";
 import { getPortofolioBadgeClassStatus } from "@/lib/common";
 
 interface PortfolioContentWindowProps {
@@ -95,15 +95,20 @@ export default function PortfolioContentWindow(props: PortfolioContentWindowProp
                         {/* Screenshot */}
                         <Show when={project()?.image_cover}>
                             <img
-                                src={getFileUrl(project()?.image_cover||"")  || "/assets/placeholder.png"}
+                                src={project()?.image_cover || "/assets/placeholder.png"}
                                 alt={project()?.title}
                                 class="portfolio-detail-screenshot"
                             />
                         </Show>
 
                         {/* Article/Description */}
-                        <div class="portfolio-detail-article" innerHTML={project()?.content}>
-                           
+                        <div class="portfolio-detail-article">
+                            <Show
+                                when={Array.isArray(project()?.content)}
+                                fallback={<div innerHTML={typeof project()?.content === "string" ? project()?.content : ""} />}
+                            >
+                                <PortableText value={project()?.content as any} />
+                            </Show>
                         </div>
                     </div>
                 }>
