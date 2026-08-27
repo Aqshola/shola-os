@@ -6,16 +6,18 @@
   "scripts": {
     "start": "vite",
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && wrangler pages functions build --outdir dist-worker && mv dist-worker/index.js dist/_worker.js && rm -rf dist-worker",
     "serve": "vite preview"
   },
   "license": "MIT",
   "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260827.1",
     "sharp": "^0.34.5",
     "solid-devtools": "^0.34.3",
     "typescript": "^5.7.2",
     "vite": "^7.1.4",
-    "vite-plugin-solid": "^2.11.8"
+    "vite-plugin-solid": "^2.11.8",
+    "wrangler": "^4.126.0"
   },
   "dependencies": {
     "@portabletext/solid": "^1.0.8",
