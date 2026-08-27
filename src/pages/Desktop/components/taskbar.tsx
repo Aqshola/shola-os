@@ -110,6 +110,13 @@ export default function Taskbar() {
                                         registerWindow(`portfolio-content-${openProjectId}`)
                                     }
                                 }
+                                if (win.id == MODULE_ID.game) {
+                                    const gameHooks = win.hooks as any
+                                    const selectedGameId = gameHooks.selectedGameId()
+                                    if (selectedGameId) {
+                                        registerWindow(`game-player-${selectedGameId}`)
+                                    }
+                                }
                             } else {
                                 win.hooks?.minimize()
                             }

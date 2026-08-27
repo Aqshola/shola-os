@@ -5,6 +5,7 @@ const PortfolioWindow = lazy(() => import("@/apps/PortfolioWindow"));
 const AboutMeWindow = lazy(() => import("@/apps/AboutMeWindow"));
 const NotesWindow = lazy(() => import("@/apps/NotesWindow"));
 const BlogWindow = lazy(() => import("@/apps/BlogWindow"));
+const GameWindow = lazy(() => import("@/apps/GameWindow"));
 import { AppWindow } from "@/hooks/type";
 import { useEmail } from "@/hooks/useEmail";
 import { useResume } from "@/hooks/useResume";
@@ -12,6 +13,7 @@ import { usePortfolio } from "@/hooks/usePortfolio";
 import { useAboutMe } from "@/hooks/useAboutMe";
 import { useNotes } from "@/hooks/useNotes";
 import { useBlog } from "@/hooks/useBlog";
+import { useGame } from "@/hooks/useGame";
 import { MODULE_ID } from "./module-id";
 import { clearLocalStorage, removeFromLocalStorage } from "@/lib/localstorage";
 import { openShutdown } from "@/stores/shutdownStore";
@@ -44,6 +46,7 @@ export function initializeStartApps() {
     const aboutme = useAboutMe();
     const notes = useNotes();
     const blog = useBlog();
+    const game = useGame();
 
     const LIST_START_APP: StartApp[] = [
         {
@@ -146,6 +149,20 @@ export function initializeStartApps() {
             showIn: {
                 start: true,
                 desktop: true,
+            },
+        },
+        {
+            id: MODULE_ID.game,
+            hooks: game,
+            title: "Games",
+            icon: "/assets/icons/game.png",
+            action: () => { game.open(); setCurrentApp(MODULE_ID.game); },
+            type: "window",
+            component: GameWindow,
+            showIn: {
+                start: true,
+                desktop: true,
+                taskbar: true,
             },
         },
 

@@ -10,6 +10,7 @@ import { useEmail } from "@/hooks/useEmail";
 import { useAboutMe } from "@/hooks/useAboutMe";
 import { useNotes } from "@/hooks/useNotes";
 import { useBlog } from "@/hooks/useBlog";
+import { useGame } from "@/hooks/useGame";
 import { MODULE_ID } from "@/module/module-id";
 import { registerWindow } from "@/stores/windowStore";
 
@@ -25,6 +26,7 @@ export default function Desktop(props: DesktopProps) {
     const aboutme = useAboutMe();
     const notes = useNotes();
     const blog = useBlog();
+    const game = useGame();
 
     onMount(() => {
         // Handle blog with slug first (deep linking on desktop)
@@ -44,6 +46,7 @@ export default function Desktop(props: DesktopProps) {
                 [MODULE_ID.aboutme]: () => aboutme.open(),
                 [MODULE_ID.notes]: () => notes.open(),
                 [MODULE_ID.blog]: () => blog.open(),
+                [MODULE_ID.game]: () => game.open(),
             };
             const opener = appOpeners[props.appName];
             if (opener) {
