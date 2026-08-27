@@ -6,7 +6,7 @@
   "scripts": {
     "start": "vite",
     "dev": "vite",
-    "build": "vite build && wrangler pages functions build --outdir dist-worker && mv dist-worker/index.js dist/_worker.js && rm -rf dist-worker",
+    "build": "vite build",
     "serve": "vite preview"
   },
   "license": "MIT",
