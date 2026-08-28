@@ -11,23 +11,43 @@ interface AboutMeWindowProps {
     onClose: () => void;
     onMinimize: () => void;
     onRestore: () => void;
-    hooks: any
+    hooks: any;
 }
 
 const WINDOW_ID = MODULE_ID.aboutme;
 
 export default function AboutMeWindow(props: AboutMeWindowProps) {
+    return (
+        <Show when={props.isOpen}>
+            <ContentAboutMeWindow
+                hooks={props.hooks}
+                onClose={props.onClose}
+                onMinimize={props.onMinimize}
+                onRestore={props.onRestore}
+            />
+        </Show>
+    );
+}
+
+interface PropsContentAboutMeWindow {
+    onClose: () => void;
+    onMinimize: () => void;
+    onRestore: () => void;
+    hooks: any;
+}
+
+function ContentAboutMeWindow(props: PropsContentAboutMeWindow) {
     const [isMaximized, setIsMaximized] = createSignal(false);
     const defaultPosition = { x: window.innerWidth / 2, y: (window.innerHeight / 2) };
     const draggable = useDraggable({ x: defaultPosition.x, y: defaultPosition.y });
     const deviceType = useDeviceType();
 
+    // INITIAL
+    onMount(() => {
+        props.hooks.fetchBio();
+        registerWindow(WINDOW_ID);
+    });
 
-    //INITIAL
-    onMount(()=>{
-        props.hooks.fetchBio()
-        registerWindow(WINDOW_ID)
-    })
     onCleanup(() => {
         unregisterWindow(WINDOW_ID);
     });
@@ -41,60 +61,58 @@ export default function AboutMeWindow(props: AboutMeWindowProps) {
     };
 
     return (
-        <Show when={props.isOpen}>
+        <div
+            class="window aboutme-window"
+            classList={{
+                "window-maximized": isMaximized(),
+                "aboutme-window-mobile": deviceType() === "mobile" && !isMaximized(),
+                "aboutme-window-desktop": deviceType() === "desktop" && !isMaximized()
+            }}
+            style={{
+                position: isMaximized() ? "fixed" : "absolute",
+                left: isMaximized() ? "0" : `${draggable.position().x}px`,
+                top: isMaximized() ? "0" : `${draggable.position().y}px`,
+                "z-index": getZIndex(WINDOW_ID),
+            }}
+            onMouseDown={handleTitleBarClick}
+        >
             <div
-                class="window aboutme-window"
-                classList={{
-                    "window-maximized": isMaximized(),
-                    "aboutme-window-mobile": deviceType() === "mobile" && !isMaximized(),
-                    "aboutme-window-desktop": deviceType() === "desktop" && !isMaximized()
-                }}
-                style={{
-                    position: isMaximized() ? "fixed" : "absolute",
-                    left: isMaximized() ? "0" : `${draggable.position().x}px`,
-                    top: isMaximized() ? "0" : `${draggable.position().y}px`,
-                    "z-index": getZIndex(WINDOW_ID),
-                }}
-                onMouseDown={handleTitleBarClick}
+                class="title-bar"
+                onMouseDown={!isMaximized() ? draggable.handleMouseDown : undefined}
             >
-                <div
-                    class="title-bar"
-                    onMouseDown={!isMaximized() ? draggable.handleMouseDown : undefined}
-                >
-                    <div class="title-bar-text">About Me</div>
-                    <div class="title-bar-controls">
-                        <button aria-label="Minimize" onClick={handleMinimize}></button>
-                        <button aria-label="Maximize" onClick={handleMaximize}></button>
-                        <button aria-label="Close" onClick={handleClose}></button>
-                    </div>
-                </div>
-                <div class="window-body aboutme-content" style={{ "background-color": "white", padding: "20px" }}>
-                    <Show when={!props.hooks.loading()} fallback={<div style={{ "text-align": "center", padding: "20px" }}>Loading...</div>}>
-                        <Show when={props.hooks.bio()}>
-                            <div class="aboutme-name" style={{
-                                "font-size": "32px",
-                                "font-weight": "bold",
-                                "text-align": "center",
-                                "margin-bottom": "20px"
-                            }}>
-                                {props.hooks.bio()!.name}
-                            </div>
-                            <div class="aboutme-description" style={{
-                                "text-align": "center",
-                                "font-size": "16px",
-                                "color": "#333"
-                            }}>
-                                <Show
-                                    when={Array.isArray(props.hooks.bio()!.desc)}
-                                    fallback={<div innerHTML={typeof props.hooks.bio()!.desc === "string" ? props.hooks.bio()!.desc : ""} />}
-                                >
-                                    <PortableText value={props.hooks.bio()!.desc as any} />
-                                </Show>
-                            </div>
-                        </Show>
-                    </Show>
+                <div class="title-bar-text">About Me</div>
+                <div class="title-bar-controls">
+                    <button aria-label="Minimize" onClick={handleMinimize}></button>
+                    <button aria-label="Maximize" onClick={handleMaximize}></button>
+                    <button aria-label="Close" onClick={handleClose}></button>
                 </div>
             </div>
-        </Show>
+            <div class="window-body aboutme-content" style={{ "background-color": "white", padding: "20px" }}>
+                <Show when={!props.hooks.loading()} fallback={<div style={{ "text-align": "center", padding: "20px" }}>Loading...</div>}>
+                    <Show when={props.hooks.bio()}>
+                        <div class="aboutme-name" style={{
+                            "font-size": "32px",
+                            "font-weight": "bold",
+                            "text-align": "center",
+                            "margin-bottom": "20px"
+                        }}>
+                            {props.hooks.bio()!.name}
+                        </div>
+                        <div class="aboutme-description" style={{
+                            "text-align": "center",
+                            "font-size": "16px",
+                            "color": "#333"
+                        }}>
+                            <Show
+                                when={Array.isArray(props.hooks.bio()!.desc)}
+                                fallback={<div innerHTML={typeof props.hooks.bio()!.desc === "string" ? props.hooks.bio()!.desc : ""} />}
+                            >
+                                <PortableText value={props.hooks.bio()!.desc as any} />
+                            </Show>
+                        </div>
+                    </Show>
+                </Show>
+            </div>
+        </div>
     );
 }

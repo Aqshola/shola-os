@@ -1,6 +1,6 @@
-import { For, Show, onMount, onCleanup, createSignal } from "solid-js";
+import { For, Show, createSignal } from "solid-js";
 import { useDraggable } from "@/hooks/useDraggable";
-import { bringToFront, getZIndex, registerWindow, unregisterWindow } from "@/stores/windowStore";
+import { bringToFront, getZIndex, registerWindow } from "@/stores/windowStore";
 import "@/pages/Desktop/style/window.css";
 import PortfolioContentWindow from "./PortfolioContentWindow";
 import { Portfolio } from "@/services/portofolio";
@@ -10,19 +10,36 @@ interface PortfolioWindowProps {
     onClose: () => void;
     onMinimize: () => void;
     onRestore: () => void;
-
-    hooks: any
+    hooks: any;
 }
 
 const WINDOW_ID = "portfolio";
 
 export default function PortfolioWindow(props: PortfolioWindowProps) {
+    return (
+        <Show when={props.isOpen}>
+            <ContentPortfolioWindow
+                hooks={props.hooks}
+                onClose={props.onClose}
+                onMinimize={props.onMinimize}
+                onRestore={props.onRestore}
+            />
+        </Show>
+    );
+}
+
+interface PropsContentPortfolioWindow {
+    onClose: () => void;
+    onMinimize: () => void;
+    onRestore: () => void;
+    hooks: any;
+}
+
+function ContentPortfolioWindow(props: PropsContentPortfolioWindow) {
     const [isMaximized, setIsMaximized] = createSignal(false);
     const defaultPosition = { x: window.innerWidth / 2, y: (window.innerHeight / 2) };
     const draggable = useDraggable({ x: defaultPosition.x, y: defaultPosition.y });
-    const portofolio = props.hooks as any
-
- 
+    const portofolio = props.hooks as any;
 
     const handleClose = () => props.onClose();
     const handleMinimize = () => props.onMinimize();
@@ -34,67 +51,65 @@ export default function PortfolioWindow(props: PortfolioWindowProps) {
 
     const handleProjectClick = (project: any) => {
         portofolio.openProject(project.id);
-        registerWindow(`portfolio-content-${project.id}`)
+        registerWindow(`portfolio-content-${project.id}`);
     };
 
     return (
         <>
-            <Show when={props.isOpen}>
+            <div
+                class="window portfolio-window"
+                classList={{ "window-maximized": isMaximized() }}
+                style={{
+                    position: isMaximized() ? "fixed" : "absolute",
+                    left: isMaximized() ? "0" : `${draggable.position().x}px`,
+                    top: isMaximized() ? "0" : `${draggable.position().y}px`,
+                    width: isMaximized() ? "100%" : undefined,
+                    height: isMaximized() ? "calc(100vh - 28px)" : undefined,
+                    "z-index": getZIndex(WINDOW_ID),
+                }}
+                onMouseDown={handleTitleBarClick}
+            >
                 <div
-                    class="window portfolio-window"
-                    classList={{ "window-maximized": isMaximized() }}
-                    style={{
-                        position: isMaximized() ? "fixed" : "absolute",
-                        left: isMaximized() ? "0" : `${draggable.position().x}px`,
-                        top: isMaximized() ? "0" : `${draggable.position().y}px`,
-                        width: isMaximized() ? "100%" : undefined,
-                        height: isMaximized() ? "calc(100vh - 28px)" : undefined,
-                        "z-index": getZIndex(WINDOW_ID),
-                    }}
-                    onMouseDown={handleTitleBarClick}
+                    class="title-bar"
+                    onMouseDown={draggable.handleMouseDown}
                 >
-                    <div
-                        class="title-bar"
-                        onMouseDown={draggable.handleMouseDown}
-                    >
-                        <div class="title-bar-text">Portfolio</div>
-                        <div class="title-bar-controls">
-                            <button aria-label="Minimize" onClick={handleMinimize}></button>
-                            <button aria-label="Maximize" onClick={handleMaximize}></button>
-                            <button aria-label="Close" onClick={handleClose}></button>
-                        </div>
-                    </div>
-                    <div class="window-body portfolio-content">
-                        <Show when={portofolio.loading()} fallback={
-                            <div class="portfolio-card-list">
-                                <For each={portofolio.portfolioList() as Portfolio[]}>{(project) => (
-                                    <div
-                                        class="portfolio-card"
-                                        onClick={() => handleProjectClick(project)}
-                                    >
-                                        <div class="portfolio-card-header">
-                                            <img src="/assets/icons/kodak_imaging.ico" alt="" class="portfolio-card-icon" />
-                                            <span class="portfolio-card-title">{project.title}</span>
-                                        </div>
-                                        <img src={project.image_cover || "/assets/placeholder.png"} alt={project.title} class="portfolio-card-thumbnail" />
-                                    </div>
-                                )}</For>
-                            </div>
-                        }>
-                            <div class="loading">Loading portfolio...</div>
-                        </Show>
+                    <div class="title-bar-text">Portfolio</div>
+                    <div class="title-bar-controls">
+                        <button aria-label="Minimize" onClick={handleMinimize}></button>
+                        <button aria-label="Maximize" onClick={handleMaximize}></button>
+                        <button aria-label="Close" onClick={handleClose}></button>
                     </div>
                 </div>
+                <div class="window-body portfolio-content">
+                    <Show when={portofolio.loading()} fallback={
+                        <div class="portfolio-card-list">
+                            <For each={portofolio.portfolioList() as Portfolio[]}>{(project) => (
+                                <div
+                                    class="portfolio-card"
+                                    onClick={() => handleProjectClick(project)}
+                                >
+                                    <div class="portfolio-card-header">
+                                        <img src="/assets/icons/kodak_imaging.ico" alt="" class="portfolio-card-icon" />
+                                        <span class="portfolio-card-title">{project.title}</span>
+                                    </div>
+                                    <img src={project.image_cover || "/assets/placeholder.png"} alt={project.title} class="portfolio-card-thumbnail" />
+                                </div>
+                            )}</For>
+                        </div>
+                    }>
+                        <div class="loading">Loading portfolio...</div>
+                    </Show>
+                </div>
+            </div>
 
-                <PortfolioContentWindow
-                    projectId={portofolio.openProjectId()}
-                    selectedProject={portofolio.selectedProject}
-                    loading={portofolio.loading}
-                    onClose={() => portofolio.closeProject()}
-                    onMinimize={() => handleMinimize()}
-                    onRestore={() => portofolio.restoreContent()}
-                />
-            </Show>
+            <PortfolioContentWindow
+                projectId={portofolio.openProjectId()}
+                selectedProject={portofolio.selectedProject}
+                loading={portofolio.loading}
+                onClose={() => portofolio.closeProject()}
+                onMinimize={() => handleMinimize()}
+                onRestore={() => portofolio.restoreContent()}
+            />
         </>
     );
 }

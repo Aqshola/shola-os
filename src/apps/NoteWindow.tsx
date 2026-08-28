@@ -1,4 +1,4 @@
-import { Show, createSignal, createEffect, onCleanup, onMount, on } from "solid-js";
+import { Show, createSignal, createEffect, onCleanup, on } from "solid-js";
 import { useDraggable } from "@/hooks/useDraggable";
 import { bringToFront, getZIndex, registerWindow, unregisterWindow } from "@/stores/windowStore";
 import "@/pages/Desktop/style/window.css";
@@ -15,6 +15,28 @@ interface NoteWindowProps {
 const WINDOW_ID_PREFIX = "note-";
 
 export default function NoteWindow(props: NoteWindowProps) {
+    return (
+        <Show when={props.noteId}>
+            <ContentNoteWindow
+                noteId={props.noteId!}
+                hooks={props.hooks}
+                onClose={props.onClose}
+                onMinimize={props.onMinimize}
+                onRestore={props.onRestore}
+            />
+        </Show>
+    );
+}
+
+interface PropsContentNoteWindow {
+    noteId: string;
+    onClose: () => void;
+    onMinimize: () => void;
+    onRestore: () => void;
+    hooks: any;
+}
+
+function ContentNoteWindow(props: PropsContentNoteWindow) {
     const [isMaximized, setIsMaximized] = createSignal(false);
     const [title, setTitle] = createSignal("");
     const [content, setContent] = createSignal("");
@@ -24,7 +46,6 @@ export default function NoteWindow(props: NoteWindowProps) {
     const draggable = useDraggable({ x: defaultPosition.x, y: defaultPosition.y });
 
     const notes = props.hooks;
-
 
     createEffect(
         on(() => props.noteId, (noteId) => {
@@ -90,75 +111,73 @@ export default function NoteWindow(props: NoteWindowProps) {
     const isCreateMode = () => !props.noteId;
 
     return (
-        <Show when={props.noteId}>
+        <div
+            class="window note-detail-window"
+            classList={{ "window-maximized": isMaximized() }}
+            style={{
+                position: isMaximized() ? "fixed" : "absolute",
+                left: isMaximized() ? "0" : `${draggable.position().x}px`,
+                top: isMaximized() ? "0" : `${draggable.position().y}px`,
+                width: isMaximized() ? "100%" : "350px",
+                height: isMaximized() ? "calc(100vh - 28px)" : "300px",
+                "z-index": getZIndex(`${WINDOW_ID_PREFIX}${props.noteId}`),
+            }}
+            onMouseDown={handleTitleBarClick}
+        >
             <div
-                class="window note-detail-window"
-                classList={{ "window-maximized": isMaximized() }}
-                style={{
-                    position: isMaximized() ? "fixed" : "absolute",
-                    left: isMaximized() ? "0" : `${draggable.position().x}px`,
-                    top: isMaximized() ? "0" : `${draggable.position().y}px`,
-                    width: isMaximized() ? "100%" : "350px",
-                    height: isMaximized() ? "calc(100vh - 28px)" : "300px",
-                    "z-index": getZIndex(`${WINDOW_ID_PREFIX}${props.noteId}`),
-                }}
-                onMouseDown={handleTitleBarClick}
+                class="title-bar"
+                onMouseDown={!isMaximized() ? draggable.handleMouseDown : undefined}
             >
-                <div
-                    class="title-bar"
-                    onMouseDown={!isMaximized() ? draggable.handleMouseDown : undefined}
-                >
-                    <div class="title-bar-text">
-                        {isCreateMode() ? "New Note" : title() || "Note"}
-                        {!isSaved() && " *"}
-                    </div>
-                    <div class="title-bar-controls">
-                        <button aria-label="Minimize" onClick={handleMinimize}></button>
-                        <button aria-label="Maximize" onClick={handleMaximize}></button>
-                        <button aria-label="Close" onClick={handleClose}></button>
-                    </div>
+                <div class="title-bar-text">
+                    {isCreateMode() ? "New Note" : title() || "Note"}
+                    {!isSaved() && " *"}
                 </div>
-                <div class="window-body">
-                    <Show when={!isCreateMode()} fallback={
-                        <div class="note-create-mode">
-                            <p>Creating new note from NotesWindow...</p>
-                        </div>
-                    }>
-                        <div class="note-detail-form">
-                            <div class="field-row">
-                                <label for="note-title">Title:</label>
-                                <input
-                                    id="note-title"
-                                    type="text"
-                                    value={title()}
-                                    onInput={(e) => handleTitleChange(e.currentTarget.value)}
-                                    placeholder="Note title..."
-                                />
-                            </div>
-                            <div class="field-row-stacked">
-                                <label for="note-content">Content:</label>
-                                <textarea
-                                    id="note-content"
-                                    rows={8}
-                                    value={content()}
-                                    onInput={(e) => handleContentChange(e.currentTarget.value)}
-                                    placeholder="Write your note..."
-                                />
-                            </div>
-                            <div class="button-row">
-                                <button
-                                    class="default"
-                                    onClick={handleSave}
-                                    disabled={isSaved() || !title().trim()}
-                                >
-                                    {isSaved() ? "Saved" : "Save"}
-                                </button>
-                                <button onClick={handleClose}>Close</button>
-                            </div>
-                        </div>
-                    </Show>
+                <div class="title-bar-controls">
+                    <button aria-label="Minimize" onClick={handleMinimize}></button>
+                    <button aria-label="Maximize" onClick={handleMaximize}></button>
+                    <button aria-label="Close" onClick={handleClose}></button>
                 </div>
             </div>
-        </Show>
+            <div class="window-body">
+                <Show when={!isCreateMode()} fallback={
+                    <div class="note-create-mode">
+                        <p>Creating new note from NotesWindow...</p>
+                    </div>
+                }>
+                    <div class="note-detail-form">
+                        <div class="field-row">
+                            <label for="note-title">Title:</label>
+                            <input
+                                id="note-title"
+                                type="text"
+                                value={title()}
+                                onInput={(e) => handleTitleChange(e.currentTarget.value)}
+                                placeholder="Note title..."
+                            />
+                        </div>
+                        <div class="field-row-stacked">
+                            <label for="note-content">Content:</label>
+                            <textarea
+                                id="note-content"
+                                rows={8}
+                                value={content()}
+                                onInput={(e) => handleContentChange(e.currentTarget.value)}
+                                placeholder="Write your note..."
+                            />
+                        </div>
+                        <div class="button-row">
+                            <button
+                                class="default"
+                                onClick={handleSave}
+                                disabled={isSaved() || !title().trim()}
+                            >
+                                {isSaved() ? "Saved" : "Save"}
+                            </button>
+                            <button onClick={handleClose}>Close</button>
+                        </div>
+                    </div>
+                </Show>
+            </div>
+        </div>
     );
 }

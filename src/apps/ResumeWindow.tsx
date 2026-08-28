@@ -1,6 +1,6 @@
-import { createSignal, Show, onMount, onCleanup } from "solid-js";
+import { createSignal, Show, onCleanup } from "solid-js";
 import { useDraggable } from "@/hooks/useDraggable";
-import { bringToFront, getZIndex, registerWindow, unregisterWindow } from "@/stores/windowStore";
+import { bringToFront, getZIndex, unregisterWindow } from "@/stores/windowStore";
 import "@/pages/Desktop/style/window.css";
 import { MODULE_ID } from "@/module/module-id";
 import { useDeviceType } from "@/hooks/useDeviceType";
@@ -13,9 +13,27 @@ interface ResumeWindowProps {
     onRestore: () => void;
 }
 
+const WINDOW_ID = MODULE_ID.resume;
 
 export default function ResumeWindow(props: ResumeWindowProps) {
-    const WINDOW_ID = MODULE_ID.resume;
+    return (
+        <Show when={props.isOpen}>
+            <ContentResumeWindow
+                onClose={props.onClose}
+                onMinimize={props.onMinimize}
+                onRestore={props.onRestore}
+            />
+        </Show>
+    );
+}
+
+interface PropsContentResumeWindow {
+    onClose: () => void;
+    onMinimize: () => void;
+    onRestore: () => void;
+}
+
+function ContentResumeWindow(props: PropsContentResumeWindow) {
     const [isMaximized, setIsMaximized] = createSignal(false);
     const defaultPosition = { x: window.innerWidth / 2, y: (window.innerHeight / 2) };
     const draggable = useDraggable({ x: defaultPosition.x, y: defaultPosition.y });
@@ -34,41 +52,39 @@ export default function ResumeWindow(props: ResumeWindowProps) {
     };
 
     return (
-        <Show when={props.isOpen}>
+        <div
+            class="window resume-window"
+            classList={{
+                "window-maximized": isMaximized(),
+                "resume-window-mobile": deviceType() === "mobile" && !isMaximized(),
+                "resume-window-desktop": deviceType() === "desktop" && !isMaximized()
+            }}
+            style={{
+                position: isMaximized() ? "fixed" : "absolute",
+                left: isMaximized() ? "0" : `${draggable.position().x}px`,
+                top: isMaximized() ? "0" : `${draggable.position().y}px`,
+                "z-index": getZIndex(WINDOW_ID),
+            }}
+            onMouseDown={handleTitleBarClick}
+        >
             <div
-                class="window resume-window"
-                classList={{
-                    "window-maximized": isMaximized(),
-                    "resume-window-mobile": deviceType() === "mobile" && !isMaximized(),
-                    "resume-window-desktop": deviceType() === "desktop" && !isMaximized()
-                }}
-                style={{
-                    position: isMaximized() ? "fixed" : "absolute",
-                    left: isMaximized() ? "0" : `${draggable.position().x}px`,
-                    top: isMaximized() ? "0" : `${draggable.position().y}px`,
-                    "z-index": getZIndex(WINDOW_ID),
-                }}
-                onMouseDown={handleTitleBarClick}
+                class="title-bar"
+                onMouseDown={!isMaximized() ? draggable.handleMouseDown : undefined}
             >
-                <div
-                    class="title-bar"
-                    onMouseDown={!isMaximized() ? draggable.handleMouseDown : undefined}
-                >
-                    <div class="title-bar-text">Resume</div>
-                    <div class="title-bar-controls">
-                        <button aria-label="Minimize" onClick={handleMinimize}></button>
-                        <button aria-label="Maximize" onClick={handleMaximize}></button>
-                        <button aria-label="Close" onClick={handleClose}></button>
-                    </div>
-                </div>
-                <div class="window-body" style={{ border: "1px solid black", height: "450px" }}>
-                    <iframe
-                        src={social.resume}
-                        class="resume-iframe"
-                        allow="autoplay"
-                    />
+                <div class="title-bar-text">Resume</div>
+                <div class="title-bar-controls">
+                    <button aria-label="Minimize" onClick={handleMinimize}></button>
+                    <button aria-label="Maximize" onClick={handleMaximize}></button>
+                    <button aria-label="Close" onClick={handleClose}></button>
                 </div>
             </div>
-        </Show>
+            <div class="window-body" style={{ border: "1px solid black", height: "450px" }}>
+                <iframe
+                    src={social.resume}
+                    class="resume-iframe"
+                    allow="autoplay"
+                />
+            </div>
+        </div>
     );
 }
