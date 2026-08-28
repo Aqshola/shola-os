@@ -1,4 +1,4 @@
-import { createSignal, Show, onMount, onCleanup, } from "solid-js";
+import { createSignal, Show, onCleanup } from "solid-js";
 import { useDraggable } from "@/hooks/useDraggable";
 import { bringToFront, getZIndex, registerWindow, unregisterWindow } from "@/stores/windowStore";
 import "@/pages/Desktop/style/window.css";
@@ -18,6 +18,24 @@ interface EmailWindowProps {
 const WINDOW_ID = MODULE_ID.email;
 
 export default function EmailWindow(props: EmailWindowProps) {
+    return (
+        <Show when={props.isOpen}>
+            <ContentEmailWindow
+                onClose={props.onClose}
+                onMinimize={props.onMinimize}
+                onRestore={props.onRestore}
+            />
+        </Show>
+    );
+}
+
+interface PropsContentEmailWindow {
+    onClose: () => void;
+    onMinimize: () => void;
+    onRestore: () => void;
+}
+
+function ContentEmailWindow(props: PropsContentEmailWindow) {
     const [isMaximized, setIsMaximized] = createSignal(false);
     const [senderEmail, setSenderEmail] = createSignal("");
     const [content, setContent] = createSignal("");
@@ -31,7 +49,6 @@ export default function EmailWindow(props: EmailWindowProps) {
     const draggable = useDraggable({ x: defaultPosition.x, y: defaultPosition.y });
     const deviceType = useDeviceType();
 
-
     onCleanup(() => {
         unregisterWindow(WINDOW_ID);
     });
@@ -43,10 +60,8 @@ export default function EmailWindow(props: EmailWindowProps) {
         }
         setMessageBox({ isOpen: true, type: "success", message: "Email sent successfully!" });
 
-
-
         const success = await sendEmail(senderEmail(), content());
-        registerWindow("messagebox")
+        registerWindow("messagebox");
         if (success) {
             setMessageBox({ isOpen: true, type: "success", message: "Email sent successfully!" });
             setSenderEmail("");
@@ -63,7 +78,7 @@ export default function EmailWindow(props: EmailWindowProps) {
     };
 
     return (
-        <Show when={props.isOpen}>
+        <>
             <div
                 class="window email-window"
                 classList={{
@@ -126,10 +141,10 @@ export default function EmailWindow(props: EmailWindowProps) {
                 message={messageBox.message}
                 type={messageBox.type}
                 onClose={() => {
-                    setMessageBox((prev) => ({ ...prev, isOpen: false }))
-                    props.onClose()
+                    setMessageBox((prev) => ({ ...prev, isOpen: false }));
+                    props.onClose();
                 }}
             />
-        </Show>
+        </>
     );
 }
