@@ -1,28 +1,24 @@
 import { createSignal } from "solid-js";
 import { createStore } from "solid-js/store";
 import { makePersisted } from "@solid-primitives/storage";
-import { GameItem, getListGames, getGameDetail } from "@/services/game";
+import { GameItem, getListGames } from "@/services/game";
 import { AppWindow } from "./type";
 
 export function useGame(): AppWindow & {
   selectedGame: () => GameItem | null;
   selectedGameId: () => string | null;
   isGameRunning: () => boolean;
-  isPlayerMinimized: () => boolean;
   gameList: () => GameItem[];
   loading: () => boolean;
   fetchGames: () => Promise<void>;
   playGame: (game: GameItem) => void;
   closePlayer: () => void;
-  minimizePlayer: () => void;
-  restorePlayer: () => void;
 } {
   const [state, setState] = makePersisted(
     createStore({
       isOpen: false,
       isMinimized: false,
       selectedGameId: null as string | null,
-      isPlayerMinimized: false,
       gameList: [] as GameItem[],
       selectedGame: null as GameItem | null,
     }),
@@ -57,7 +53,6 @@ export function useGame(): AppWindow & {
       isMinimized: false,
       selectedGameId: null,
       selectedGame: null,
-      isPlayerMinimized: false,
     });
   };
 
@@ -86,7 +81,6 @@ export function useGame(): AppWindow & {
     setState({
       selectedGameId: game.id,
       selectedGame: game,
-      isPlayerMinimized: false,
     });
   };
 
@@ -94,16 +88,7 @@ export function useGame(): AppWindow & {
     setState({
       selectedGameId: null,
       selectedGame: null,
-      isPlayerMinimized: false,
     });
-  };
-
-  const minimizePlayer = () => {
-    setState("isPlayerMinimized", true);
-  };
-
-  const restorePlayer = () => {
-    setState("isPlayerMinimized", false);
   };
 
   return {
@@ -114,7 +99,6 @@ export function useGame(): AppWindow & {
     selectedGame: () => state.selectedGame,
     selectedGameId: () => state.selectedGameId,
     isGameRunning: () => state.selectedGameId !== null,
-    isPlayerMinimized: () => state.isPlayerMinimized,
 
     gameList: () => state.gameList,
     loading,
@@ -127,7 +111,5 @@ export function useGame(): AppWindow & {
     fetchGames,
     playGame,
     closePlayer,
-    minimizePlayer,
-    restorePlayer,
   };
 }
