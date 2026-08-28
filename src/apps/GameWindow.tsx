@@ -171,12 +171,15 @@ export default function GameWindow(props: GameWindowProps) {
         </div>
 
         {/* Emulator Player Subwindow */}
+        <Show when={gameHook.selectedGame()}>
+
         <GamePlayerWindow
           game={gameHook.selectedGame()}
           onClose={() => gameHook.closePlayer()}
           onMinimize={() => handleMinimize()}
           onRestore={() => gameHook.restorePlayer()}
         />
+        </Show>
       </Show>
     </>
   );

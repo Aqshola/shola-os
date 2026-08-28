@@ -136,10 +136,10 @@ export default function GamePlayerWindow(props: GamePlayerWindowProps) {
   const handleReset = () => {
     if (browserInstance) {
       browserInstance.nes.reloadROM();
-      // if (isPaused()) {
-      //   browserInstance.start();
-      //   setIsPaused(false);
-      // }
+      if (isPaused()) {
+        browserInstance.start();
+        setIsPaused(false);
+      }
     }
   };
 
@@ -157,7 +157,6 @@ export default function GamePlayerWindow(props: GamePlayerWindowProps) {
   };
 
   return (
-    <Show when={props.game}>
       <div
         class="window game-emulator-window"
         classList={{ "window-maximized": isMaximized() }}
@@ -205,7 +204,6 @@ export default function GamePlayerWindow(props: GamePlayerWindowProps) {
                 <span class="status-loading">Loading ROM...</span>
               </Show>
               <Show when={!isLoading() && !loadingError()}>
-                <span class="status-running">{isPaused() ? "Paused" : "Running (60 FPS)"}</span>
               </Show>
               <Show when={loadingError()}>
                 <span class="status-error">Error</span>
@@ -375,6 +373,5 @@ export default function GamePlayerWindow(props: GamePlayerWindowProps) {
           <p class="status-bar-field">60 FPS</p>
         </div>
       </div>
-    </Show>
   );
 }

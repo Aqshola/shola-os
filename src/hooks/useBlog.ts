@@ -12,6 +12,7 @@ export function useBlog() {
             isMinimized: false,
             posts: [] as BlogPost[],
             selectedPost: null as BlogPost | null,
+            activePostSlug: null as string | null,
             page: 1,
             pageSize: 6,
             total: 0,
@@ -80,23 +81,24 @@ export function useBlog() {
     };
 
     const openPost = (slug: string) => {
-        setState({ selectedPost: null });
+        setState({ activePostSlug: slug });
         setBlogSlug(slug);
         setCurrentApp(MODULE_ID.blog);
     };
 
     const closePost = () => {
-        setState({ selectedPost: null });
+        setState({ activePostSlug: null, selectedPost: null });
+        setBlogSlug(null);
     };
 
     const open = () => {
-        setState({ isOpen: true });
+        setState({ isOpen: true, isMinimized: false });
         setCurrentApp(MODULE_ID.blog);
         fetchPosts(state.page);
     };
 
     const close = () => {
-        setState({ isOpen: false });
+        setState({ isOpen: false, isMinimized: false, activePostSlug: null, selectedPost: null });
         closePost();
     };
 
@@ -121,13 +123,14 @@ export function useBlog() {
         }
     };
 
-    const isPostActive = () => state.selectedPost !== null;
+    const isPostActive = () => state.activePostSlug !== null;
 
     return {
         isMinimized: () => state.isMinimized,
         isActive: () => state.isOpen && !state.isMinimized,
         posts: () => state.posts,
         selectedPost: () => state.selectedPost,
+        activePostSlug: () => state.activePostSlug,
         page: () => state.page,
         pageSize: () => state.pageSize,
         total: () => state.total,
