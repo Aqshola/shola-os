@@ -33,7 +33,6 @@ export default function Desktop(props: DesktopProps) {
         if (props.appName === MODULE_ID.blog && props.blogSlug) {
             blog.open();
             blog.openPost(props.blogSlug);
-            registerWindow(`post-${props.blogSlug}`);
             return;
         }
 
