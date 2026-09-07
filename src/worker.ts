@@ -10,6 +10,7 @@ const CRAWLER_USER_AGENTS = [
   'crawl',
   'twitterbot',
   'facebookexternalhit',
+  'meta-externalagent',
   'discordbot',
   'linkedinbot',
   'slackbot',
@@ -19,6 +20,8 @@ const CRAWLER_USER_AGENTS = [
   'bingbot',
   'yandexbot',
   'applebot',
+  'pinterest',
+  'redditbot',
 ];
 
 function isCrawler(userAgent: string | null): boolean {
@@ -355,18 +358,32 @@ export default {
 
             let thumbnailUrl = 'https://shola.pro/assets/wallpaper/desktop.webp';
             if (typeof rawThumbnail === 'string' && rawThumbnail.length > 0) {
-              thumbnailUrl = rawThumbnail;
+              thumbnailUrl = rawThumbnail.startsWith('http')
+                ? rawThumbnail
+                : `${url.origin}${rawThumbnail.startsWith('/') ? '' : '/'}${rawThumbnail}`;
             } else if (rawThumbnail && typeof rawThumbnail === 'object') {
-              if (rawThumbnail.url) {
-                thumbnailUrl = rawThumbnail.url;
-              } else if (rawThumbnail.meta?.storageKey) {
-                thumbnailUrl = `${url.origin}/_emdash/api/media/file/${rawThumbnail.meta.storageKey}`;
-              } else if (rawThumbnail.storageKey) {
-                thumbnailUrl = `${url.origin}/_emdash/api/media/file/${rawThumbnail.storageKey}`;
+              const directUrl = rawThumbnail.url || rawThumbnail.asset?.url;
+              const storageKey =
+                rawThumbnail.meta?.storageKey ||
+                rawThumbnail.storageKey ||
+                rawThumbnail.asset?.meta?.storageKey ||
+                rawThumbnail.asset?.storageKey;
+
+              if (directUrl) {
+                thumbnailUrl = directUrl.startsWith('http')
+                  ? directUrl
+                  : `${url.origin}${directUrl.startsWith('/') ? '' : '/'}${directUrl}`;
+              } else if (storageKey) {
+                thumbnailUrl = `${url.origin}/_emdash/api/media/file/${storageKey}`;
               }
             }
 
-            const response = await env.ASSETS.fetch(request);
+            // Always fetch index.html template so HTMLRewriter mutates valid HTML
+            const indexRequest = new Request(new URL('/index.html', request.url), request);
+            let response = await env.ASSETS.fetch(indexRequest);
+            if (!response.ok) {
+              response = await env.ASSETS.fetch(request);
+            }
             const title = escapeHtml(titleText);
             const description = escapeHtml(excerptText);
             const canonicalUrl = url.toString();
@@ -434,8 +451,18 @@ export default {
     }
 
     // -------------------------------------------------------------
-    // All other requests -> Serve static assets from [assets]
+    // All other requests -> Serve static assets with SPA fallback
     // -------------------------------------------------------------
-    return env.ASSETS.fetch(request);
+    try {
+      const assetResponse = await env.ASSETS.fetch(request);
+      if (assetResponse.status === 404) {
+        const indexRequest = new Request(new URL('/index.html', request.url), request);
+        return await env.ASSETS.fetch(indexRequest);
+      }
+      return assetResponse;
+    } catch (_) {
+      const indexRequest = new Request(new URL('/index.html', request.url), request);
+      return await env.ASSETS.fetch(indexRequest);
+    }
   },
 };
