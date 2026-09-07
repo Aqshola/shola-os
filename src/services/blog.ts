@@ -33,16 +33,24 @@ export interface GetListPostsOptions {
     status?: string;
 }
 
-export function mapEntryToBlogPost(entry: EmDashEntry<BlogPostData>): BlogPost {
-    const thumbnail = entry.data?.thumbnail;
-    let imageUrl = "";
-    if (typeof thumbnail === "string") {
-        imageUrl = thumbnail;
-    } else if (thumbnail && typeof thumbnail === "object") {
-        imageUrl = thumbnail.url 
-            || (thumbnail.meta?.storageKey ? `/_emdash/api/media/file/${thumbnail.meta.storageKey}` : "")
-            || (thumbnail.storageKey ? `/_emdash/api/media/file/${thumbnail.storageKey}` : "");
+export function resolveImageUrl(image: any): string {
+    if (!image) return "";
+    if (typeof image === "string") return image;
+    if (typeof image === "object") {
+        if (image.url) return image.url;
+        if (image.asset?.url) return image.asset.url;
+        const storageKey =
+            image.meta?.storageKey ||
+            image.storageKey ||
+            image.asset?.meta?.storageKey ||
+            image.asset?.storageKey;
+        if (storageKey) return `/_emdash/api/media/file/${storageKey}`;
     }
+    return "";
+}
+
+export function mapEntryToBlogPost(entry: EmDashEntry<BlogPostData>): BlogPost {
+    const imageUrl = resolveImageUrl(entry.data?.thumbnail);
 
     return {
         id: entry.id,

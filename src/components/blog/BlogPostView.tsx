@@ -1,5 +1,5 @@
 import { Show, createSignal, createEffect } from "solid-js";
-import { PortableText } from "@portabletext/solid";
+import BlogPostContent from "./BlogPostContent";
 import "@/pages/Blogs/style/blogs.css";
 import { getPostBySlug, BlogPost } from "@/services/blog";
 
@@ -110,7 +110,7 @@ export default function BlogPostView(props: BlogPostViewProps) {
 
             {/* Main Content Body */}
             <div class="blogs-window-body" style={{ flex: "1", "overflow-y": "auto", margin: "2px", padding: "16px 20px" }}>
-                <Show when={!loading()} fallback={<div class="blogs-loading">Fetching article from Emdash CMS...</div>}>
+                <Show when={!loading()} fallback={<div class="blogs-loading">Get Data</div>}>
                     <Show when={!error()} fallback={
                         <div class="blogs-error">
                             <h2>Error Loading Article</h2>
@@ -156,17 +156,8 @@ export default function BlogPostView(props: BlogPostViewProps) {
                                     </div>
                                 </Show>
 
-                                {/* Article Body with PortableText */}
-                                <article class="article-body">
-                                    <Show
-                                        when={Array.isArray(post()!.content)}
-                                        fallback={
-                                            <div innerHTML={typeof post()!.content === "string" ? (post()!.content as string) : ""} />
-                                        }
-                                    >
-                                        <PortableText value={post()!.content as any} />
-                                    </Show>
-                                </article>
+                                {/* Article Body with Rich Content Support */}
+                                <BlogPostContent content={post()!.content} />
 
                                 {/* Footer Navigation */}
                                 <div class="article-footer-nav">

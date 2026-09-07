@@ -129,16 +129,15 @@ export default function BlogsPage() {
                     {/* Header Banner */}
                     <div class="blogs-header-banner">
                         <div>
-                            <h1 class="blogs-header-title">Technical Articles & Musings</h1>
+                            <h1 class="blogs-header-title">Random Thoughts</h1>
                             <p class="blogs-header-subtitle">
-                                Architecture notes, engineering thoughts, and retro computing explorations by Aqshol.
+                                idk, probably will write random things in here
                             </p>
                         </div>
-                        <span class="blogs-header-badge">Emdash CMS Powered</span>
                     </div>
 
                     {/* Posts View */}
-                    <Show when={!loading()} fallback={<div class="blogs-loading">Connecting to Emdash CMS and loading posts...</div>}>
+                    <Show when={!loading()} fallback={<div class="blogs-loading">loading posts...</div>}>
                         <Show when={filteredPosts().length > 0} fallback={
                             <div class="blogs-empty">
                                 <p>No blog posts found matching your criteria.</p>
