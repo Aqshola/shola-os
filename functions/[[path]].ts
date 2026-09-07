@@ -9,6 +9,7 @@ const CRAWLER_USER_AGENTS = [
   'crawl',
   'twitterbot',
   'facebookexternalhit',
+  'meta-externalagent',
   'discordbot',
   'linkedinbot',
   'slackbot',
@@ -18,6 +19,8 @@ const CRAWLER_USER_AGENTS = [
   'bingbot',
   'yandexbot',
   'applebot',
+  'pinterest',
+  'redditbot',
 ];
 
 function isCrawler(userAgent: string | null): boolean {
@@ -105,18 +108,31 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
     let thumbnailUrl = 'https://shola.pro/assets/wallpaper/desktop.webp';
     if (typeof rawThumbnail === 'string' && rawThumbnail.length > 0) {
-      thumbnailUrl = rawThumbnail;
+      thumbnailUrl = rawThumbnail.startsWith('http')
+        ? rawThumbnail
+        : `${url.origin}${rawThumbnail.startsWith('/') ? '' : '/'}${rawThumbnail}`;
     } else if (rawThumbnail && typeof rawThumbnail === 'object') {
-      if (rawThumbnail.url) {
-        thumbnailUrl = rawThumbnail.url;
-      } else if (rawThumbnail.meta?.storageKey) {
-        thumbnailUrl = `${url.origin}/_emdash/api/media/file/${rawThumbnail.meta.storageKey}`;
-      } else if (rawThumbnail.storageKey) {
-        thumbnailUrl = `${url.origin}/_emdash/api/media/file/${rawThumbnail.storageKey}`;
+      const directUrl = rawThumbnail.url || rawThumbnail.asset?.url;
+      const storageKey =
+        rawThumbnail.meta?.storageKey ||
+        rawThumbnail.storageKey ||
+        rawThumbnail.asset?.meta?.storageKey ||
+        rawThumbnail.asset?.storageKey;
+
+      if (directUrl) {
+        thumbnailUrl = directUrl.startsWith('http')
+          ? directUrl
+          : `${url.origin}${directUrl.startsWith('/') ? '' : '/'}${directUrl}`;
+      } else if (storageKey) {
+        thumbnailUrl = `${url.origin}/_emdash/api/media/file/${storageKey}`;
       }
     }
 
-    const response = await context.next();
+    const indexRequest = new Request(new URL('/index.html', url.origin), context.request);
+    let response = await context.next(indexRequest);
+    if (!response.ok) {
+      response = await context.next();
+    }
     const title = escapeHtml(titleText);
     const description = escapeHtml(excerptText);
     const canonicalUrl = url.toString();
